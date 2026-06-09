@@ -1,138 +1,113 @@
-# e-Kaku V3
+# e-Kaku V3 — AGENTS.md
 
-Laravel 12 — Kartu Kuning (AK1) management app for Pandeglang, Banten.
+## TL;DR
 
-## Roles & seed accounts
+AK-1 Kartu Kuning (job seeker card) management for Disnaker Pandeglang. Laravel 12, Blade + Alpine.js v3, Tailwind v3, Pest. SQLite default for dev/test.
 
-Three roles: `user`, `admin`, `atasan`. Pre-seeded (password: `password`):
-- `user@ekaku.test`
-- `admin@ekaku.test`
-- `atasan@ekaku.test`
+## Commands
 
-Seed: `php artisan db:seed --class=DemoDataSeeder` or set `SEED_DEMO_DATA=true` in `.env` and run `db:seed`.
-
-## Dev commands
-
-| Command | What it does |
+| What | Command |
 |---|---|
-| `composer run dev` | Full dev environment (PHP server + queue + logs + Vite via concurrently) |
-| `composer run test` | Clears config then runs `php artisan test` |
-| `vendor/bin/pint --dirty` | Format code (run before finalizing changes) |
-| `php artisan test --compact --filter={testName}` | Run single test |
-| `npm run build` | Build frontend assets |
+| Dev server (all) | `composer run dev` (PHP server + queue + pail + Vite) |
+| Quick server only | `php.bat artisan serve` |
+| Queue worker | `php.bat artisan queue:work` |
+| Scheduler | `php.bat artisan schedule:work` |
+| Run all tests | `composer run test` (runs `config:clear` first) |
+| Single test | `php.bat artisan test --compact --filter={Name}` |
+| Format code | `vendor/bin/pint --dirty` |
+| Clear Blade cache | `php.bat artisan view:clear` |
+| Seed demo | `php.bat artisan db:seed --class=DemoDataSeeder` |
 
-## Architecture
+**Always use `php.bat` not `php`** (PHP is not in PATH; wrapper provided).
 
-Custom `role` middleware (`App\Http\Middleware\RoleMiddleware`) registered as alias in `bootstrap/app.php`. Route groups use `->middleware('role:admin')`, `'role:user'`, `'role:atasan'`. Accepts comma-separated roles (e.g. `'role:admin,atasan'`).
+## Pre-seeded accounts (password: `password`)
 
-Middleware, routing, and exceptions configured in `bootstrap/app.php` (Laravel 12 style — no `app/Http/Kernel.php`). Service providers in `bootstrap/providers.php`.
-
-Wilayah data: `database/data/pandeglang_wilayah.json` (Pandeglang district/village hierarchy).
-
-No API routes (`routes/api.php` does not exist). Only `routes/web.php`, conditionally `routes/auth.php`, and `routes/console.php`.
-
-## Models & SoftDeletes
-
-**All** models use `SoftDeletes`: User, Biodata, KartuKuning, Upload, NotificationE, StatusPekerjaan. Queries that need deleted records must use `withTrashed()`.
-
-- `User`: `hasCompletedProfile()` (biodata fields), `hasRequiredDocuments()` (ktp/ijazah/foto uploads), `generateQrCode()` (HMAC-SHA256 over `user_id:nomor_ak1:issuedAt` using `APP_KEY`, stores `qr_token`, `qr_issued_at`, `expired_at` +2yrs)
-- `KartuKuning`: status enum `pending|printed|expired`, `scan_count` unsigned int default 0 (increments only on successful public verification in `verify()`)
-- `NotificationE`: maps to `notifications` table (not `notification_e`), `tipe` enum `status_update|kartu_expired`, `status_baca` boolean
-
-## Reminder system
-
-Single `SendSmartReminders` Job runs daily at 07:00 via `routes/console.php`. Enhances old `reminder:smart` command (removed).
-
-Trigger: `Schedule::job(SendSmartReminders)->dailyAt('07:00')`. Delivery uses both Laravel `Notification` (email) and `NotificationE` model (in-app). Includes dedup (7-day cooldown for status/kartu, 30-day for expired) via `NotificationE` table.
-
-| Check | Logic |
+| Email | Role |
 |---|---|
-| Kartu expiry (30 days before) | `expired_at` within next 30 days, status=printed |
-| Kartu already expired | `expired_at` in past, status=printed → auto-set to `expired` |
-| Status pekerjaan (6 months) | `status_pekerjaan.updated_at` > 6 months ago |
+| `user@ekaku.test` | User |
+| `admin@ekaku.test` | Admin |
+| `atasan@ekaku.test` | Atasan |
 
-Requires queue worker for delivery (`php artisan queue:work`). Requires scheduler for daily trigger (`php artisan schedule:work`).
-
-## Events
-
-`BiodataStatusChanged` event → `SendBiodataStatusNotification` listener, registered in `AppServiceProvider::boot()` (not in `EventServiceProvider`). Also: `StatusPekerjaanReminderEvent`.
-
-## Caching
-
-Admin/atasan dashboard queries are cached:
-- `dashboard.admin.stats` (300s), `dashboard.admin.statusDistribution` (300s), `dashboard.admin.recentActivities` (300s), `dashboard.admin.regionalSummary` (600s)
-- `dashboard.atasan.stats` (300s)
-- `dashboard.wilayahData` (86400s/24h)
-
-Cleared with `php artisan cache:clear` or individually by key.
-
-## Database indexes
-
-Manual index migrations (beyond Laravel auto-creates):
-
-| Migration | Table | Index |
-|---|---|---|
-| `add_status_verifikasi_index_to_biodata_table` | `biodata` | `status_verifikasi` |
-| `add_role_index_to_users_table` | `users` | `role` |
-| `add_user_id_status_baca_index_to_notifications_table` | `notifications` | `(user_id, status_baca)` |
-
-`kartu_kuning.user_id` and `notifications.user_id` already indexed by `foreignId()->constrained()`.
-
-## QR verification
-
-Public route: `GET /verify/{nomor_ak1}?token=...` — no auth required. HMAC-SHA256 token using `APP_KEY`. `scan_count` incremented only on successful verification. Token valid 2 years (`expired_at`). Old `qr_code_path` file field kept for backward compat.
-
-## Upload document types
-
-Enum: `ktp`, `ijazah`, `foto`, `kk`, `sertifikat` (added `kk` and `sertifikat` via migration 2026_06_01_000001).
-
-## Notifications
-
-Two delivery systems:
-1. **Laravel Notifications** (`BiodataStatusUpdated`, `KartuKuningExpiryReminder`, `StatusPekerjaanReminder`) — used by the scheduled job and biodata verification
-2. **NotificationE model** (table `notifications`) — used by manual `reminder:smart` command and manual admin sends. `status_baca` boolean, `tipe` enum.
-
-## Key dependencies
-
-- `barryvdh/laravel-dompdf` — PDF (kartu kuning, laporan)
-- `simplesoftwareio/simple-qrcode` — QR code
-- `laravel/boost` — MCP server (`artisan boost:mcp`)
-- Alpine.js v3 + Tailwind CSS v3 — frontend
-- chart.js, html5-qrcode, sweetalert2 — JS dependencies
+Set `SEED_DEMO_DATA=true` in `.env` to auto-seed on migrate.
 
 ## Testing
 
-Pest with `RefreshDatabase`, SQLite in-memory. Tests in `tests/Feature/`. Key test: `Ak1WorkflowTest` — full flow (register → biodata → upload → submit → admin verify → kartu kuning PDF).
+- Pest with `RefreshDatabase` + SQLite in-memory
+- Key test: `Ak1WorkflowTest` (full registration → biodata → uploads → admin verify → kartu kuning)
+- Single test: `php.bat artisan test --compact --filter={TestName}`
+
+## Architecture
+
+- **Roles**: `user`, `admin`, `atasan` (middleware `role:{name}`)
+- **Auth**: Laravel Breeze (Blade/Alpine), routes in `routes/auth.php`
+- **Routes**: All user routes in `routes/web.php` under `auth` middleware
+- **Profile page**: `resources/views/user/profile.blade.php` — single-page tab layout (akun/biodata/berkas) using Alpine `x-show` + hash routing in `x-init` with `setTimeout`
+- **Upload types**: ktp (required), ijazah (required), foto (required), kk, sertifikat
+- **Wilayah data**: `database/data/pandeglang_wilayah.json` for admin report filters
+- **Notifications**: Custom `NotificationE` model (not Laravel's built-in notifications)
+
+## Profile page gotchas
+
+- The sidebar `<div class="space-y-6">` must be a **grid sibling** of the `lg:col-span-2` column inside the `lg:grid-cols-3` grid — NOT nested inside the column. If the sidebar moves below the content, the column div wasn't properly closed.
+- Tab switching uses `x-init` with `setTimeout(() => { activeTab = ... }, 50)` reading `window.location.hash`. Inline ternary in `x-data` does NOT work reliably for this.
+- Biodata container (`#biodata`) uses `x-show="activeTab !== 'akun'"` so both biodata AND berkas tabs show it. The gradient header + p-6 form inside hide via `x-show="activeTab === 'biodata'"`.
+
+## Frontend structure
+
+- Tab switching logic: `<div x-data="{ activeTab: 'akun', openPribadi: true, openPendidikan: true }" x-init="setTimeout(() => activeTab = window.location.hash === '#biodata' ? 'biodata' : window.location.hash === '#berkas' ? 'berkas' : 'akun', 50)">`
+- Single-page design with Alpine.js reactive state management
+
+## Dev environment setup
+
+```bash
+composer run setup  # runs: composer install, key:generate, migrate, npm install, build
+```
+
+Or step-by-step:
+
+```bash
+composer install
+php.bat artisan key:generate
+php.bat artisan migrate
+npm install
+npm run build
+```
+
+## Testing workflow
+
+1. Run all tests: `composer run test`
+2. Single test: `php.bat artisan test --compact --filter={TestName}`
+3. Format before committing: `vendor/bin/pint --dirty`
+
+## Important files
+
+- `routes/web.php:44` - Main user route group (auth middleware)
+- `routes/auth.php` - Laravel Breeze auth routes
+- `resources/views/user/profile.blade.php:23` - Profile page with Alpine.js
+- `database/seeders/DemoDataSeeder.php:14` - Demo data seeder (300+ users)
+- `tests/Feature/Ak1WorkflowTest.php:16` - Key integration test
+
+## LSP false positives
+
+LSP parser errors in `.blade.php` files from CSS/SCSS inside `<style>` blocks are pre-existing and harmless. Ignore them.
+
+## MCP tools available
+
+- `laravel-boost` (Artisan `boost:mcp`) — tinker, routes, config, schema, docs search, browser logs
+- `laravel-telescope` (Artisan `telescope-mcp:server`) — debug queries, requests, logs, exceptions, etc. Requires `APP_ENV=local` or `TELESCOPE_ENABLED=true`.
+- `lighthouse` (`lighthouse-mcp`) — Lighthouse performance & accessibility audits
+- `filesystem` (`@modelcontextprotocol/server-filesystem`) — full filesystem read/write access to project directory
 
 ## Deployment
 
-Railway via `nixpacks.toml` (PHP 8.3 + Node 20). See `DEPLOYMENT.md`. Session, queue, cache default to `database` driver.
+See `DEPLOYMENT.md`. Railway via `nixpacks.toml` + `Procfile`. Session/queue/cache use `database` driver.
 
-## PHP & Boost
+## Project conventions
 
-PHP via Laragon at `C:\laragon\bin\php\php-8.3.16-Win32-vs16-x64\php.exe`. Not in system PATH — use `php.bat` wrapper (project root). All `php`/`artisan`/`composer` commands assume `php.bat`. Boost MCP (`artisan boost:mcp`) configured in `opencode.json`.
-
-Local `.env` uses `DB_CONNECTION=sqlite` — switch to `mysql` for production.
-
-## Conventions
-
-- PHP 8.3, typed properties/returns, constructor property promotion
-- Custom `disnaker` color palette in Tailwind (`disnaker-500: #005aa7`)
-- `NotificationE` model (avoids collision with Laravel's `Notification`)
-- QR verification: HMAC-SHA256 token, public `/verify/{nomor_ak1}`
-- Blade views grouped by role (`admin/`, `atasan/`, `user/`)
-- CSV exports: UTF-8 BOM, ISO dates
-- Profile photos: `profile_photo_path` column, served via `route('profile.photo')`, accessor `getProfilePhotoUrlAttribute()`
-- `composer run setup` — full first-time setup
-
-## Frontend styling
-
-- Cards: `card-shadow` class (`rounded-xl bg-white p-6 card-shadow`), never `rounded-lg bg-white shadow`
-- Buttons: `btn-primary` (disnaker-500), `btn-secondary` (gray border), `btn-danger` (red-600) — defined in `resources/css/app.css`. No inline styles.
-- Form fields: use `<x-input-label>`, `<x-text-input>`, `<x-input-error>` Blade components
-- Empty states: table cells `<i class="fas fa-[icon] mr-2">` + centered text; standalone empty states get icon-circle pattern
-- Page titles: `@section('title', ...)` in every view extending `layouts.app` or `guest-auth.blade.php`
-- Alpine.js: preferred over vanilla JS (`onsubmit` → `@submit.prevent`)
-- Layout `app.blade.php` uses both `{{ $slot }}` and `@yield('content')`; auto-selects nav partial by role (`layouts.navigation-{role}` or `navigation-guest`); supports `@stack('styles')`/`@stack('scripts')`
-- `guest-auth.blade.php` uses `$slot` only (no `@yield`), gradient background, centered card
-- `app.js` disables clicked submit button on form submit, intercepts 401/419 for redirect to `/login`
+- **File paths**: Always use `php.bat` wrapper (PHP not in PATH)
+- **Database**: SQLite default, MySQL optional via `.env` config
+- **Testing**: `RefreshDatabase` trait for isolated test state
+- **Authentication**: Multi-role system with middleware `role:{name}`
+- **Notifications**: Custom `NotificationE` model (not Laravel's built-in)
+- **Frontend**: Alpine.js v3 for reactive UI with x-show directives
+- **Code style**: `vendor/bin/pint --dirty` for formatting before commits

@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Dashboard User')
+@section('description', 'Dashboard pengguna e-Kaku V3 - Kelola biodata, status pekerjaan, kartu kuning digital, dan notifikasi. Pantau status verifikasi dan update profil Anda.')
 
 @section('content')
 <div class="page-wrap">

@@ -17,7 +17,7 @@
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         @foreach ($jenisList as $key => $label)
             @php $docs = $grouped->get($key, collect()); @endphp
-            <div class="rounded-xl bg-white p-6 card-shadow" x-data="{ showForm: false }">
+            <div class="rounded-xl bg-white p-6 card-shadow" x-data="{ showForm: true }">
                 <div class="mb-4 flex items-center gap-3">
                     <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-disnaker-100">
                         <i class="fas {{ $icons[$key] }} text-lg text-disnaker-600"></i>

@@ -87,9 +87,10 @@ class KartuKuningController extends Controller
             ['tanggal_cetak' => now()]
         );
 
-        // Selalu regenerasi QR saat download PDF agar token terbaru
-        $user->generateQrCode();
-        $user->refresh(['biodata', 'kartuKuning']);
+        if (! $user->kartuKuning->qr_token || ($user->kartuKuning->expired_at && $user->kartuKuning->expired_at->isPast())) {
+            $user->generateQrCode();
+            $user->refresh(['biodata', 'kartuKuning']);
+        }
 
         $qrSvg = QrCode::format('svg')
             ->size(200)

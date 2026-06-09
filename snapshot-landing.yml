@@ -1,0 +1,187 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - link "e-Kaku" [ref=e5] [cursor=pointer]:
+        - /url: http://127.0.0.1:8081
+        - img "e-Kaku" [ref=e6]
+      - generic [ref=e7]:
+        - link "Beranda" [ref=e8] [cursor=pointer]:
+          - /url: http://127.0.0.1:8081
+        - link "Fitur" [ref=e9] [cursor=pointer]:
+          - /url: "#features"
+        - link "Cara Kerja" [ref=e10] [cursor=pointer]:
+          - /url: "#how-it-works"
+        - link "Tentang" [ref=e11] [cursor=pointer]:
+          - /url: "#about"
+      - generic [ref=e12]:
+        - link "Masuk" [ref=e13] [cursor=pointer]:
+          - /url: http://127.0.0.1:8081/login
+        - link "Daftar" [ref=e14] [cursor=pointer]:
+          - /url: http://127.0.0.1:8081/register
+  - main [ref=e15]:
+    - generic [ref=e16]:
+      - img [ref=e18]
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - generic [ref=e23]:
+            - generic [ref=e24]: 
+            - generic [ref=e25]: Dinas Tenaga Kerja Kabupaten Pandeglang
+          - heading "e-Kaku V3 Kartu Kuning Digital Disnaker Pandeglang" [level=1] [ref=e26]:
+            - text: e-Kaku V3
+            - generic [ref=e27]: Kartu Kuning Digital Disnaker Pandeglang
+          - paragraph [ref=e28]: Digitalisasi kartu kuning (AK-1) untuk pencari kerja. Daftar, lengkapi profil, dan dapatkan kartu digital dengan QR code.
+          - generic [ref=e29]:
+            - link "Daftar Sekarang " [ref=e30] [cursor=pointer]:
+              - /url: http://127.0.0.1:8081/register
+              - text: Daftar Sekarang
+              - generic [ref=e31]: 
+            - link " Masuk" [ref=e32] [cursor=pointer]:
+              - /url: http://127.0.0.1:8081/login
+              - generic [ref=e33]: 
+              - text: Masuk
+        - img "Lambang Pandeglang" [ref=e35]
+    - generic [ref=e38]:
+      - generic [ref=e39]:
+        - generic [ref=e41]: 
+        - generic [ref=e42]: "0"
+        - paragraph [ref=e43]: Pencari Kerja Terdaftar
+      - generic [ref=e44]:
+        - generic [ref=e46]: 
+        - generic [ref=e47]: "0"
+        - paragraph [ref=e48]: Kartu Kuning Terbit
+      - generic [ref=e49]:
+        - generic [ref=e51]: 
+        - generic [ref=e52]: "0"
+        - paragraph [ref=e53]: Biodata Terverifikasi
+    - generic [ref=e55]:
+      - generic [ref=e56]:
+        - heading "Cara Kerja" [level=2] [ref=e57]
+        - paragraph [ref=e58]: Hanya 3 langkah mudah untuk mendapatkan Kartu Kuning digital Anda
+      - generic [ref=e59]:
+        - generic [ref=e60]:
+          - generic [ref=e61]: "1"
+          - generic [ref=e63]: 
+          - heading "Daftar Akun" [level=3] [ref=e64]
+          - paragraph [ref=e65]: Buat akun pencari kerja dengan email dan data diri Anda.
+        - generic [ref=e66]:
+          - generic [ref=e67]: "2"
+          - generic [ref=e69]: 
+          - heading "Lengkapi Data" [level=3] [ref=e70]
+          - paragraph [ref=e71]: Isi biodata dan unggah dokumen yang diperlukan untuk verifikasi.
+        - generic [ref=e72]:
+          - generic [ref=e73]: "3"
+          - generic [ref=e75]: 
+          - heading "Dapatkan Kartu" [level=3] [ref=e76]
+          - paragraph [ref=e77]: Kartu digital dengan QR code siap diunduh dan diverifikasi.
+    - generic [ref=e79]:
+      - generic [ref=e80]:
+        - heading "Fitur Unggulan" [level=2] [ref=e81]
+        - paragraph [ref=e82]: Sistem kartu kuning digital dengan teknologi terkini untuk kemudahan pencari kerja dan pengawas Disnaker.
+      - generic [ref=e83]:
+        - generic [ref=e84]:
+          - generic [ref=e86]: 
+          - heading "Profil Lengkap" [level=3] [ref=e87]
+          - paragraph [ref=e88]: Lengkapi data diri, skill, dan preferensi untuk mendapatkan rekomendasi yang tepat.
+          - generic [ref=e89]:
+            - generic [ref=e90]: 
+            - text: Data terintegrasi
+        - generic [ref=e91]:
+          - generic [ref=e93]: 
+          - heading "Update Status" [level=3] [ref=e94]
+          - paragraph [ref=e95]: "Update status pekerjaan secara berkala: Belum Bekerja, Sudah Bekerja, atau Pelatihan."
+          - generic [ref=e96]:
+            - generic [ref=e97]: 
+            - text: Reminder otomatis 3 bulanan
+        - generic [ref=e98]:
+          - generic [ref=e100]: 
+          - heading "Kartu Digital" [level=3] [ref=e101]
+          - paragraph [ref=e102]: Kartu digital dengan QR code yang bisa diunduh dalam PDF dan diverifikasi online.
+          - generic [ref=e103]:
+            - generic [ref=e104]: 
+            - text: Akses kapan saja
+        - generic [ref=e105]:
+          - generic [ref=e107]: 
+          - heading "Dashboard Admin" [level=3] [ref=e108]
+          - paragraph [ref=e109]: Pantau statistik pencari kerja, tren, dan kelola data secara efisien.
+          - generic [ref=e110]:
+            - generic [ref=e111]: 
+            - text: Visualisasi data lengkap
+        - generic [ref=e112]:
+          - generic [ref=e114]: 
+          - heading "Notifikasi" [level=3] [ref=e115]
+          - paragraph [ref=e116]: Terima notifikasi update status, reminder, dan info dari Disnaker Pandeglang.
+          - generic [ref=e117]:
+            - generic [ref=e118]: 
+            - text: Email & in-app notification
+        - generic [ref=e119]:
+          - generic [ref=e121]: 
+          - heading "Export Laporan" [level=3] [ref=e122]
+          - paragraph [ref=e123]: Export data pencari kerja dalam PDF atau CSV untuk keperluan pelaporan.
+          - generic [ref=e124]:
+            - generic [ref=e125]: 
+            - text: Multiple format support
+    - generic [ref=e127]:
+      - generic [ref=e128]:
+        - heading "Tentang e-Kaku V3" [level=2] [ref=e129]
+        - paragraph [ref=e130]: Digitalisasi layanan kartu kuning oleh Dinas Tenaga Kerja Kabupaten Pandeglang
+      - generic [ref=e131]:
+        - generic [ref=e132]:
+          - paragraph [ref=e133]: e-Kaku V3 adalah sistem digitalisasi kartu kuning (AK-1) yang dikembangkan oleh Dinas Tenaga Kerja Kabupaten Pandeglang untuk memudahkan pencari kerja dalam mengelola data dan status pekerjaan mereka.
+          - paragraph [ref=e134]: Sistem ini dilengkapi dengan teknologi QR code, dashboard admin, dan notifikasi yang memudahkan monitoring dan pelaporan secara real-time.
+          - paragraph [ref=e135]: Dengan e-Kaku V3, pencari kerja dapat mengupdate status pekerjaan, mendapatkan reminder otomatis, dan mengakses kartu digital kapan saja melalui perangkat mobile atau desktop.
+          - heading "Manfaat Utama" [level=3] [ref=e136]
+          - generic [ref=e137]:
+            - generic [ref=e138]:
+              - generic [ref=e139]: 
+              - generic [ref=e140]: Efisiensi administrasi pencari kerja
+            - generic [ref=e141]:
+              - generic [ref=e142]: 
+              - generic [ref=e143]: Monitoring real-time status pekerjaan
+            - generic [ref=e144]:
+              - generic [ref=e145]: 
+              - generic [ref=e146]: Reduksi biaya cetak kartu fisik
+            - generic [ref=e147]:
+              - generic [ref=e148]: 
+              - generic [ref=e149]: Peningkatan akurasi data statistik
+        - generic [ref=e150]:
+          - generic [ref=e151]:
+            - generic [ref=e152]:
+              - generic [ref=e154]: 
+              - generic [ref=e155]:
+                - heading "Dinas Tenaga Kerja" [level=3] [ref=e156]
+                - paragraph [ref=e157]: Kabupaten Pandeglang
+            - generic [ref=e158]:
+              - generic [ref=e159]:
+                - generic [ref=e160]: 
+                - generic [ref=e161]:
+                  - paragraph [ref=e162]: Alamat
+                  - paragraph [ref=e163]: Jl. Raya Pandeglang - Serang KM. 5, Pandeglang, Banten
+              - generic [ref=e164]:
+                - generic [ref=e165]: 
+                - generic [ref=e166]:
+                  - paragraph [ref=e167]: Telepon
+                  - paragraph [ref=e168]: (0253) 201001 / 201002
+              - generic [ref=e169]:
+                - generic [ref=e170]: 
+                - generic [ref=e171]:
+                  - paragraph [ref=e172]: Email
+                  - paragraph [ref=e173]: disnaker@pandeglang.go.id
+          - generic [ref=e174]:
+            - heading "Jam Operasional" [level=3] [ref=e175]
+            - generic [ref=e176]:
+              - generic [ref=e177]:
+                - generic [ref=e178]: Senin - Kamis
+                - generic [ref=e179]: 08:00 - 16:00 WIB
+              - generic [ref=e180]:
+                - generic [ref=e181]: Jumat
+                - generic [ref=e182]: 08:00 - 16:30 WIB
+            - generic [ref=e183]:
+              - generic [ref=e184]: 
+              - text: Untuk pendaftaran dan bantuan teknis, hubungi bagian informasi Disnaker.
+  - contentinfo [ref=e185]:
+    - generic [ref=e186]:
+      - generic [ref=e187]:
+        - img "Lambang Pandeglang" [ref=e188]
+        - generic [ref=e189]: Dinas Tenaga Kerja Kabupaten Pandeglang
+      - paragraph [ref=e190]: © 2026 Disnaker Pandeglang. All rights reserved.
+      - paragraph [ref=e191]: e-Kaku V3 — Digital Yellow Card System

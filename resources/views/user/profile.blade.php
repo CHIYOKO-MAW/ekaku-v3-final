@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Profil Saya')
+@section('description', 'Kelola profil dan biodata e-Kaku V3 - Isi data pribadi, unggah berkas (KTP, Ijazah, Foto), dan ajukan verifikasi admin untuk mendapatkan Kartu Kuning digital.')
 
 @section('content')
 @php
@@ -19,7 +20,7 @@
         ? \Carbon\Carbon::parse($user->kartuKuning->tanggal_cetak)->addYears(5)
         : null;
 @endphp
-<div class="page-wrap" x-data="{ activeTab: window.location.hash === '#biodata' ? 'biodata' : 'akun', openPribadi: true, openPendidikan: true }">
+<div class="page-wrap" x-data="{ activeTab: 'akun', openPribadi: true, openPendidikan: true }" x-init="setTimeout(() => activeTab = window.location.hash === '#biodata' ? 'biodata' : window.location.hash === '#berkas' ? 'berkas' : 'akun', 50)">
 
     {{-- HEADER GRADIENT --}}
     <div class="rounded-xl bg-gradient-to-r from-[#005aa7] to-blue-600 p-6 card-shadow">
@@ -48,7 +49,7 @@
             <button @click="activeTab = 'biodata'; window.location.hash = 'biodata'" :class="activeTab === 'biodata' ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:text-gray-700'" class="inline-flex items-center border-b-2 px-1 py-3 text-sm font-medium">
                 <i class="fas fa-address-card mr-2"></i>Biodata
             </button>
-            <button @click="activeTab = 'berkas'; window.location.hash = ''" :class="activeTab === 'berkas' ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:text-gray-700'" class="inline-flex items-center border-b-2 px-1 py-3 text-sm font-medium">
+            <button @click="activeTab = 'berkas'; window.location.hash = '#berkas'" :class="activeTab === 'berkas' ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:text-gray-700'" class="inline-flex items-center border-b-2 px-1 py-3 text-sm font-medium">
                 <i class="fas fa-file-upload mr-2"></i>Berkas
             </button>
         </div>
@@ -137,8 +138,8 @@
             </div>
 
             {{-- TAB BIODATA --}}
-            <div x-show="activeTab === 'biodata'" id="biodata" class="overflow-hidden rounded-xl bg-white card-shadow">
-                <div class="bg-gradient-to-r from-[#005aa7] to-blue-600 px-6 py-4">
+            <div x-show="activeTab !== 'akun'" id="biodata" class="overflow-hidden rounded-xl bg-white card-shadow">
+                <div x-show="activeTab === 'biodata'" class="bg-gradient-to-r from-[#005aa7] to-blue-600 px-6 py-4">
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div class="flex items-center gap-3">
                             <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20">
@@ -160,7 +161,7 @@
                         @endif
                     </div>
                 </div>
-                <div class="p-6">
+                <div x-show="activeTab === 'biodata'" class="p-6">
 
                 <form method="POST" action="{{ $biodata ? route('biodata.update') : route('biodata.store') }}" class="space-y-6">
                     @csrf
@@ -181,8 +182,8 @@
                                     <x-input-error :messages="$errors->get('nik')" />
                                 </div>
                                 <div>
-                                    <x-input-label :value="__('Nama Lengkap')" />
-                                    <x-text-input type="text" value="{{ $user->name }}" disabled />
+                                    <x-input-label for="nama_lengkap_display" :value="__('Nama Lengkap')" />
+                                    <x-text-input id="nama_lengkap_display" type="text" value="{{ $user->name }}" disabled />
                                 </div>
                                 <div>
                                     <x-input-label for="tempat_lahir" :value="__('Tempat Lahir')" />
@@ -343,30 +344,82 @@
                                 <p class="text-xs text-red-500"><i class="fas fa-exclamation-circle mr-1"></i>Lengkapi data nik, tempat lahir, tanggal lahir, alamat, dan pendidikan terlebih dahulu.</p>
                             @endif
                             @if (! $docsComplete)
-                                <p class="text-xs text-red-500"><i class="fas fa-exclamation-circle mr-1"></i>Upload KTP, Ijazah, dan Foto sebelum mengajukan verifikasi.</p>
+                                <p class="text-xs text-red-500">
+                                    <i class="fas fa-exclamation-circle mr-1"></i>
+                                    Upload KTP, Ijazah, dan Foto
+                                    <button type="button" @@click="activeTab = 'berkas'; window.location.hash = '#berkas'" class="font-semibold text-red-700 underline hover:text-red-900">di sini</button>
+                                    sebelum mengajukan verifikasi.
+                                </p>
                             @endif
                         </div>
-                    @endif
+                                                                    @endif
                 @endif
             </div>
 
             {{-- TAB BERKAS --}}
             @php
                 $jenisList = ['ktp' => 'KTP', 'ijazah' => 'Ijazah', 'foto' => 'Foto', 'kk' => 'Kartu Keluarga', 'sertifikat' => 'Sertifikat'];
+                $requiredDocs = ['ktp', 'ijazah', 'foto'];
                 $groupedUploads = $uploads->groupBy('jenis_dokumen');
                 $icons = ['ktp' => 'fa-id-card', 'ijazah' => 'fa-graduation-cap', 'foto' => 'fa-camera', 'kk' => 'fa-users', 'sertifikat' => 'fa-certificate'];
+                $allRequiredUploaded = collect($requiredDocs)->every(fn ($key) => $groupedUploads->get($key)?->isNotEmpty());
             @endphp
             <div x-show="activeTab === 'berkas'" class="space-y-6">
+                @if (! $allRequiredUploaded)
+                    <div class="rounded-xl border border-red-200 bg-red-50 p-4 card-shadow">
+                        <div class="flex items-start gap-3">
+                            <div class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-100">
+                                <i class="fas fa-exclamation-circle text-sm text-red-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-red-800">Dokumen Wajib Belum Lengkap</p>
+                                <p class="mt-1 text-sm text-red-700">
+                                    Upload <span class="font-semibold">KTP</span>,
+                                    <span class="font-semibold">Ijazah</span>, dan
+                                    <span class="font-semibold">Foto</span>
+                                    untuk bisa mengajukan validasi admin.
+                                    @if ($biodata && $biodata->status_verifikasi !== 'verified')
+                                        <a href="{{ $biodata ? route('biodata.edit') : route('biodata.create') }}" class="ml-1 font-semibold text-red-800 underline hover:text-red-900">
+                                            Kembali ke Biodata <i class="fas fa-arrow-right ml-1 text-xs"></i>
+                                        </a>
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <div class="rounded-xl border border-green-200 bg-green-50 p-4 card-shadow">
+                        <div class="flex items-start gap-3">
+                            <div class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-100">
+                                <i class="fas fa-check-circle text-sm text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-green-800">Semua Dokumen Wajib Terupload</p>
+                                <p class="mt-1 text-sm text-green-700">Anda sudah siap mengajukan validasi admin.</p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                     @foreach ($jenisList as $key => $label)
-                        @php $docs = $groupedUploads->get($key, collect()); @endphp
-                        <div class="rounded-xl bg-white p-6 card-shadow border-t-2 border-disnaker-300" x-data="{ showForm: false }">
+                        @php
+                            $docs = $groupedUploads->get($key, collect());
+                            $isRequired = in_array($key, $requiredDocs);
+                        @endphp
+                        <div class="rounded-xl bg-white p-6 card-shadow border-t-2 {{ $isRequired ? 'border-red-400' : 'border-disnaker-300' }}">
                             <div class="mb-4 flex items-center gap-3">
                                 <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-disnaker-100">
                                     <i class="fas {{ $icons[$key] }} text-lg text-disnaker-600"></i>
                                 </div>
                                 <div>
-                                    <h3 class="font-semibold text-gray-900">{{ $label }}</h3>
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="font-semibold text-gray-900">{{ $label }}</h3>
+                                        @if ($isRequired)
+                                            <span class="rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700">Wajib</span>
+                                        @else
+                                            <span class="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-semibold text-gray-500">Opsional</span>
+                                        @endif
+                                    </div>
                                     <p class="text-xs text-gray-500">
                                         @if ($docs->count())
                                             {{ $docs->count() }} file terupload
@@ -424,12 +477,7 @@
                                 <p class="mt-3 text-xs italic text-gray-400">*Jika Sudah Punya</p>
                             @endif
 
-                            <button @click="showForm = !showForm" class="btn-secondary mt-4 w-full">
-                                <i class="fas mr-2" :class="showForm ? 'fa-times' : 'fa-upload'"></i>
-                                <span x-text="showForm ? 'Batal' : 'Upload {{ $label }}'"></span>
-                            </button>
-
-                            <form x-cloak x-show="showForm" action="{{ route('upload.store') }}" method="POST" enctype="multipart/form-data" class="mt-4 space-y-3 rounded-lg border border-disnaker-200 bg-disnaker-50 p-4">
+                            <form action="{{ route('upload.store') }}" method="POST" enctype="multipart/form-data" class="mt-4 space-y-3 rounded-lg border border-disnaker-200 bg-disnaker-50 p-4">
                                 @csrf
                                 <input type="hidden" name="jenis_dokumen" value="{{ $key }}">
                                 <div>
@@ -446,9 +494,10 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        {{-- SIDEBAR --}}
-        <div class="space-y-6">
+    {{-- SIDEBAR --}}
+    <div class="space-y-6">
             <div class="overflow-hidden rounded-xl bg-white card-shadow">
                 <div class="bg-gradient-to-r from-[#005aa7] to-blue-600 px-4 py-3">
                     <h3 class="text-sm font-semibold text-white"><i class="fas fa-chart-line mr-2"></i>Progress Biodata</h3>
@@ -492,12 +541,31 @@
                             <p class="mt-1 text-xs text-yellow-700">Kartu aktif setelah biodata diverifikasi admin.</p>
                         </div>
                         @if ($biodata)
-                            <form method="POST" action="{{ route('biodata.submit') }}" class="mt-4">
-                                @csrf
-                                <button type="submit" class="btn-secondary">
-                                    <i class="fas fa-paper-plane mr-2"></i>Ajukan Validasi Admin
-                                </button>
-                            </form>
+                            @php $canSubmitSidebar = $biodata->isComplete() && $user->hasRequiredDocuments(); @endphp
+                            @if ($canSubmitSidebar)
+                                <form method="POST" action="{{ route('biodata.submit') }}" class="mt-4">
+                                    @csrf
+                                    <button type="submit" class="btn-secondary">
+                                        <i class="fas fa-paper-plane mr-2"></i>Ajukan Validasi Admin
+                                    </button>
+                                </form>
+                            @else
+                                <div class="mt-4 space-y-1">
+                                    <button type="button" class="btn-secondary opacity-50 cursor-not-allowed w-full" disabled>
+                                        <i class="fas fa-paper-plane mr-2"></i>Ajukan Validasi Admin
+                                    </button>
+                                    @if (! $user->hasRequiredDocuments())
+                                        <p class="text-xs text-red-500">
+                                            <i class="fas fa-exclamation-circle mr-1"></i>
+                                            Upload dokumen dulu
+                                            <button type="button" @@click="activeTab = 'berkas'; window.location.hash = '#berkas'" class="font-semibold text-red-700 underline hover:text-red-900">di sini</button>
+                                        </p>
+                                    @endif
+                                    @if (! $biodata->isComplete())
+                                        <p class="text-xs text-red-500"><i class="fas fa-exclamation-circle mr-1"></i>Lengkapi data biodata dulu.</p>
+                                    @endif
+                                </div>
+                            @endif
                         @endif
                     @endif
                 </div>
@@ -544,7 +612,6 @@
                     </div>
                 </div>
             </div>
-        </div>
     </div>
 </div>
 @endsection

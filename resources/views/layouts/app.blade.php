@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="description" content="@yield('description', 'e-Kaku V3 - Sistem Digital Kartu Kuning (AK1) Dinas Tenaga Kerja Kabupaten Pandeglang. Kelola biodata, upload berkas, verifikasi admin, dan cetak kartu kuning secara online.')">
 
     <title>{{ config('app.name', 'e-Kaku V3') }} - @yield('title', 'Digital Yellow Card')</title>
 
@@ -59,7 +60,10 @@
         <footer class="border-t border-gray-200 bg-white py-6">
             <div class="mx-auto max-w-7xl px-4 text-center text-sm text-gray-600 sm:px-6 lg:px-8">
                 <div class="mb-3 flex items-center justify-center gap-2">
-                    <img src="{{ asset('images/lambang-pandeglang.png') }}" alt="Lambang Pandeglang" class="h-8 w-8">
+                    <picture>
+                        <source srcset="{{ asset('images/lambang-pandeglang.webp') }}" type="image/webp">
+                        <img src="{{ asset('images/lambang-pandeglang.png') }}" alt="Lambang Pandeglang" class="h-8 w-8">
+                    </picture>
                     <span class="font-semibold text-gray-700">Dinas Tenaga Kerja Kabupaten Pandeglang</span>
                 </div>
                 <p>&copy; {{ date('Y') }} Disnaker Pandeglang. All rights reserved.</p>

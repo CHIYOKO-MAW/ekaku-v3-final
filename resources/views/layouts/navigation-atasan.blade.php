@@ -8,7 +8,10 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between">
             <a href="{{ route('atasan.dashboard') }}" class="flex items-center gap-2">
-                <img src="{{ asset('images/logo-ekaku.png') }}" alt="e-Kaku" class="h-8 w-auto">
+                <picture>
+                    <source srcset="{{ asset('images/logo-ekaku.webp') }}" type="image/webp">
+                    <img src="{{ asset('images/logo-ekaku.png') }}" alt="e-Kaku" class="h-8 w-auto">
+                </picture>
             </a>
 
             <div class="hidden items-center gap-6 sm:flex">
@@ -18,7 +21,7 @@
 
             <div class="hidden items-center sm:flex">
                 <div class="relative" x-data="{ open: false }">
-                    <button @click="open = !open" class="relative rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-disnaker-600">
+                    <button @click="open = !open" aria-label="Notifikasi" class="relative rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-disnaker-600">
                         <i class="fas fa-bell text-lg"></i>
                         @if ($unreadNotes > 0)
                             <span class="absolute -right-0.5 -top-0.5 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1 text-xs text-white">
@@ -75,7 +78,7 @@
                 </div>
             </div>
 
-            <button @click="mobileOpen = !mobileOpen" class="rounded-md p-2 text-gray-500 hover:bg-gray-100 sm:hidden">
+            <button @click="mobileOpen = !mobileOpen" aria-label="Menu" class="rounded-md p-2 text-gray-500 hover:bg-gray-100 sm:hidden">
                 <i class="fas" :class="mobileOpen ? 'fa-times' : 'fa-bars'"></i>
             </button>
         </div>

@@ -21,6 +21,25 @@
             "environment": {
                 "APP_ENV": "local"
             }
+        },
+        "lighthouse": {
+            "type": "local",
+            "enabled": true,
+            "command": [
+                "lighthouse-mcp"
+            ],
+            "environment": {
+                "CHROME_PATH": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
+            }
+        },
+        "filesystem": {
+            "type": "local",
+            "enabled": true,
+            "command": [
+                "mcp-server-filesystem",
+                "C:\\Users\\chiyo\\Desktop\\PROSKIP ALBAR\\ekaku-v3",
+                "C:\\Users\\chiyo\\AppData\\Local\\Temp\\opencode"
+            ]
         }
     }
 }

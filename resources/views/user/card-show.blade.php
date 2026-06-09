@@ -40,7 +40,10 @@
         <table width="100%" cellpadding="0" cellspacing="0">
             <tr>
                 <td width="34" valign="middle">
-                    <img src="{{ asset('images/lambang-pandeglang.png') }}" width="28" height="28" alt="">
+                    <picture>
+                        <source srcset="{{ asset('images/lambang-pandeglang.webp') }}" type="image/webp">
+                        <img src="{{ asset('images/lambang-pandeglang.png') }}" width="28" height="28" alt="">
+                    </picture>
                 </td>
                 <td valign="middle">
                     <div style="font-size:9px;font-weight:bold;text-transform:uppercase;letter-spacing:0.3px">Pemerintah Kab. Pandeglang</div>

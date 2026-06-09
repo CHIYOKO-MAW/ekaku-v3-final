@@ -9,6 +9,9 @@ use App\Http\Controllers\StatusPekerjaanController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerifikasiController;
+use App\Models\Biodata;
+use App\Models\KartuKuning;
+use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
@@ -23,7 +26,15 @@ Route::middleware(['auth', 'role:admin'])->get('/force-seed', function () {
     }
 });
 
-Route::get('/', fn () => view('welcome'))->name('welcome');
+Route::get('/', function () {
+    $stats = [
+        'pencari_kerja' => User::count(),
+        'kartu_terbit' => KartuKuning::count(),
+        'biodata_terverifikasi' => Biodata::where('status_verifikasi', 'verified')->count(),
+    ];
+
+    return view('welcome', compact('stats'));
+})->name('welcome');
 Route::get('/landing', fn () => redirect()->route('welcome'))->name('landing');
 
 if (file_exists(__DIR__.'/auth.php')) {
