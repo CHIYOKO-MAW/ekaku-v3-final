@@ -9,6 +9,18 @@
                 "artisan",
                 "boost:mcp"
             ]
+        },
+        "laravel-telescope": {
+            "type": "local",
+            "enabled": true,
+            "command": [
+                "php.bat",
+                "C:\\Users\\chiyo\\Desktop\\PROSKIP ALBAR\\ekaku-v3\\artisan",
+                "telescope-mcp:server"
+            ],
+            "environment": {
+                "APP_ENV": "local"
+            }
         }
     }
 }

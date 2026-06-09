@@ -28,6 +28,7 @@ class KartuKuning extends Model
         'tanggal_cetak' => 'datetime',
         'qr_issued_at' => 'datetime',
         'expired_at' => 'datetime',
+        'last_scanned_at' => 'datetime',
     ];
 
     public function user()

@@ -30,4 +30,18 @@ generateQrCode()
 PROGRESS_TRACKING.md
 context-project.md
 RAILWAY_SETUP.md
+
+# AI agent configs
+.claude/
+.codex/
+.gemini/
+
+# MCP / Playwright artifacts
 .playwright-mcp/
+
+# Screenshots & profile dumps
+dashboard-user.png
+notifikasi-user.png
+upload-page.png
+profile-user*.png
+profile-*.yml

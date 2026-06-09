@@ -122,7 +122,7 @@ class KartuKuningController extends Controller
 
         if (! $kartu) {
             $errorMessage = 'Kartu dengan nomor ini tidak ditemukan dalam sistem.';
-        } elseif (! $token || $kartu->qr_token !== $token) {
+        } elseif (! $token || ! hash_equals((string) $kartu->qr_token, $token)) {
             $errorMessage = 'Token keamanan tidak valid. Kartu ini kemungkinan dipalsukan.';
         } elseif ($kartu->status === 'expired') {
             $errorMessage = 'Kartu ini sudah kadaluarsa.';
@@ -148,6 +148,9 @@ class KartuKuningController extends Controller
             ]);
         }
 
+        $kartu->update([
+            'last_scanned_at' => now(),
+        ]);
         $kartu->increment('scan_count');
 
         return view('kartu.verify', [

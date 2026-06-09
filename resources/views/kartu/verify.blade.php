@@ -331,6 +331,15 @@
                         <div class="chip-value">{{ $kartu->scan_count }}x</div>
                     </div>
                 </div>
+                @if($kartu->last_scanned_at)
+                <div class="kartu-chip">
+                    <div class="kartu-chip-icon yellow"><i class="fas fa-clock-rotate-left"></i></div>
+                    <div class="kartu-chip-text">
+                        <div class="chip-label">Terakhir Dipindai</div>
+                        <div class="chip-value">{{ $kartu->last_scanned_at->format('d/m/Y H:i') }} WIB</div>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
 
