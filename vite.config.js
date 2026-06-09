@@ -9,6 +9,11 @@ export default defineConfig({
             buildDirectory: 'build',
         }),
     ],
+    server: {
+        host: 'localhost',
+        port: 5173,
+        strictPort: true,
+    },
     build: {
         manifest: true,
         outDir: 'public/build',
