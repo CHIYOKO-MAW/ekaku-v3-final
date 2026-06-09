@@ -1,3 +1,4 @@
+@section('title', 'Verifikasi Email')
 <x-guest-layout>
     <div class="mb-4 text-sm text-gray-600">
         Silakan verifikasi email Anda sebelum menggunakan semua fitur e-Kaku V3.

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\BiodataStatusChanged;
 use App\Models\Biodata;
 use App\Models\KartuKuning;
 use App\Models\NotificationE;
@@ -17,12 +18,14 @@ class VerifikasiController extends Controller
     public function index()
     {
         $datas = Biodata::with('user')->where('status_verifikasi', 'pending')->paginate(15);
+
         return view('admin.verifikasi', compact('datas'));
     }
 
     public function show(Biodata $biodata)
     {
         $biodata->load('user.uploads');
+
         return view('admin.verifikasi-detail', compact('biodata'));
     }
 
@@ -36,6 +39,7 @@ class VerifikasiController extends Controller
         $status = $request->input('status');
         $catatan = trim((string) $request->input('catatan'));
 
+        $oldStatus = $biodata->status_verifikasi;
         $biodata->update([
             'status_verifikasi' => $status,
             'verifikator_id' => $request->user()->id,
@@ -47,7 +51,7 @@ class VerifikasiController extends Controller
             'judul' => 'Status Verifikasi Biodata',
             'pesan' => $status === 'verified'
                 ? 'Biodata Anda telah diverifikasi admin. Anda sekarang dapat mencetak kartu kuning.'
-                : 'Biodata Anda ditolak admin.' . ($catatan !== '' ? ' Catatan: ' . $catatan : ''),
+                : 'Biodata Anda ditolak admin.'.($catatan !== '' ? ' Catatan: '.$catatan : ''),
             'status_baca' => false,
             'tipe' => 'status_update',
         ]);
@@ -56,11 +60,16 @@ class VerifikasiController extends Controller
             KartuKuning::updateOrCreate(
                 ['user_id' => $biodata->user_id],
                 [
-                    'nomor_ak1' => 'AK1-' . now()->format('Ymd') . '-' . str_pad((string) $biodata->user_id, 4, '0', STR_PAD_LEFT),
+                    'nomor_ak1' => 'AK1-'.now()->format('Ymd').'-'.str_pad((string) $biodata->user_id, 4, '0', STR_PAD_LEFT),
                     'status' => 'printed',
                     'tanggal_cetak' => now(),
                 ]
             );
+        }
+
+        // Fire event for status change notification
+        if ($oldStatus !== $status) {
+            event(new BiodataStatusChanged($biodata->user, $status, $oldStatus));
         }
 
         return back()->with('success', 'Status verifikasi diperbarui.');
@@ -69,6 +78,7 @@ class VerifikasiController extends Controller
     public function updateStatus(Request $request, $biodataId)
     {
         $biodata = Biodata::findOrFail($biodataId);
+
         return $this->update($request, $biodata);
     }
 }

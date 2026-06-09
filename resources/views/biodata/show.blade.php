@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Detail Biodata')
+
 @section('content')
 <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
     <h1 class="mb-6 text-2xl font-bold">Detail Biodata</h1>
@@ -9,7 +11,7 @@
             Biodata belum tersedia.
         </div>
     @else
-        <div class="grid gap-4 rounded-lg bg-white p-6 shadow sm:grid-cols-2">
+        <div class="grid gap-4 rounded-xl bg-white p-6 card-shadow sm:grid-cols-2">
             <div><span class="font-semibold">NIK:</span> {{ $biodata->nik }}</div>
             <div><span class="font-semibold">Tempat Lahir:</span> {{ $biodata->tempat_lahir }}</div>
             <div><span class="font-semibold">Tanggal Lahir:</span> {{ $biodata->tanggal_lahir }}</div>
@@ -31,7 +33,7 @@
             @endif
         </div>
 
-        <div class="mt-4 rounded-lg bg-white p-6 shadow">
+        <div class="mt-4 rounded-xl bg-white p-6 card-shadow">
             <h2 class="mb-2 text-lg font-semibold text-gray-900">Pengajuan Validasi</h2>
             <p class="mb-4 text-sm text-gray-600">
                 User hanya dapat preview/cetak kartu kuning setelah biodata diverifikasi admin Disnaker.
@@ -39,15 +41,11 @@
 
             @if (auth()->user()->role === 'user')
                 @if ($biodata->status_verifikasi === 'verified')
-                    <a href="{{ route('kartu.show') }}" class="inline-flex rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700">
-                        Lihat Kartu Kuning
-                    </a>
+                    <a href="{{ route('kartu.show') }}" class="btn-primary"><i class="fas fa-id-card mr-2"></i>Lihat Kartu Kuning</a>
                 @else
                     <form method="POST" action="{{ route('biodata.submit') }}">
                         @csrf
-                        <button type="submit" class="inline-flex rounded-md bg-disnaker-500 px-4 py-2 text-white hover:bg-disnaker-600">
-                            Ajukan Validasi ke Admin
-                        </button>
+                        <button type="submit" class="btn-primary"><i class="fas fa-paper-plane mr-2"></i>Ajukan Validasi</button>
                     </form>
                 @endif
             @endif

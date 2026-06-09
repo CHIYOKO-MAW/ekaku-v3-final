@@ -1,9 +1,11 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\NotificationE;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class NotificationController extends Controller
 {
@@ -15,12 +17,16 @@ class NotificationController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
+        $cacheKey = 'notification.unread.'.$user->id;
         if ($request->boolean('mark_read')) {
             $user->notificationsE()->where('status_baca', false)->update(['status_baca' => true]);
+            Cache::forget($cacheKey);
         }
 
         $notes = $user->notificationsE()->latest()->paginate(10);
-        $unreadCount = $user->notificationsE()->where('status_baca', false)->count();
+        $unreadCount = Cache::remember($cacheKey, 120, function () use ($user) {
+            return $user->notificationsE()->where('status_baca', false)->count();
+        });
 
         return view('user.notification', compact('notes', 'unreadCount'));
     }
@@ -77,6 +83,6 @@ class NotificationController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Notifikasi dikirim ke ' . $validUserIds->count() . ' pengguna.');
+        return back()->with('success', 'Notifikasi dikirim ke '.$validUserIds->count().' pengguna.');
     }
 }

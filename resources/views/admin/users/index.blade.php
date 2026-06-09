@@ -35,7 +35,7 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @forelse($users as $item)
-                        @php($sv = $item->biodata->status_verifikasi ?? 'pending')
+                        @php $sv = $item->biodata->status_verifikasi ?? 'pending'; @endphp
                         <tr>
                             <td class="px-4 py-3 font-medium text-gray-900">{{ $item->name }}</td>
                             <td class="px-4 py-3 text-gray-700">{{ $item->biodata->nik ?? '-' }}</td>
@@ -52,7 +52,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="px-4 py-6 text-center text-gray-500">Tidak ada data pengguna.</td></tr>
+                        <tr><td colspan="6" class="px-4 py-12 text-center text-gray-500"><i class="fas fa-users mr-2"></i>Tidak ada data pengguna.</td></tr>
                     @endforelse
                 </tbody>
             </table>

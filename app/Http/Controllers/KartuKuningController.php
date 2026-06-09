@@ -46,8 +46,14 @@ class KartuKuningController extends Controller
 
         $this->ensureKartuKuningReady($user);
 
+        $qrSvg = QrCode::format('svg')
+            ->size(200)
+            ->generate($user->qr_code);
+        $qrBase64 = base64_encode($qrSvg);
+
         return view('user.card-show', [
-            'user'       => $user,
+            'user' => $user,
+            'qrBase64' => $qrBase64,
             'validUntil' => now()->addYears(2),
         ]);
     }
@@ -88,14 +94,15 @@ class KartuKuningController extends Controller
         $qrSvg = QrCode::format('svg')
             ->size(200)
             ->generate($user->qr_code);
+        $qrBase64 = base64_encode($qrSvg);
 
         $pdf = Pdf::loadView('kartu.cetak', [
-            'user'       => $user->fresh(['biodata', 'kartuKuning']),
-            'qrSvg'      => $qrSvg,
+            'user' => $user->fresh(['biodata', 'kartuKuning']),
+            'qrBase64' => $qrBase64,
             'validUntil' => now()->addYears(2),
-        ]);
+        ])->setPaper('a4', 'portrait');
 
-        return $pdf->download('kartu-kuning-' . $user->id . '.pdf');
+        return $pdf->download('kartu-kuning-'.$user->id.'.pdf');
     }
 
     /**
@@ -119,6 +126,10 @@ class KartuKuningController extends Controller
             $errorMessage = 'Token keamanan tidak valid. Kartu ini kemungkinan dipalsukan.';
         } elseif ($kartu->status === 'expired') {
             $errorMessage = 'Kartu ini sudah kadaluarsa.';
+        } elseif ($kartu->expired_at && $kartu->expired_at->isPast()) {
+            $errorMessage = 'Token verifikasi QR sudah kadaluarsa.';
+            // Update kartu status to expired
+            $kartu->update(['status' => 'expired']);
         } else {
             $user = User::with(['biodata', 'kartuKuning'])->find($kartu->user_id);
             if (! $user || ! $user->biodata || $user->biodata->status_verifikasi !== 'verified') {
@@ -128,31 +139,25 @@ class KartuKuningController extends Controller
             }
         }
 
-        // Increment scan count jika kartu ditemukan
-        if ($kartu) {
-            $kartu->increment('scan_count');
-        }
-
         // Jika tidak valid, tampilkan halaman error
         if (! $isValid) {
             return view('kartu.verify', [
-                'valid'        => false,
+                'valid' => false,
                 'errorMessage' => $errorMessage,
-                'nomor_ak1'    => $nomor_ak1,
+                'nomor_ak1' => $nomor_ak1,
             ]);
         }
 
-        // Load user dengan relasi lengkap
-        $user = User::with(['biodata', 'kartuKuning'])->find($kartu->user_id);
+        $kartu->increment('scan_count');
 
         return view('kartu.verify', [
-            'valid'      => true,
-            'user'       => $user,
-            'kartu'      => $kartu->fresh(),
+            'valid' => true,
+            'user' => $user,
+            'kartu' => $kartu->fresh(),
             'validUntil' => $kartu->tanggal_cetak
                 ? \Carbon\Carbon::parse($kartu->tanggal_cetak)->addYears(2)
                 : now()->addYears(2),
-            'scannedAt'  => now(),
+            'scannedAt' => now(),
         ]);
     }
 
@@ -164,30 +169,30 @@ class KartuKuningController extends Controller
         $user = User::with(['biodata', 'kartuKuning'])->findOrFail($id);
 
         return response()->json([
-            'valid'    => (bool) $user->kartuKuning && optional($user->biodata)->status_verifikasi === 'verified',
-            'user'     => [
-                'id'   => $user->id,
+            'valid' => (bool) $user->kartuKuning && optional($user->biodata)->status_verifikasi === 'verified',
+            'user' => [
+                'id' => $user->id,
                 'name' => $user->name,
             ],
-            'biodata'  => [
-                'nik'                => optional($user->biodata)->nik
-                    ? substr(optional($user->biodata)->nik, 0, 6) . '**********'
+            'biodata' => [
+                'nik' => optional($user->biodata)->nik
+                    ? substr(optional($user->biodata)->nik, 0, 6).'**********'
                     : null,
-                'tempat_lahir'       => optional($user->biodata)->tempat_lahir,
-                'jenis_kelamin'      => optional($user->biodata)->jenis_kelamin,
-                'pendidikan'         => optional($user->biodata)->pendidikan,
-                'institusi'          => optional($user->biodata)->institusi_pendidikan,
-                'jurusan'            => optional($user->biodata)->jurusan,
-                'tahun_lulus'        => optional($user->biodata)->tahun_lulus,
-                'keahlian'           => optional($user->biodata)->keahlian,
-                'tujuan_lamaran'     => optional($user->biodata)->tujuan_lamaran,
-                'status_verifikasi'  => optional($user->biodata)->status_verifikasi,
+                'tempat_lahir' => optional($user->biodata)->tempat_lahir,
+                'jenis_kelamin' => optional($user->biodata)->jenis_kelamin,
+                'pendidikan' => optional($user->biodata)->pendidikan,
+                'institusi' => optional($user->biodata)->institusi_pendidikan,
+                'jurusan' => optional($user->biodata)->jurusan,
+                'tahun_lulus' => optional($user->biodata)->tahun_lulus,
+                'keahlian' => optional($user->biodata)->keahlian,
+                'tujuan_lamaran' => optional($user->biodata)->tujuan_lamaran,
+                'status_verifikasi' => optional($user->biodata)->status_verifikasi,
             ],
-            'kartu'    => [
-                'nomor_ak1'     => optional($user->kartuKuning)->nomor_ak1,
+            'kartu' => [
+                'nomor_ak1' => optional($user->kartuKuning)->nomor_ak1,
                 'tanggal_cetak' => optional($user->kartuKuning)->tanggal_cetak,
-                'status'        => optional($user->kartuKuning)->status,
-                'scan_count'    => optional($user->kartuKuning)->scan_count,
+                'status' => optional($user->kartuKuning)->status,
+                'scan_count' => optional($user->kartuKuning)->scan_count,
             ],
         ]);
     }
@@ -204,10 +209,10 @@ class KartuKuningController extends Controller
 
         if (! $user->kartuKuning) {
             KartuKuning::create([
-                'user_id'    => $user->id,
-                'nomor_ak1'  => 'AK1-' . now()->format('Ymd') . '-' . str_pad((string) $user->id, 4, '0', STR_PAD_LEFT),
+                'user_id' => $user->id,
+                'nomor_ak1' => 'AK1-'.now()->format('Ymd').'-'.str_pad((string) $user->id, 4, '0', STR_PAD_LEFT),
                 'tanggal_cetak' => now(),
-                'status'     => 'printed',
+                'status' => 'printed',
             ]);
 
             $user->refresh();

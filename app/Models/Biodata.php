@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Biodata extends Model
@@ -43,5 +43,14 @@ class Biodata extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function isComplete(): bool
+    {
+        return $this->nik
+            && $this->tempat_lahir
+            && $this->tanggal_lahir
+            && $this->alamat
+            && $this->pendidikan;
     }
 }

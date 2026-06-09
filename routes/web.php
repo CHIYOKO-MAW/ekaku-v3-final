@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\BiodataController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KartuKuningController;
@@ -12,23 +10,24 @@ use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerifikasiController;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Route;
 
-Route::get('/force-seed', function () {
+Route::middleware(['auth', 'role:admin'])->get('/force-seed', function () {
     try {
-        echo "Starting seeding...<br>";
+        echo 'Starting seeding...<br>';
         Artisan::call('db:seed', ['--force' => true]);
-        echo "Seeding completed!<br>";
-        echo "<pre>" . Artisan::output() . "</pre>";
+        echo 'Seeding completed!<br>';
+        echo '<pre>'.Artisan::output().'</pre>';
     } catch (\Exception $e) {
-        echo "Error: " . $e->getMessage();
+        echo 'Error: '.$e->getMessage();
     }
 });
 
 Route::get('/', fn () => view('welcome'))->name('welcome');
 Route::get('/landing', fn () => redirect()->route('welcome'))->name('landing');
 
-if (file_exists(__DIR__ . '/auth.php')) {
-    require __DIR__ . '/auth.php';
+if (file_exists(__DIR__.'/auth.php')) {
+    require __DIR__.'/auth.php';
 }
 
 Route::middleware('auth')->group(function () {
@@ -40,11 +39,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/biodata', [BiodataController::class, 'index'])->name('biodata.index');
-    Route::get('/biodata/create', fn () => redirect()->to(route('profile.edit') . '#biodata'))->name('biodata.create');
+    Route::get('/biodata/create', fn () => redirect()->to(route('profile.edit').'#biodata'))->name('biodata.create');
     Route::post('/biodata', [BiodataController::class, 'store'])->name('biodata.store');
-    Route::get('/biodata/edit', fn () => redirect()->to(route('profile.edit') . '#biodata'))->name('biodata.edit');
+    Route::get('/biodata/edit', fn () => redirect()->to(route('profile.edit').'#biodata'))->name('biodata.edit');
     Route::put('/biodata', [BiodataController::class, 'update'])->name('biodata.update');
-    Route::get('/biodata/{id}', fn () => redirect()->to(route('profile.edit') . '#biodata'))->name('biodata.show');
+    Route::get('/biodata/{id}', fn () => redirect()->to(route('profile.edit').'#biodata'))->name('biodata.show');
     Route::delete('/biodata/{id}', [BiodataController::class, 'destroy'])->name('biodata.destroy');
     Route::post('/biodata/submit', [BiodataController::class, 'submitForVerification'])->name('biodata.submit');
 
@@ -98,19 +97,18 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('user')->name('user.')->group(function () {
-        Route::get('/biodata', fn () => redirect()->route('profile.edit') . '#biodata')->name('biodata');
+        Route::get('/biodata', fn () => redirect()->route('profile.edit').'#biodata')->name('biodata');
         Route::get('/profile', fn () => redirect()->route('profile.edit'))->name('profile');
         Route::get('/kartu', fn () => redirect()->route('kartu.show'))->name('kartu');
         Route::get('/notifikasi', fn () => redirect()->route('notifikasi.index'))->name('notifikasi');
     });
 });
 
-Route::get('/kartu-scan/{id}', [KartuKuningController::class, 'scanData'])->name('kartu.scan.data');
+Route::middleware('auth')->get('/kartu-scan/{id}', [KartuKuningController::class, 'scanData'])->name('kartu.scan.data');
 
 // Halaman verifikasi publik — dibuka saat QR discan (tidak perlu login)
-Route::get('/verify/{nomor_ak1}', [KartuKuningController::class, 'verify'])->name('kartu.verify');
+Route::middleware('throttle:30,1')->get('/verify/{nomor_ak1}', [KartuKuningController::class, 'verify'])->name('kartu.verify');
 
 Route::get('/dashboard/user', [DashboardController::class, 'user'])
     ->middleware(['auth', 'role:user'])
     ->name('dashboard.user');
-

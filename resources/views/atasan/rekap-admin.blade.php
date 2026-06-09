@@ -31,7 +31,7 @@
               <td class="px-4 py-3 text-red-700">{{ $rejectedPerAdmin[$admin->id] ?? 0 }}</td>
             </tr>
           @empty
-            <tr><td colspan="5" class="px-4 py-6 text-center text-gray-500">Belum ada admin terdaftar.</td></tr>
+            <tr><td colspan="5" class="px-4 py-12 text-center text-gray-500"><i class="fas fa-user-shield mr-2"></i>Belum ada admin terdaftar.</td></tr>
           @endforelse
         </tbody>
       </table>

@@ -18,9 +18,9 @@ class UserController extends Controller
         if (request('search')) {
             $term = trim((string) request('search'));
             $users->where(function ($q) use ($term) {
-                $q->where('name', 'like', '%' . $term . '%')
-                    ->orWhere('email', 'like', '%' . $term . '%')
-                    ->orWhereHas('biodata', fn ($qb) => $qb->where('nik', 'like', '%' . $term . '%'));
+                $q->where('name', 'like', '%'.$term.'%')
+                    ->orWhere('email', 'like', '%'.$term.'%')
+                    ->orWhereHas('biodata', fn ($qb) => $qb->where('nik', 'like', '%'.$term.'%'));
             });
         }
 
@@ -29,6 +29,7 @@ class UserController extends Controller
         }
 
         $users = $users->latest()->paginate(20)->withQueryString();
+
         return view('admin.users.index', compact('users'));
     }
 
@@ -53,6 +54,10 @@ class UserController extends Controller
             'password' => 'nullable|min:6|confirmed',
         ]);
 
+        if ((int) $request->user()->id === (int) $user->id && $request->role !== $user->role) {
+            return back()->with('error', 'Anda tidak dapat mengubah role Anda sendiri.');
+        }
+
         $user->name = $request->name;
         $user->email = $request->email;
         $user->role = $request->role;
@@ -67,6 +72,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
+
         return back()->with('success', 'User dihapus.');
     }
 

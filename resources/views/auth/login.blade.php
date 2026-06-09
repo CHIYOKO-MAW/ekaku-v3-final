@@ -1,3 +1,4 @@
+@section('title', 'Masuk')
 <x-guest-layout>
     <div class="mb-6 text-center">
         <h2 class="text-2xl font-bold text-gray-900">Masuk ke e-Kaku V3</h2>

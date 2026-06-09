@@ -33,9 +33,9 @@
                         <p class="font-medium text-gray-900">{{ strtoupper($upload->jenis_dokumen) }}</p>
                         <a href="{{ route('upload.preview', $upload) }}" target="_blank" class="mt-1 inline-block text-sm text-disnaker-600 hover:text-disnaker-700">Lihat Dokumen</a>
                     </div>
-                @empty
-                    <p class="text-sm text-gray-500">Belum ada dokumen.</p>
-                @endforelse
+@empty
+    <p class="col-span-full text-sm text-gray-500"><i class="fas fa-file mr-2"></i>Belum ada dokumen.</p>
+@endforelse
             </div>
         </div>
 
@@ -43,7 +43,7 @@
             <div class="rounded-xl bg-white p-6 card-shadow">
                 <h3 class="text-lg font-semibold text-gray-900">Status</h3>
                 <div class="mt-3 space-y-2 text-sm">
-                    @php($sv = $user->biodata->status_verifikasi ?? 'pending')
+                    @php $sv = $user->biodata->status_verifikasi ?? 'pending'; @endphp
                     <p><span class="font-semibold">Verifikasi:</span> <span class="rounded-full px-2 py-1 text-xs font-semibold {{ $sv === 'verified' ? 'bg-green-100 text-green-700' : ($sv === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }}">{{ strtoupper($sv) }}</span></p>
                     <p><span class="font-semibold">Status Pekerjaan:</span> {{ $user->statusPekerjaan?->status_pekerjaan ? str_replace('_', ' ', ucfirst($user->statusPekerjaan->status_pekerjaan)) : '-' }}</p>
                     <p><span class="font-semibold">Update Terakhir:</span> {{ optional($user->statusPekerjaan?->tanggal_update)->format('d M Y') ?? '-' }}</p>
@@ -58,9 +58,9 @@
                             <p class="font-medium text-gray-900">{{ $note->judul }}</p>
                             <p class="text-gray-600">{{ $note->pesan }}</p>
                         </div>
-                    @empty
-                        <p class="text-gray-500">Belum ada notifikasi.</p>
-                    @endforelse
+@empty
+    <p class="text-gray-500"><i class="fas fa-bell-slash mr-2"></i>Belum ada notifikasi.</p>
+@endforelse
                 </div>
             </div>
         </div>

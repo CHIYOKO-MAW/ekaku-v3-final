@@ -4,20 +4,79 @@
 
 @section('content')
 <div class="page-wrap">
-    <div class="rounded-xl bg-white p-6 card-shadow">
+
+    {{-- WELCOME CARD GRADIENT --}}
+    <div class="rounded-xl bg-gradient-to-r from-[#005aa7] to-blue-600 p-6 card-shadow">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Selamat Datang, {{ $user->name }}!</h1>
-                <p class="mt-1 text-sm text-gray-600">Kelola biodata, status pekerjaan, dan kartu kuning digital Anda.</p>
+                <h1 class="text-2xl font-bold text-white">Selamat Datang, {{ $user->name }}!</h1>
+                <p class="mt-1 text-sm text-blue-100">Kelola biodata, status pekerjaan, dan kartu kuning digital Anda.</p>
             </div>
-            <div class="hidden h-16 w-16 items-center justify-center rounded-full bg-disnaker-100 sm:flex">
-                <i class="fas fa-user text-2xl text-disnaker-600"></i>
+            <div class="hidden h-16 w-16 items-center justify-center rounded-full bg-white/20 sm:flex">
+                <i class="fas fa-user text-2xl text-white"></i>
             </div>
         </div>
     </div>
 
+    {{-- STAT BAR --}}
+    <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div class="rounded-xl border border-blue-200 bg-blue-50 p-4 card-shadow">
+            <div class="flex items-center gap-3">
+                <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-100">
+                    <i class="fas fa-address-card text-lg text-blue-600"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs font-medium uppercase tracking-wide text-blue-600">Biodata</p>
+                    <p class="truncate text-sm font-semibold text-gray-900">
+                        @if ($biodata?->status_verifikasi === 'verified')
+                            Terverifikasi
+                        @elseif ($biodata?->status_verifikasi === 'rejected')
+                            Ditolak
+                        @elseif ($biodata)
+                            Menunggu Validasi
+                        @else
+                            Belum Diisi
+                        @endif
+                    </p>
+                </div>
+            </div>
+            <a href="{{ route('profile.edit') }}" class="mt-3 inline-block text-xs font-medium text-blue-600 hover:text-blue-700">Kelola <i class="fas fa-arrow-right ml-1 text-[10px]"></i></a>
+        </div>
+
+        <div class="rounded-xl border border-green-200 bg-green-50 p-4 card-shadow">
+            <div class="flex items-center gap-3">
+                <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-green-100">
+                    <i class="fas fa-id-card text-lg text-green-600"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs font-medium uppercase tracking-wide text-green-600">Kartu Kuning</p>
+                    <p class="truncate text-sm font-semibold text-gray-900">
+                        {{ $biodata?->status_verifikasi === 'verified' ? $user->kartuKuning?->nomor_ak1 ?? 'Siap Cetak' : 'Terkunci' }}
+                    </p>
+                </div>
+            </div>
+            <a href="{{ route('kartu.show') }}" class="mt-3 inline-block text-xs font-medium text-green-600 hover:text-green-700">Buka <i class="fas fa-arrow-right ml-1 text-[10px]"></i></a>
+        </div>
+
+        <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 card-shadow">
+            <div class="flex items-center gap-3">
+                <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-amber-100">
+                    <i class="fas fa-bell text-lg text-amber-600"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs font-medium uppercase tracking-wide text-amber-600">Notifikasi</p>
+                    <p class="truncate text-sm font-semibold text-gray-900">{{ $unreadCount }} belum dibaca</p>
+                </div>
+            </div>
+            <a href="{{ route('notifikasi.index') }}" class="mt-3 inline-block text-xs font-medium text-amber-600 hover:text-amber-700">Lihat <i class="fas fa-arrow-right ml-1 text-[10px]"></i></a>
+        </div>
+    </div>
+
+    {{-- MAIN GRID --}}
     <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div class="lg:col-span-2 rounded-xl bg-white p-6 card-shadow">
+
+        {{-- LEFT: STATUS PROFIL --}}
+        <div class="lg:col-span-2 rounded-xl bg-white p-6 card-shadow border-t-4 border-disnaker-500">
             <div class="flex items-center justify-between">
                 <h2 class="text-lg font-semibold text-gray-900">Status Profil dan Verifikasi</h2>
                 @if ($biodata?->status_verifikasi === 'verified')
@@ -58,30 +117,32 @@
             </div>
         </div>
 
+        {{-- RIGHT SIDEBAR --}}
         <div class="space-y-4">
-            <div class="rounded-xl bg-white p-5 card-shadow">
+            <div class="rounded-xl bg-blue-50 border border-blue-100 p-5 card-shadow">
                 <div class="flex items-center justify-between">
-                    <p class="text-sm text-gray-600">Notifikasi Baru</p>
-                    <i class="fas fa-bell text-disnaker-600"></i>
+                    <p class="text-sm font-medium text-blue-800">Notifikasi Baru</p>
+                    <i class="fas fa-bell text-blue-500"></i>
                 </div>
-                <p class="mt-2 text-3xl font-bold text-gray-900">{{ $unreadCount }}</p>
-                <a href="{{ route('notifikasi.index') }}" class="mt-3 inline-block text-sm font-medium text-disnaker-600 hover:text-disnaker-700">Lihat notifikasi</a>
+                <p class="mt-2 text-3xl font-bold text-blue-900">{{ $unreadCount }}</p>
+                <a href="{{ route('notifikasi.index') }}" class="mt-3 inline-block text-sm font-medium text-blue-600 hover:text-blue-700">Lihat notifikasi <i class="fas fa-arrow-right ml-1 text-xs"></i></a>
             </div>
 
-            <div class="rounded-xl bg-white p-5 card-shadow">
+            <div class="rounded-xl bg-green-50 border border-green-100 p-5 card-shadow">
                 <div class="flex items-center justify-between">
-                    <p class="text-sm text-gray-600">Kartu Kuning</p>
-                    <i class="fas fa-id-card text-disnaker-600"></i>
+                    <p class="text-sm font-medium text-green-800">Kartu Kuning</p>
+                    <i class="fas fa-id-card text-green-500"></i>
                 </div>
-                <p class="mt-2 text-sm text-gray-700">
+                <p class="mt-2 text-sm text-green-900">
                     {{ $biodata?->status_verifikasi === 'verified' ? 'Siap dipreview dan dicetak.' : 'Aktif setelah biodata diverifikasi admin.' }}
                 </p>
-                <a href="{{ route('kartu.show') }}" class="mt-3 inline-block text-sm font-medium text-disnaker-600 hover:text-disnaker-700">Buka kartu digital</a>
+                <a href="{{ route('kartu.show') }}" class="mt-3 inline-block text-sm font-medium text-green-600 hover:text-green-700">Buka kartu digital <i class="fas fa-arrow-right ml-1 text-xs"></i></a>
             </div>
         </div>
     </div>
 
-    <div class="mt-6 rounded-xl bg-white p-6 card-shadow">
+    {{-- NOTIFIKASI TERBARU --}}
+    <div class="mt-6 rounded-xl bg-white p-6 card-shadow border-t-4 border-disnaker-500">
         <div class="mb-4 flex items-center justify-between">
             <h2 class="text-lg font-semibold text-gray-900">Notifikasi Terbaru</h2>
             <a href="{{ route('notifikasi.index') }}" class="text-sm font-medium text-disnaker-600 hover:text-disnaker-700">Semua notifikasi</a>
@@ -94,11 +155,15 @@
                     <p class="mt-1 text-xs text-gray-500">{{ $note->created_at?->diffForHumans() }}</p>
                 </div>
             @empty
-                <div class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-6 text-center text-sm text-gray-500">
-                    Belum ada notifikasi.
+                <div class="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-6 text-sm text-gray-500">
+                    <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-200">
+                        <i class="fas fa-bell-slash text-gray-400"></i>
+                    </div>
+                    <span>Belum ada notifikasi.</span>
                 </div>
             @endforelse
         </div>
     </div>
+
 </div>
 @endsection

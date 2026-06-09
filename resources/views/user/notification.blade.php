@@ -4,18 +4,18 @@
 
 @section('content')
 <div class="page-wrap">
-    <div class="mb-6 rounded-xl bg-white p-6 card-shadow">
+    <div class="mb-6 rounded-xl bg-gradient-to-r from-[#005aa7] to-blue-600 p-6 card-shadow">
         <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Notifikasi Saya</h1>
-                <p class="mt-1 text-sm text-gray-600">Info validasi biodata, reminder status, dan pembaruan sistem.</p>
+                <h1 class="text-2xl font-bold text-white">Notifikasi Saya</h1>
+                <p class="mt-1 text-sm text-blue-100">Info validasi biodata, reminder status, dan pembaruan sistem.</p>
             </div>
             <div class="flex items-center gap-2">
                 <span class="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
                     {{ $unreadCount }} belum dibaca
                 </span>
                 @if ($unreadCount > 0)
-                    <a href="{{ route('notifikasi.index', ['mark_read' => 1]) }}" class="rounded-md border border-disnaker-200 px-3 py-1.5 text-xs font-medium text-disnaker-600 hover:bg-disnaker-50">
+                    <a href="{{ route('notifikasi.index', ['mark_read' => 1]) }}" class="rounded-md border border-white/30 px-3 py-1.5 text-xs font-medium text-white hover:bg-white/20">
                         Tandai semua dibaca
                     </a>
                 @endif

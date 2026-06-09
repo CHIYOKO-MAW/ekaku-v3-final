@@ -1,0 +1,154 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e5]:
+      - link "e-Kaku" [ref=e6] [cursor=pointer]:
+        - /url: http://localhost:8000/dashboard/user
+        - img "e-Kaku" [ref=e7]
+      - generic [ref=e8]:
+        - link " Dashboard" [ref=e9] [cursor=pointer]:
+          - /url: http://localhost:8000/dashboard/user
+          - generic [ref=e10]: 
+          - text: Dashboard
+        - link " Profil" [ref=e11] [cursor=pointer]:
+          - /url: http://localhost:8000/profile
+          - generic [ref=e12]: 
+          - text: Profil
+        - link " Update Status" [ref=e13] [cursor=pointer]:
+          - /url: http://localhost:8000/status-pekerjaan
+          - generic [ref=e14]: 
+          - text: Update Status
+        - link " Kartu Digital" [ref=e15] [cursor=pointer]:
+          - /url: http://localhost:8000/kartu-kuning
+          - generic [ref=e16]: 
+          - text: Kartu Digital
+      - generic [ref=e17]:
+        - button "" [ref=e19] [cursor=pointer]:
+          - generic [ref=e20]: 
+        - generic [ref=e21]:
+          - button "D" [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]: D
+          - text:    
+      - text: 
+  - main [ref=e24]:
+    - generic [ref=e25]:
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - generic [ref=e30]: D
+          - generic [ref=e31]:
+            - heading "Demo User" [level=1] [ref=e32]
+            - paragraph [ref=e33]: user@ekaku.test
+        - link " Dashboard" [ref=e34] [cursor=pointer]:
+          - /url: http://localhost:8000/dashboard/user
+          - generic [ref=e35]: 
+          - text: Dashboard
+      - generic [ref=e37]:
+        - button " Akun" [ref=e38] [cursor=pointer]:
+          - generic [ref=e39]: 
+          - text: Akun
+        - button " Biodata" [ref=e40] [cursor=pointer]:
+          - generic [ref=e41]: 
+          - text: Biodata
+        - button " Berkas" [ref=e42] [cursor=pointer]:
+          - generic [ref=e43]: 
+          - text: Berkas
+      - generic [ref=e45]:
+        - generic [ref=e46]:
+          - generic [ref=e48]:
+            - generic [ref=e50]: 
+            - heading "Informasi Akun" [level=2] [ref=e51]
+          - generic [ref=e53]:
+            - generic [ref=e54]:
+              - generic [ref=e55]: Foto Profil
+              - generic [ref=e56]:
+                - generic [ref=e59]: D
+                - generic [ref=e60]:
+                  - generic [ref=e62]:
+                    - generic [ref=e63]: 
+                    - text: Pilih Foto
+                  - paragraph [ref=e64]: "Format: JPG, PNG, WEBP. Maks 2MB."
+            - generic [ref=e65]:
+              - generic [ref=e66]: Nama Lengkap
+              - textbox "Nama Lengkap" [ref=e67]: Demo User
+            - generic [ref=e68]:
+              - generic [ref=e69]: Email
+              - textbox "Email" [ref=e70]: user@ekaku.test
+            - button " Simpan Informasi Akun" [ref=e72] [cursor=pointer]:
+              - generic [ref=e73]: 
+              - text: Simpan Informasi Akun
+        - text:                        
+        - generic [ref=e74]:
+          - generic [ref=e75]:
+            - heading " Progress Biodata" [level=3] [ref=e77]:
+              - generic [ref=e78]: 
+              - text: Progress Biodata
+            - generic [ref=e79]:
+              - generic [ref=e80]:
+                - generic [ref=e81]: Kelengkapan
+                - generic [ref=e82]: 100%
+              - generic [ref=e85]:
+                - generic [ref=e86]:
+                  - generic [ref=e87]: 
+                  - generic [ref=e88]: Nik
+                - generic [ref=e89]:
+                  - generic [ref=e90]: 
+                  - generic [ref=e91]: Tempat Lahir
+                - generic [ref=e92]:
+                  - generic [ref=e93]: 
+                  - generic [ref=e94]: Tanggal Lahir
+                - generic [ref=e95]:
+                  - generic [ref=e96]: 
+                  - generic [ref=e97]: Alamat
+                - generic [ref=e98]:
+                  - generic [ref=e99]: 
+                  - generic [ref=e100]: Pendidikan
+                - generic [ref=e101]:
+                  - generic [ref=e102]: 
+                  - generic [ref=e103]: Keahlian
+          - generic [ref=e104]:
+            - heading " Mini Kartu Digital" [level=3] [ref=e106]:
+              - generic [ref=e107]: 
+              - text: Mini Kartu Digital
+            - generic [ref=e108]:
+              - generic [ref=e109]:
+                - paragraph [ref=e110]: Nomor AK-1
+                - paragraph [ref=e111]: AK1-20260601-0001
+                - paragraph [ref=e112]: Berlaku hingga 01 Jun 2031
+              - link " Preview Kartu" [ref=e113] [cursor=pointer]:
+                - /url: http://localhost:8000/kartu-kuning
+                - generic [ref=e114]: 
+                - text: Preview Kartu
+          - generic [ref=e115]:
+            - heading " Status Verifikasi" [level=3] [ref=e117]:
+              - generic [ref=e118]: 
+              - text: Status Verifikasi
+            - generic [ref=e119]:
+              - paragraph [ref=e120]: Preview dan cetak kartu kuning hanya aktif setelah biodata terverifikasi admin.
+              - generic [ref=e122]: Terverifikasi Admin
+          - generic [ref=e123]:
+            - heading " Aksi Cepat" [level=3] [ref=e125]:
+              - generic [ref=e126]: 
+              - text: Aksi Cepat
+            - generic [ref=e128]:
+              - link " Isi / Update Biodata" [ref=e129] [cursor=pointer]:
+                - /url: http://localhost:8000/profile#biodata
+                - generic [ref=e130]: 
+                - text: Isi / Update Biodata
+              - link " Update Status Pekerjaan" [ref=e131] [cursor=pointer]:
+                - /url: http://localhost:8000/status-pekerjaan
+                - generic [ref=e132]: 
+                - text: Update Status Pekerjaan
+              - link " Lihat Kartu Kuning" [ref=e133] [cursor=pointer]:
+                - /url: http://localhost:8000/kartu-kuning
+                - generic [ref=e134]: 
+                - text: Lihat Kartu Kuning
+              - link " Lihat Notifikasi" [ref=e135] [cursor=pointer]:
+                - /url: http://localhost:8000/notifikasi
+                - generic [ref=e136]: 
+                - text: Lihat Notifikasi
+  - contentinfo [ref=e137]:
+    - generic [ref=e138]:
+      - generic [ref=e139]:
+        - img "Lambang Pandeglang" [ref=e140]
+        - generic [ref=e141]: Dinas Tenaga Kerja Kabupaten Pandeglang
+      - paragraph [ref=e142]: © 2026 Disnaker Pandeglang. All rights reserved.
+      - paragraph [ref=e143]: e-Kaku V3 — Digital Yellow Card System

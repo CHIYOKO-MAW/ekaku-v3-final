@@ -34,7 +34,7 @@
                             <td class="px-4 py-3 font-medium text-gray-900">{{ $item->name }}</td>
                             <td class="px-4 py-3 text-gray-700">{{ $item->email }}</td>
                             <td class="px-4 py-3">
-                                @php($sv = $item->biodata->status_verifikasi ?? 'pending')
+                                @php $sv = $item->biodata->status_verifikasi ?? 'pending'; @endphp
                                 <span class="rounded-full px-2 py-1 text-xs font-semibold {{ $sv === 'verified' ? 'bg-green-100 text-green-700' : ($sv === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }}">{{ strtoupper($sv) }}</span>
                             </td>
                             <td class="px-4 py-3 text-gray-700">{{ optional($item->statusPekerjaan?->tanggal_update)->format('d M Y') ?? '-' }}</td>
@@ -48,7 +48,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="px-4 py-6 text-center text-gray-500">Tidak ada pengguna yang perlu perhatian.</td></tr>
+                        <tr><td colspan="6" class="px-4 py-12 text-center text-gray-500"><i class="fas fa-exclamation-triangle mr-2"></i>Tidak ada pengguna yang perlu perhatian.</td></tr>
                     @endforelse
                 </tbody>
             </table>

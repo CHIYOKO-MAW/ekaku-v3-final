@@ -1,0 +1,25 @@
+- main [ref=e2]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - heading "Akun e-Kaku V3" [level=1] [ref=e6]
+      - paragraph [ref=e7]: Pelayanan Kartu Kuning Digital Disnaker Pandeglang
+    - generic [ref=e8]:
+      - heading "Masuk ke e-Kaku V3" [level=2] [ref=e9]
+      - paragraph [ref=e10]: Akses layanan kartu kuning digital Disnaker Pandeglang
+    - generic [ref=e11]:
+      - generic [ref=e12]:
+        - generic [ref=e13]: Email
+        - textbox "Email" [active] [ref=e14]
+      - generic [ref=e15]:
+        - generic [ref=e16]: Password
+        - textbox "Password" [ref=e17]
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - checkbox "Ingat saya" [ref=e20]
+          - generic [ref=e21]: Ingat saya
+        - link "Lupa password?" [ref=e22] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/forgot-password
+      - generic [ref=e23]:
+        - link "Belum punya akun?" [ref=e24] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/register
+        - button "Masuk" [ref=e25] [cursor=pointer]

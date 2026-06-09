@@ -1,0 +1,106 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e5]:
+      - link "e-Kaku" [ref=e6] [cursor=pointer]:
+        - /url: http://localhost:8000/dashboard/user
+        - img "e-Kaku" [ref=e7]
+      - generic [ref=e8]:
+        - link " Dashboard" [ref=e9] [cursor=pointer]:
+          - /url: http://localhost:8000/dashboard/user
+          - generic [ref=e10]: 
+          - text: Dashboard
+        - link " Profil" [ref=e11] [cursor=pointer]:
+          - /url: http://localhost:8000/profile
+          - generic [ref=e12]: 
+          - text: Profil
+        - link " Update Status" [ref=e13] [cursor=pointer]:
+          - /url: http://localhost:8000/status-pekerjaan
+          - generic [ref=e14]: 
+          - text: Update Status
+        - link " Kartu Digital" [ref=e15] [cursor=pointer]:
+          - /url: http://localhost:8000/kartu-kuning
+          - generic [ref=e16]: 
+          - text: Kartu Digital
+      - generic [ref=e17]:
+        - button "" [ref=e19] [cursor=pointer]:
+          - generic [ref=e20]: 
+        - generic [ref=e21]:
+          - button "D" [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]: D
+          - text:    
+      - text: 
+  - main [ref=e24]:
+    - generic [ref=e26]:
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - heading "Kartu Kuning Digital" [level=1] [ref=e29]
+          - paragraph [ref=e30]: Kartu AK-1 — Dinas Tenaga Kerja Kab. Pandeglang
+        - link " Download PDF" [active] [ref=e31] [cursor=pointer]:
+          - /url: http://localhost:8000/kartu-kuning/download
+          - generic [ref=e32]: 
+          - text: Download PDF
+      - generic [ref=e34]:
+        - table [ref=e36]:
+          - rowgroup [ref=e37]:
+            - row "Lambang Pemerintah Kabupaten Pandeglang Dinas Tenaga Kerja Kartu Tanda Pencari Kerja (AK/1) Nomor Registrasi AK1-20260601-0001" [ref=e38]:
+              - cell "Lambang" [ref=e39]:
+                - img "Lambang" [ref=e40]
+              - cell "Pemerintah Kabupaten Pandeglang Dinas Tenaga Kerja Kartu Tanda Pencari Kerja (AK/1)" [ref=e41]:
+                - paragraph [ref=e42]: Pemerintah Kabupaten Pandeglang
+                - paragraph [ref=e43]: Dinas Tenaga Kerja
+                - paragraph [ref=e44]: Kartu Tanda Pencari Kerja (AK/1)
+              - cell "Nomor Registrasi AK1-20260601-0001" [ref=e45]:
+                - paragraph [ref=e46]: Nomor Registrasi
+                - paragraph [ref=e47]: AK1-20260601-0001
+        - generic [ref=e48]:
+          - generic [ref=e49]: DEMO USER
+          - table [ref=e50]:
+            - rowgroup [ref=e51]:
+              - 'row "NIK : 360100********** Tempat, Tgl Lahir : Pandeglang, 01/01/2000 Alamat : Jl. Pandeglang, Desa Pandeglang, Kec. Pandeglang, Kab. Pandeglang, Banten Jenis Kelamin : - Pendidikan : SMA/SMK Keahlian : Administrasi Perkantoran" [ref=e52]':
+                - 'cell "NIK : 360100********** Tempat, Tgl Lahir : Pandeglang, 01/01/2000 Alamat : Jl. Pandeglang, Desa Pandeglang, Kec. Pandeglang, Kab. Pandeglang, Banten" [ref=e53]':
+                  - generic [ref=e54]: "NIK : 360100**********"
+                  - generic [ref=e55]: "Tempat, Tgl Lahir : Pandeglang, 01/01/2000"
+                  - generic [ref=e56]: "Alamat : Jl. Pandeglang, Desa Pandeglang, Kec. Pandeglang, Kab. Pandeglang, Banten"
+                - 'cell "Jenis Kelamin : - Pendidikan : SMA/SMK Keahlian : Administrasi Perkantoran" [ref=e57]':
+                  - generic [ref=e58]: "Jenis Kelamin : -"
+                  - generic [ref=e59]: "Pendidikan : SMA/SMK"
+                  - generic [ref=e60]:
+                    - text: "Keahlian :"
+                    - generic [ref=e61]: Administrasi Perkantoran
+          - table [ref=e63]:
+            - rowgroup [ref=e64]:
+              - row "[Foto 3x4] ✓ Terverifikasi Scan verifikasi Tanggal Cetak 01/06/2026 Berlaku Hingga 01/06/2028" [ref=e65]:
+                - cell "[Foto 3x4] ✓ Terverifikasi" [ref=e66]:
+                  - generic [ref=e68]: "[Foto 3x4]"
+                  - generic [ref=e69]: ✓ Terverifikasi
+                - cell "Scan verifikasi" [ref=e70]:
+                  - img [ref=e71]
+                  - paragraph [ref=e76]: Scan verifikasi
+                - cell "Tanggal Cetak 01/06/2026 Berlaku Hingga 01/06/2028" [ref=e77]:
+                  - generic [ref=e78]:
+                    - text: Tanggal Cetak
+                    - paragraph [ref=e79]: 01/06/2026
+                  - generic [ref=e80]:
+                    - text: Berlaku Hingga
+                    - paragraph [ref=e81]: 01/06/2028
+        - table [ref=e83]:
+          - rowgroup [ref=e84]:
+            - row "Dinas Tenaga Kerja Kab. Pandeglang e-Kaku V3" [ref=e85]:
+              - cell "Dinas Tenaga Kerja Kab. Pandeglang" [ref=e86]
+              - cell "e-Kaku V3" [ref=e87]
+      - generic [ref=e89]:
+        - generic [ref=e90]: 
+        - generic [ref=e91]:
+          - paragraph [ref=e92]: QR Code Dilindungi HMAC-SHA256
+          - paragraph [ref=e93]:
+            - text: QR Code mengandung token keamanan unik. Saat discan sistem memverifikasi keaslian secara realtime. Kartu palsu akan terdeteksi sebagai
+            - strong [ref=e94]: TIDAK VALID
+            - text: .
+          - paragraph [ref=e95]: "Token terakhir: 01/06/2026 05:35 WIB • Scan: 0x"
+  - contentinfo [ref=e96]:
+    - generic [ref=e97]:
+      - generic [ref=e98]:
+        - img "Lambang Pandeglang" [ref=e99]
+        - generic [ref=e100]: Dinas Tenaga Kerja Kabupaten Pandeglang
+      - paragraph [ref=e101]: © 2026 Disnaker Pandeglang. All rights reserved.
+      - paragraph [ref=e102]: e-Kaku V3 — Digital Yellow Card System

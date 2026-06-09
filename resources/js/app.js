@@ -93,3 +93,32 @@ const initEkakuCharts = () => {
 };
 
 document.addEventListener('DOMContentLoaded', initEkakuCharts);
+
+document.addEventListener('submit', (e) => {
+    const targetButtons = e.submitter
+        ? [e.submitter]
+        : document.querySelectorAll('.btn-primary, .btn-danger');
+    targetButtons.forEach((btn) => {
+        if (btn.closest('form')) {
+            btn.disabled = true;
+            btn.dataset.originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Memproses...';
+        }
+    });
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+    const status = event.reason?.status ?? event.reason?.response?.status;
+    if (status === 401 || status === 419) {
+        window.location.href = '/login';
+    }
+});
+
+const originalFetch = window.fetch;
+window.fetch = async (...args) => {
+    const response = await originalFetch(...args);
+    if (response.status === 401 || response.status === 419) {
+        window.location.href = '/login';
+    }
+    return response;
+};

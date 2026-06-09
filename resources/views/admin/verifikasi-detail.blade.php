@@ -21,11 +21,23 @@
     </div>
 
     <h2 class="mt-8 text-lg font-semibold text-gray-900">Dokumen Upload</h2>
-    <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+    <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
       @forelse($biodata->user->uploads as $upload)
+        @php $ext = pathinfo($upload->file_path, PATHINFO_EXTENSION); @endphp
         <div class="rounded-lg border border-gray-200 p-4">
-          <p class="font-medium text-gray-800">{{ strtoupper($upload->jenis_dokumen) }}</p>
-          <a href="{{ route('upload.preview', $upload) }}" class="mt-2 inline-flex text-sm font-semibold text-disnaker-600 hover:underline" target="_blank">Lihat Dokumen</a>
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-100">
+              @if (in_array($ext, ['jpg', 'jpeg', 'png']))
+                <img src="{{ route('upload.preview', $upload->id) }}" alt="preview" class="h-full w-full object-cover">
+              @else
+                <i class="fas fa-file-pdf text-red-500"></i>
+              @endif
+            </div>
+            <div>
+              <p class="font-medium text-gray-800">{{ strtoupper($upload->jenis_dokumen) }} <span class="text-xs font-normal text-gray-500">({{ strtoupper($ext) }})</span></p>
+              <a href="{{ route('upload.preview', $upload) }}" class="text-sm font-semibold text-disnaker-600 hover:underline" target="_blank">Lihat Dokumen</a>
+            </div>
+          </div>
         </div>
       @empty
         <p class="text-sm text-gray-500">Belum ada dokumen diunggah.</p>
@@ -38,14 +50,14 @@
         <form action="{{ route('admin.verifikasi.updateStatus', $biodata) }}" method="POST">
           @csrf
           <input type="hidden" name="status" value="verified">
-          <button class="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700" type="submit">Setujui</button>
+          <button type="submit" class="btn-primary">Setujui</button>
         </form>
 
         <form action="{{ route('admin.verifikasi.updateStatus', $biodata) }}" method="POST" class="flex flex-wrap items-center gap-2">
           @csrf
           <input type="hidden" name="status" value="rejected">
           <input type="text" name="catatan" class="form-input" placeholder="Catatan penolakan (opsional)">
-          <button class="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700" type="submit">Tolak</button>
+          <button type="submit" class="btn-danger">Tolak</button>
         </form>
       </div>
     </div>

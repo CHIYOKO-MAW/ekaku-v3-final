@@ -1,3 +1,4 @@
+@section('title', 'Lupa Password')
 <x-guest-layout>
     <div class="mb-4 text-sm text-gray-600">
         Masukkan email akun Anda. Kami akan mengirimkan tautan reset password.

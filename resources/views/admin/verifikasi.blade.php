@@ -31,7 +31,7 @@
               <td class="px-4 py-3"><a href="{{ route('admin.verifikasi.show', $data) }}" class="btn-secondary">Detail</a></td>
             </tr>
           @empty
-            <tr><td colspan="5" class="px-4 py-6 text-center text-gray-500">Tidak ada data verifikasi pending.</td></tr>
+            <tr><td colspan="5" class="px-4 py-12 text-center text-gray-500"><i class="fas fa-check-circle mr-2"></i>Tidak ada data verifikasi pending.</td></tr>
           @endforelse
         </tbody>
       </table>

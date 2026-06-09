@@ -1,0 +1,65 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e5]:
+      - link " e-Kaku V3" [ref=e6] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/dashboard/user
+        - generic [ref=e8]: 
+        - generic [ref=e9]: e-Kaku V3
+      - text:          
+      - button "" [ref=e10] [cursor=pointer]:
+        - generic [ref=e11]: 
+  - main [ref=e12]:
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - heading "Dokumen Saya" [level=1] [ref=e15]
+        - paragraph [ref=e16]: Upload KTP, Ijazah, dan Foto untuk kelengkapan biodata.
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - generic [ref=e19]:
+            - generic [ref=e21]: 
+            - generic [ref=e22]:
+              - heading "KTP" [level=3] [ref=e23]
+              - paragraph [ref=e24]: Belum upload
+          - generic [ref=e26]:
+            - generic [ref=e27]: 
+            - paragraph [ref=e28]: Belum ada ktp
+          - button " Batal" [active] [ref=e64] [cursor=pointer]:
+            - generic [ref=e30]: 
+            - generic [ref=e31]: Batal
+          - generic [ref=e65]:
+            - generic [ref=e66]:
+              - generic [ref=e67]: File (jpg/png/pdf, max 5MB)
+              - button "File (jpg/png/pdf, max 5MB)" [ref=e68]
+            - button " Upload" [ref=e69] [cursor=pointer]:
+              - generic [ref=e70]: 
+              - text: Upload
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - generic [ref=e35]: 
+            - generic [ref=e36]:
+              - heading "Ijazah" [level=3] [ref=e37]
+              - paragraph [ref=e38]: Belum upload
+          - generic [ref=e40]:
+            - generic [ref=e41]: 
+            - paragraph [ref=e42]: Belum ada ijazah
+          - button " Upload Ijazah" [ref=e43] [cursor=pointer]:
+            - generic [ref=e44]: 
+            - generic [ref=e45]: Upload Ijazah
+          - text: 
+        - generic [ref=e46]:
+          - generic [ref=e47]:
+            - generic [ref=e49]: 
+            - generic [ref=e50]:
+              - heading "Foto" [level=3] [ref=e51]
+              - paragraph [ref=e52]: Belum upload
+          - generic [ref=e54]:
+            - generic [ref=e55]: 
+            - paragraph [ref=e56]: Belum ada foto
+          - button " Upload Foto" [ref=e57] [cursor=pointer]:
+            - generic [ref=e58]: 
+            - generic [ref=e59]: Upload Foto
+          - text: 
+  - contentinfo [ref=e60]:
+    - generic [ref=e61]:
+      - paragraph [ref=e62]: © 2026 Dinas Tenaga Kerja Pandeglang. All rights reserved.
+      - paragraph [ref=e63]: e-Kaku V3 - Digital Yellow Card System

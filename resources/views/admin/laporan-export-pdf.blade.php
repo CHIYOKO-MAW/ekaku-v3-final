@@ -32,7 +32,7 @@
         </thead>
         <tbody>
             @forelse($rows as $row)
-                @php($area = $areaMap[$row->id] ?? ['kecamatan' => '-', 'kelurahan' => '-'])
+                @php $area = $areaMap[$row->id] ?? ['kecamatan' => '-', 'kelurahan' => '-']; @endphp
                 <tr>
                     <td>{{ $row->name }}</td>
                     <td>{{ $row->email }}</td>

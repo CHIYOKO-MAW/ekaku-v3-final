@@ -18,67 +18,149 @@
     $validUntil = $user->kartuKuning?->tanggal_cetak
         ? \Carbon\Carbon::parse($user->kartuKuning->tanggal_cetak)->addYears(5)
         : null;
-
 @endphp
-<div class="page-wrap">
-    <div class="rounded-xl bg-white p-6 card-shadow">
+<div class="page-wrap" x-data="{ activeTab: window.location.hash === '#biodata' ? 'biodata' : 'akun', openPribadi: true, openPendidikan: true }">
+
+    {{-- HEADER GRADIENT --}}
+    <div class="rounded-xl bg-gradient-to-r from-[#005aa7] to-blue-600 p-6 card-shadow">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
-                <div class="flex h-16 w-16 items-center justify-center rounded-full bg-disnaker-100">
-                    <i class="fas fa-user text-2xl text-disnaker-600"></i>
+                <div class="flex h-16 w-16 items-center justify-center rounded-full bg-white/20">
+                    <span class="text-2xl font-bold text-white">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900">{{ $user->name }}</h1>
-                    <p class="text-sm text-gray-600">{{ $user->email }}</p>
+                    <h1 class="text-2xl font-bold text-white">{{ $user->name }}</h1>
+                    <p class="text-sm text-blue-100">{{ $user->email }}</p>
                 </div>
             </div>
-            <a href="{{ route('dashboard.user') }}" class="btn-secondary">
-                <i class="fas fa-arrow-left mr-2"></i>Kembali ke Dashboard
+            <a href="{{ route('dashboard.user') }}" class="inline-flex items-center gap-2 rounded-lg bg-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/30">
+                <i class="fas fa-arrow-left"></i>Dashboard
             </a>
+        </div>
+    </div>
+
+    {{-- TAB BAR --}}
+    <div class="mt-6 rounded-lg bg-disnaker-100/50 px-4">
+        <div class="flex gap-6">
+            <button @click="activeTab = 'akun'; window.location.hash = ''" :class="activeTab === 'akun' ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:text-gray-700'" class="inline-flex items-center border-b-2 px-1 py-3 text-sm font-medium">
+                <i class="fas fa-user mr-2"></i>Akun
+            </button>
+            <button @click="activeTab = 'biodata'; window.location.hash = 'biodata'" :class="activeTab === 'biodata' ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:text-gray-700'" class="inline-flex items-center border-b-2 px-1 py-3 text-sm font-medium">
+                <i class="fas fa-address-card mr-2"></i>Biodata
+            </button>
+            <button @click="activeTab = 'berkas'; window.location.hash = ''" :class="activeTab === 'berkas' ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:text-gray-700'" class="inline-flex items-center border-b-2 px-1 py-3 text-sm font-medium">
+                <i class="fas fa-file-upload mr-2"></i>Berkas
+            </button>
         </div>
     </div>
 
     <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div class="space-y-6 lg:col-span-2">
-            <div class="rounded-xl bg-white p-6 card-shadow">
-                <h2 class="mb-4 text-lg font-semibold text-gray-900">Informasi Akun</h2>
-                <form method="POST" action="{{ route('profile.update') }}" class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    @csrf
-                    @method('PATCH')
-                    <div>
-                        <label for="name" class="form-label">Nama Lengkap</label>
-                        <input id="name" name="name" type="text" class="form-input" required value="{{ old('name', $user->name) }}">
-                        @error('name') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+
+            {{-- TAB AKUN --}}
+            <div x-show="activeTab === 'akun'" class="overflow-hidden rounded-xl bg-white card-shadow">
+                <div class="bg-gradient-to-r from-[#005aa7] to-blue-600 px-6 py-4">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                        <h2 class="text-lg font-semibold text-white">Informasi Akun</h2>
                     </div>
-                    <div>
-                        <label for="email" class="form-label">Email</label>
-                        <input id="email" name="email" type="email" class="form-input" required value="{{ old('email', $user->email) }}">
-                        @error('email') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                    </div>
-                    <div class="md:col-span-2">
-                        <button type="submit" class="btn-primary">
-                            <i class="fas fa-save mr-2"></i>Simpan Informasi Akun
-                        </button>
-                    </div>
-                </form>
+                </div>
+                <div class="p-6">
+                    <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        @csrf
+                        @method('PATCH')
+
+                        <div class="md:col-span-2">
+                            <x-input-label value="Foto Profil" />
+                            <div class="mt-2 flex items-center gap-5">
+                                <div class="relative flex-shrink-0">
+                                    @if ($user->profile_photo_path)
+                                        <img src="{{ route('profile.photo', $user) }}" alt="{{ $user->name }}"
+                                             class="h-20 w-20 rounded-full border-2 border-gray-200 object-cover shadow-sm">
+                                    @else
+                                        <div class="flex h-20 w-20 items-center justify-center rounded-full bg-disnaker-100 border-2 border-gray-200">
+                                            <span class="text-2xl font-bold text-disnaker-600">
+                                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                                            </span>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-3">
+                                        <label class="btn-secondary cursor-pointer">
+                                            <i class="fas fa-camera mr-1"></i>Pilih Foto
+                                            <input type="file" name="profile_photo" accept="image/jpeg,image/png,image/webp"
+                                                   class="hidden" x-ref="photoInput"
+                                                   @@change="
+                                                       const file = $event.target.files[0];
+                                                       if (file) {
+                                                           const reader = new FileReader();
+                                                           reader.onload = (e) => {
+                                                               const img = $el.closest('.md\\:col-span-2').querySelector('.preview-photo');
+                                                               if (img) img.src = e.target.result;
+                                                           };
+                                                           reader.readAsDataURL(file);
+                                                       }
+                                                   ">
+                                        </label>
+                                    </div>
+                                    <p class="mt-1.5 text-xs text-gray-500">Format: JPG, PNG, WEBP. Maks 2MB.</p>
+                                    <x-input-error :messages="$errors->get('profile_photo')" />
+                                </div>
+                            </div>
+                            @if ($user->profile_photo_path)
+                                <div class="mt-2 text-xs text-gray-400">
+                                    Foto sebelumnya akan diganti secara otomatis.
+                                </div>
+                            @endif
+                        </div>
+
+                        <div>
+                            <x-input-label for="name" :value="__('Nama Lengkap')" />
+                            <x-text-input id="name" name="name" type="text" required value="{{ old('name', $user->name) }}" />
+                            <x-input-error :messages="$errors->get('name')" />
+                        </div>
+                        <div>
+                            <x-input-label for="email" :value="__('Email')" />
+                            <x-text-input id="email" name="email" type="email" required value="{{ old('email', $user->email) }}" />
+                            <x-input-error :messages="$errors->get('email')" />
+                        </div>
+                        <div class="md:col-span-2">
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-save mr-2"></i>Simpan Informasi Akun
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
-            <div id="biodata" class="rounded-xl bg-white p-6 card-shadow">
-                <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                        <h2 class="text-lg font-semibold text-gray-900">Form Biodata Pencari Kerja</h2>
-                        <p class="mt-1 text-sm text-gray-600">Acuan pengisian disesuaikan dengan format E-Kaku v2 yang dipakai Disnaker.</p>
+            {{-- TAB BIODATA --}}
+            <div x-show="activeTab === 'biodata'" id="biodata" class="overflow-hidden rounded-xl bg-white card-shadow">
+                <div class="bg-gradient-to-r from-[#005aa7] to-blue-600 px-6 py-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20">
+                                <i class="fas fa-address-card text-white"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-semibold text-white">Form Biodata Pencari Kerja</h2>
+                                <p class="text-sm text-blue-100">Acuan pengisian disesuaikan dengan format E-Kaku v2 yang dipakai Disnaker.</p>
+                            </div>
+                        </div>
+                        @if ($biodata?->status_verifikasi === 'verified')
+                            <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">Terverifikasi</span>
+                        @elseif ($biodata?->status_verifikasi === 'rejected')
+                            <span class="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">Ditolak</span>
+                        @elseif ($biodata)
+                            <span class="rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700">Menunggu Validasi Admin</span>
+                        @else
+                            <span class="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">Belum Diisi</span>
+                        @endif
                     </div>
-                    @if ($biodata?->status_verifikasi === 'verified')
-                        <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">Terverifikasi</span>
-                    @elseif ($biodata?->status_verifikasi === 'rejected')
-                        <span class="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">Ditolak</span>
-                    @elseif ($biodata)
-                        <span class="rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700">Menunggu Validasi Admin</span>
-                    @else
-                        <span class="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">Belum Diisi</span>
-                    @endif
                 </div>
+                <div class="p-6">
 
                 <form method="POST" action="{{ $biodata ? route('biodata.update') : route('biodata.store') }}" class="space-y-6">
                     @csrf
@@ -86,148 +168,149 @@
                         @method('PUT')
                     @endif
 
-                    <div class="rounded-lg border border-gray-200 p-4">
-                        <h3 class="mb-4 text-base font-semibold text-disnaker-700">Informasi Pribadi</h3>
-                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div>
-                                <label for="nik" class="form-label">NIK</label>
-                                <input id="nik" name="nik" type="text" class="form-input" required value="{{ old('nik', $biodata->nik ?? '') }}">
-                                @error('nik') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label class="form-label">Nama Lengkap</label>
-                                <input type="text" class="form-input bg-gray-100" value="{{ $user->name }}" disabled>
-                            </div>
-                            <div>
-                                <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
-                                <input id="tempat_lahir" name="tempat_lahir" type="text" class="form-input" required value="{{ old('tempat_lahir', $biodata->tempat_lahir ?? '') }}">
-                                @error('tempat_lahir') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
-                                <input id="tanggal_lahir" name="tanggal_lahir" type="date" class="form-input" required value="{{ old('tanggal_lahir', $biodata->tanggal_lahir ?? '') }}">
-                                @error('tanggal_lahir') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-                            <div class="md:col-span-2">
-                                <label for="alamat" class="form-label">Alamat</label>
-                                <textarea id="alamat" name="alamat" class="form-input" required>{{ old('alamat', $biodata->alamat ?? '') }}</textarea>
-                                @error('alamat') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-
-                            <div>
-                                <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
-                                <select id="jenis_kelamin" name="jenis_kelamin" class="form-input">
-                                    <option value="">Pilih Jenis Kelamin</option>
-                                    <option value="laki_laki" @selected(old('jenis_kelamin', $biodata->jenis_kelamin ?? '') === 'laki_laki')>Laki-laki</option>
-                                    <option value="perempuan" @selected(old('jenis_kelamin', $biodata->jenis_kelamin ?? '') === 'perempuan')>Perempuan</option>
-                                </select>
-                                @error('jenis_kelamin') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label for="agama" class="form-label">Agama</label>
-                                <input id="agama" name="agama" type="text" class="form-input" value="{{ old('agama', $biodata->agama ?? '') }}" placeholder="Contoh: Islam">
-                                @error('agama') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label for="rt_rw" class="form-label">RT/RW</label>
-                                <input id="rt_rw" name="rt_rw" type="text" class="form-input" value="{{ old('rt_rw', $biodata->rt_rw ?? '') }}" placeholder="Contoh: 002/005">
-                                @error('rt_rw') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label for="kode_pos" class="form-label">Kode Pos</label>
-                                <input id="kode_pos" name="kode_pos" type="text" class="form-input" value="{{ old('kode_pos', $biodata->kode_pos ?? '') }}" placeholder="Contoh: 42211">
-                                @error('kode_pos') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label for="kecamatan" class="form-label">Kecamatan</label>
-                                <input id="kecamatan" name="kecamatan" type="text" class="form-input" value="{{ old('kecamatan', $biodata->kecamatan ?? '') }}" placeholder="Contoh: Pandeglang">
-                                @error('kecamatan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label for="desa_kelurahan" class="form-label">Desa/Kelurahan</label>
-                                <input id="desa_kelurahan" name="desa_kelurahan" type="text" class="form-input" value="{{ old('desa_kelurahan', $biodata->desa_kelurahan ?? '') }}" placeholder="Contoh: Pandeglang">
-                                @error('desa_kelurahan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label for="status_perkawinan" class="form-label">Status Perkawinan</label>
-                                <select id="status_perkawinan" name="status_perkawinan" class="form-input">
-                                    <option value="">Pilih Status Perkawinan</option>
-                                    <option value="belum_menikah" @selected(old('status_perkawinan', $biodata->status_perkawinan ?? '') === 'belum_menikah')>Belum Menikah</option>
-                                    <option value="menikah" @selected(old('status_perkawinan', $biodata->status_perkawinan ?? '') === 'menikah')>Menikah</option>
-                                    <option value="cerai_hidup" @selected(old('status_perkawinan', $biodata->status_perkawinan ?? '') === 'cerai_hidup')>Cerai Hidup</option>
-                                    <option value="cerai_mati" @selected(old('status_perkawinan', $biodata->status_perkawinan ?? '') === 'cerai_mati')>Cerai Mati</option>
-                                </select>
-                                @error('status_perkawinan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label for="tinggi_badan" class="form-label">Tinggi Badan (cm)</label>
-                                <input id="tinggi_badan" name="tinggi_badan" type="number" class="form-input" min="50" max="250" value="{{ old('tinggi_badan', $biodata->tinggi_badan ?? '') }}">
-                                @error('tinggi_badan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label for="berat_badan" class="form-label">Berat Badan (kg)</label>
-                                <input id="berat_badan" name="berat_badan" type="number" class="form-input" min="20" max="300" value="{{ old('berat_badan', $biodata->berat_badan ?? '') }}">
-                                @error('berat_badan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-                            <div class="md:col-span-2">
-                                <input type="hidden" name="disabilitas" value="0">
-                                <label class="inline-flex items-center gap-2 text-sm text-gray-700">
-                                    <input type="checkbox" name="disabilitas" value="1" class="rounded border-gray-300 text-disnaker-600 focus:ring-disnaker-500"
-                                        @checked((bool) old('disabilitas', $biodata->disabilitas ?? false))>
-                                    Penyandang disabilitas
-                                </label>
-                                @error('disabilitas') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="rounded-lg border border-gray-200 p-4">
-                        <h3 class="mb-4 text-base font-semibold text-disnaker-700">Pendidikan dan Pengalaman</h3>
-                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div>
-                                <label for="pendidikan" class="form-label">Pendidikan Terakhir</label>
-                                <input id="pendidikan" name="pendidikan" type="text" class="form-input" required value="{{ old('pendidikan', $biodata->pendidikan ?? '') }}">
-                                @error('pendidikan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label for="tahun_lulus" class="form-label">Tahun Lulus</label>
-                                <input id="tahun_lulus" name="tahun_lulus" type="text" class="form-input" value="{{ old('tahun_lulus', $biodata->tahun_lulus ?? '') }}" placeholder="Contoh: 2020">
-                                @error('tahun_lulus') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label for="institusi_pendidikan" class="form-label">Nama Institusi Pendidikan</label>
-                                <input id="institusi_pendidikan" name="institusi_pendidikan" type="text" class="form-input" value="{{ old('institusi_pendidikan', $biodata->institusi_pendidikan ?? '') }}">
-                                @error('institusi_pendidikan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label for="jurusan" class="form-label">Jurusan</label>
-                                <input id="jurusan" name="jurusan" type="text" class="form-input" value="{{ old('jurusan', $biodata->jurusan ?? '') }}">
-                                @error('jurusan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-                            <div class="md:col-span-2">
-                                <label for="keahlian" class="form-label">Keterampilan / Keahlian</label>
-                                <textarea id="keahlian" name="keahlian" class="form-input" placeholder="Contoh: Microsoft Office, Administrasi, Bahasa Inggris">{{ old('keahlian', $biodata->keahlian ?? '') }}</textarea>
-                                @error('keahlian') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-                            <div class="md:col-span-2">
-                                <label for="pengalaman" class="form-label">Pengalaman Kerja</label>
-                                <textarea id="pengalaman" name="pengalaman" class="form-input" placeholder="Ringkasan pengalaman kerja Anda">{{ old('pengalaman', $biodata->pengalaman ?? '') }}</textarea>
-                                @error('pengalaman') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            </div>
-                            <div class="md:col-span-2">
-                                <label for="tujuan_lamaran" class="form-label">Tempat/Tujuan Melamar</label>
-                                <input id="tujuan_lamaran" name="tujuan_lamaran" type="text" class="form-input" value="{{ old('tujuan_lamaran', $biodata->tujuan_lamaran ?? '') }}" placeholder="Contoh: PT Maju Bersama">
-                                @error('tujuan_lamaran') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    <div class="rounded-lg border border-gray-200 border-l-4 border-l-disnaker-500">
+                        <button type="button" @click="openPribadi = !openPribadi" class="flex w-full items-center justify-between px-4 py-3 text-left">
+                            <h3 class="text-base font-semibold text-disnaker-700">Informasi Pribadi</h3>
+                            <i class="fas" :class="openPribadi ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                        </button>
+                        <div x-show="openPribadi" class="border-t border-gray-200 p-4">
+                            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                <div>
+                                    <x-input-label for="nik" :value="__('NIK')" />
+                                    <x-text-input id="nik" name="nik" type="text" required value="{{ old('nik', $biodata->nik ?? '') }}" />
+                                    <x-input-error :messages="$errors->get('nik')" />
+                                </div>
+                                <div>
+                                    <x-input-label :value="__('Nama Lengkap')" />
+                                    <x-text-input type="text" value="{{ $user->name }}" disabled />
+                                </div>
+                                <div>
+                                    <x-input-label for="tempat_lahir" :value="__('Tempat Lahir')" />
+                                    <x-text-input id="tempat_lahir" name="tempat_lahir" type="text" required value="{{ old('tempat_lahir', $biodata->tempat_lahir ?? '') }}" />
+                                    <x-input-error :messages="$errors->get('tempat_lahir')" />
+                                </div>
+                                <div>
+                                    <x-input-label for="tanggal_lahir" :value="__('Tanggal Lahir')" />
+                                    <x-text-input id="tanggal_lahir" name="tanggal_lahir" type="date" required value="{{ old('tanggal_lahir', $biodata->tanggal_lahir ?? '') }}" />
+                                    <x-input-error :messages="$errors->get('tanggal_lahir')" />
+                                </div>
+                                <div class="md:col-span-2">
+                                    <x-input-label for="alamat" :value="__('Alamat')" />
+                                    <textarea id="alamat" name="alamat" class="form-input" required>{{ old('alamat', $biodata->alamat ?? '') }}</textarea>
+                                    <x-input-error :messages="$errors->get('alamat')" />
+                                </div>
+                                <div>
+                                    <x-input-label for="jenis_kelamin" :value="__('Jenis Kelamin')" />
+                                    <select id="jenis_kelamin" name="jenis_kelamin" class="form-input">
+                                        <option value="">Pilih Jenis Kelamin</option>
+                                        <option value="laki_laki" @selected(old('jenis_kelamin', $biodata->jenis_kelamin ?? '') === 'laki_laki')>Laki-laki</option>
+                                        <option value="perempuan" @selected(old('jenis_kelamin', $biodata->jenis_kelamin ?? '') === 'perempuan')>Perempuan</option>
+                                    </select>
+                                    <x-input-error :messages="$errors->get('jenis_kelamin')" />
+                                </div>
+                                <div>
+                                    <x-input-label for="agama" :value="__('Agama')" />
+                                    <x-text-input id="agama" name="agama" type="text" value="{{ old('agama', $biodata->agama ?? '') }}" placeholder="Contoh: Islam" />
+                                    <x-input-error :messages="$errors->get('agama')" />
+                                </div>
+                                <div>
+                                    <x-input-label for="rt_rw" :value="__('RT/RW')" />
+                                    <x-text-input id="rt_rw" name="rt_rw" type="text" value="{{ old('rt_rw', $biodata->rt_rw ?? '') }}" placeholder="Contoh: 002/005" />
+                                    <x-input-error :messages="$errors->get('rt_rw')" />
+                                </div>
+                                <div>
+                                    <x-input-label for="kode_pos" :value="__('Kode Pos')" />
+                                    <x-text-input id="kode_pos" name="kode_pos" type="text" value="{{ old('kode_pos', $biodata->kode_pos ?? '') }}" placeholder="Contoh: 42211" />
+                                    <x-input-error :messages="$errors->get('kode_pos')" />
+                                </div>
+                                <div>
+                                    <x-input-label for="kecamatan" :value="__('Kecamatan')" />
+                                    <x-text-input id="kecamatan" name="kecamatan" type="text" value="{{ old('kecamatan', $biodata->kecamatan ?? '') }}" placeholder="Contoh: Pandeglang" />
+                                    <x-input-error :messages="$errors->get('kecamatan')" />
+                                </div>
+                                <div>
+                                    <x-input-label for="desa_kelurahan" :value="__('Desa/Kelurahan')" />
+                                    <x-text-input id="desa_kelurahan" name="desa_kelurahan" type="text" value="{{ old('desa_kelurahan', $biodata->desa_kelurahan ?? '') }}" placeholder="Contoh: Pandeglang" />
+                                    <x-input-error :messages="$errors->get('desa_kelurahan')" />
+                                </div>
+                                <div>
+                                    <x-input-label for="status_perkawinan" :value="__('Status Perkawinan')" />
+                                    <select id="status_perkawinan" name="status_perkawinan" class="form-input">
+                                        <option value="">Pilih Status Perkawinan</option>
+                                        <option value="belum_menikah" @selected(old('status_perkawinan', $biodata->status_perkawinan ?? '') === 'belum_menikah')>Belum Menikah</option>
+                                        <option value="menikah" @selected(old('status_perkawinan', $biodata->status_perkawinan ?? '') === 'menikah')>Menikah</option>
+                                        <option value="cerai_hidup" @selected(old('status_perkawinan', $biodata->status_perkawinan ?? '') === 'cerai_hidup')>Cerai Hidup</option>
+                                        <option value="cerai_mati" @selected(old('status_perkawinan', $biodata->status_perkawinan ?? '') === 'cerai_mati')>Cerai Mati</option>
+                                    </select>
+                                    <x-input-error :messages="$errors->get('status_perkawinan')" />
+                                </div>
+                                <div>
+                                    <x-input-label for="tinggi_badan" :value="__('Tinggi Badan (cm)')" />
+                                    <x-text-input id="tinggi_badan" name="tinggi_badan" type="number" min="50" max="250" value="{{ old('tinggi_badan', $biodata->tinggi_badan ?? '') }}" />
+                                    <x-input-error :messages="$errors->get('tinggi_badan')" />
+                                </div>
+                                <div>
+                                    <x-input-label for="berat_badan" :value="__('Berat Badan (kg)')" />
+                                    <x-text-input id="berat_badan" name="berat_badan" type="number" min="20" max="300" value="{{ old('berat_badan', $biodata->berat_badan ?? '') }}" />
+                                    <x-input-error :messages="$errors->get('berat_badan')" />
+                                </div>
+                                <div class="md:col-span-2">
+                                    <input type="hidden" name="disabilitas" value="0">
+                                    <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                                        <input type="checkbox" name="disabilitas" value="1" class="rounded border-gray-300 text-disnaker-600 focus:ring-disnaker-500"
+                                            @checked((bool) old('disabilitas', $biodata->disabilitas ?? false))>
+                                        Penyandang disabilitas
+                                    </label>
+                                    <x-input-error :messages="$errors->get('disabilitas')" />
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="rounded-lg border border-gray-200 p-4">
-                        <h3 class="mb-2 text-base font-semibold text-disnaker-700">Berkas</h3>
-                        <p class="text-sm text-gray-600">
-                            Upload dokumen tetap melalui modul upload saat ini.
-                            <a href="{{ route('upload.index') }}" class="font-medium text-disnaker-600 hover:text-disnaker-700">Buka Upload Dokumen</a>
-                        </p>
+                    <div class="rounded-lg border border-gray-200 border-l-4 border-l-disnaker-500">
+                        <button type="button" @click="openPendidikan = !openPendidikan" class="flex w-full items-center justify-between px-4 py-3 text-left">
+                            <h3 class="text-base font-semibold text-disnaker-700">Pendidikan dan Pengalaman</h3>
+                            <i class="fas" :class="openPendidikan ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                        </button>
+                        <div x-show="openPendidikan" class="border-t border-gray-200 p-4">
+                            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                <div>
+                                    <x-input-label for="pendidikan" :value="__('Pendidikan Terakhir')" />
+                                    <x-text-input id="pendidikan" name="pendidikan" type="text" required value="{{ old('pendidikan', $biodata->pendidikan ?? '') }}" />
+                                    <x-input-error :messages="$errors->get('pendidikan')" />
+                                </div>
+                                <div>
+                                    <x-input-label for="tahun_lulus" :value="__('Tahun Lulus')" />
+                                    <x-text-input id="tahun_lulus" name="tahun_lulus" type="text" value="{{ old('tahun_lulus', $biodata->tahun_lulus ?? '') }}" placeholder="Contoh: 2020" />
+                                    <x-input-error :messages="$errors->get('tahun_lulus')" />
+                                </div>
+                                <div>
+                                    <x-input-label for="institusi_pendidikan" :value="__('Nama Institusi Pendidikan')" />
+                                    <x-text-input id="institusi_pendidikan" name="institusi_pendidikan" type="text" value="{{ old('institusi_pendidikan', $biodata->institusi_pendidikan ?? '') }}" />
+                                    <x-input-error :messages="$errors->get('institusi_pendidikan')" />
+                                </div>
+                                <div>
+                                    <x-input-label for="jurusan" :value="__('Jurusan')" />
+                                    <x-text-input id="jurusan" name="jurusan" type="text" value="{{ old('jurusan', $biodata->jurusan ?? '') }}" />
+                                    <x-input-error :messages="$errors->get('jurusan')" />
+                                </div>
+                                <div class="md:col-span-2">
+                                    <x-input-label for="keahlian" :value="__('Keterampilan / Keahlian')" />
+                                    <textarea id="keahlian" name="keahlian" class="form-input" placeholder="Contoh: Microsoft Office, Administrasi, Bahasa Inggris">{{ old('keahlian', $biodata->keahlian ?? '') }}</textarea>
+                                    <x-input-error :messages="$errors->get('keahlian')" />
+                                </div>
+                                <div class="md:col-span-2">
+                                    <x-input-label for="pengalaman" :value="__('Pengalaman Kerja')" />
+                                    <textarea id="pengalaman" name="pengalaman" class="form-input" placeholder="Ringkasan pengalaman kerja Anda">{{ old('pengalaman', $biodata->pengalaman ?? '') }}</textarea>
+                                    <x-input-error :messages="$errors->get('pengalaman')" />
+                                </div>
+                                <div class="md:col-span-2">
+                                    <x-input-label for="tujuan_lamaran" :value="__('Tempat/Tujuan Melamar')" />
+                                    <x-text-input id="tujuan_lamaran" name="tujuan_lamaran" type="text" value="{{ old('tujuan_lamaran', $biodata->tujuan_lamaran ?? '') }}" placeholder="Contoh: PT Maju Bersama" />
+                                    <x-input-error :messages="$errors->get('tujuan_lamaran')" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="flex flex-wrap gap-3">
@@ -237,95 +320,228 @@
                     </div>
                 </form>
 
+                @php
+                    $biodataComplete = $biodata && $biodata->isComplete();
+                    $docsComplete = $user->hasRequiredDocuments();
+                    $canSubmit = $biodata && $biodata->status_verifikasi !== 'verified' && $biodataComplete && $docsComplete;
+                @endphp
+
                 @if ($biodata && $biodata->status_verifikasi !== 'verified')
-                    <form method="POST" action="{{ route('biodata.submit') }}" class="mt-3">
-                        @csrf
-                        <button type="submit" class="btn-secondary">
-                            <i class="fas fa-paper-plane mr-2"></i>Ajukan Validasi Admin
-                        </button>
-                    </form>
-                @endif
-            </div>
-        </div>
-
-        <div class="space-y-6">
-            <div class="rounded-xl bg-white p-6 card-shadow">
-                <h3 class="text-lg font-semibold text-gray-900">Progress Biodata</h3>
-                <div class="mt-3 flex items-center justify-between text-sm">
-                    <span class="text-gray-600">Kelengkapan</span>
-                    <span class="font-semibold text-gray-900">{{ $completionPercentage }}%</span>
-                </div>
-                <div class="mt-2 h-2 w-full rounded-full bg-gray-200">
-                    <div class="h-2 rounded-full bg-disnaker-500 transition-all duration-300" style="width: {{ $completionPercentage }}%"></div>
-                </div>
-                <div class="mt-4 space-y-2 text-sm">
-                    @foreach ($progressFields as $label => $value)
-                        <div class="flex items-center {{ filled($value) ? 'text-green-600' : 'text-gray-400' }}">
-                            <i class="fas fa-check-circle mr-2"></i>
-                            <span>{{ ucwords(str_replace('_', ' ', $label)) }}</span>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-
-            <div class="rounded-xl bg-white p-6 card-shadow">
-                <h3 class="text-lg font-semibold text-gray-900">Mini Kartu Digital</h3>
-                @if ($biodata?->status_verifikasi === 'verified')
-                    <div class="mt-3 rounded-lg border border-green-200 bg-green-50 p-4">
-                        <p class="text-sm text-gray-600">Nomor AK-1</p>
-                        <p class="font-semibold text-gray-900">{{ $user->kartuKuning->nomor_ak1 ?? '-' }}</p>
-                        <p class="mt-2 text-xs text-gray-500">Berlaku hingga {{ $validUntil->format('d M Y') }}</p>
-                    </div>
-                    <a href="{{ route('kartu.show') }}" class="btn-primary mt-4">
-                        <i class="fas fa-eye mr-2"></i>Preview Kartu
-                    </a>
-                @else
-                    <div class="mt-3 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
-                        <p class="text-sm font-medium text-yellow-800">Kartu masih terkunci</p>
-                        <p class="mt-1 text-xs text-yellow-700">Kartu aktif setelah biodata diverifikasi admin.</p>
-                    </div>
-                    @if ($biodata)
-                        <form method="POST" action="{{ route('biodata.submit') }}" class="mt-4">
+                    @if ($canSubmit)
+                        <form method="POST" action="{{ route('biodata.submit') }}" class="mt-3">
                             @csrf
                             <button type="submit" class="btn-secondary">
                                 <i class="fas fa-paper-plane mr-2"></i>Ajukan Validasi Admin
                             </button>
                         </form>
+                    @else
+                        <div class="mt-3 space-y-2">
+                            <button type="button" class="btn-secondary cursor-not-allowed opacity-50" disabled>
+                                <i class="fas fa-paper-plane mr-2"></i>Ajukan Validasi Admin
+                            </button>
+                            @if (! $biodataComplete)
+                                <p class="text-xs text-red-500"><i class="fas fa-exclamation-circle mr-1"></i>Lengkapi data nik, tempat lahir, tanggal lahir, alamat, dan pendidikan terlebih dahulu.</p>
+                            @endif
+                            @if (! $docsComplete)
+                                <p class="text-xs text-red-500"><i class="fas fa-exclamation-circle mr-1"></i>Upload KTP, Ijazah, dan Foto sebelum mengajukan verifikasi.</p>
+                            @endif
+                        </div>
                     @endif
                 @endif
             </div>
 
-            <div class="rounded-xl bg-white p-6 card-shadow">
-                <h3 class="text-lg font-semibold text-gray-900">Status Verifikasi</h3>
-                <p class="mt-3 text-sm text-gray-600">Preview dan cetak kartu kuning hanya aktif setelah biodata terverifikasi admin.</p>
-                <div class="mt-4">
+            {{-- TAB BERKAS --}}
+            @php
+                $jenisList = ['ktp' => 'KTP', 'ijazah' => 'Ijazah', 'foto' => 'Foto', 'kk' => 'Kartu Keluarga', 'sertifikat' => 'Sertifikat'];
+                $groupedUploads = $uploads->groupBy('jenis_dokumen');
+                $icons = ['ktp' => 'fa-id-card', 'ijazah' => 'fa-graduation-cap', 'foto' => 'fa-camera', 'kk' => 'fa-users', 'sertifikat' => 'fa-certificate'];
+            @endphp
+            <div x-show="activeTab === 'berkas'" class="space-y-6">
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+                    @foreach ($jenisList as $key => $label)
+                        @php $docs = $groupedUploads->get($key, collect()); @endphp
+                        <div class="rounded-xl bg-white p-6 card-shadow border-t-2 border-disnaker-300" x-data="{ showForm: false }">
+                            <div class="mb-4 flex items-center gap-3">
+                                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-disnaker-100">
+                                    <i class="fas {{ $icons[$key] }} text-lg text-disnaker-600"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">{{ $label }}</h3>
+                                    <p class="text-xs text-gray-500">
+                                        @if ($docs->count())
+                                            {{ $docs->count() }} file terupload
+                                        @else
+                                            Belum upload
+                                        @endif
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2">
+                                @forelse ($docs as $doc)
+                                    @php $ext = pathinfo($doc->file_path, PATHINFO_EXTENSION); @endphp
+                                    <div class="flex items-center gap-3 rounded-lg border border-gray-200 p-2">
+                                        <a href="{{ route('upload.preview', $doc->id) }}" target="_blank" class="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-100">
+                                            @if (in_array($ext, ['jpg', 'jpeg', 'png']))
+                                                <img src="{{ route('upload.preview', $doc->id) }}" alt="preview" class="h-full w-full object-cover">
+                                            @else
+                                                <i class="fas fa-file-pdf text-red-500"></i>
+                                            @endif
+                                        </a>
+                                        <div class="min-w-0 flex-1">
+                                            <a href="{{ route('upload.preview', $doc->id) }}" target="_blank" class="block truncate text-sm font-medium text-gray-900 hover:text-disnaker-600">
+                                                {{ basename($doc->file_path) }}
+                                            </a>
+                                            <p class="text-xs text-gray-500">{{ $doc->created_at->format('d M Y') }}</p>
+                                        </div>
+                                        <div x-data="{ confirm: false }">
+                                            <button @click.prevent="confirm = true" class="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500">
+                                                <i class="fas fa-trash-alt text-sm"></i>
+                                            </button>
+                                            <div x-cloak x-show="confirm" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" @click.away="confirm = false">
+                                                <div class="rounded-xl bg-white p-6 shadow-xl" @click.stop>
+                                                    <p class="text-sm text-gray-700">Hapus dokumen <span class="font-semibold">{{ basename($doc->file_path) }}</span>?</p>
+                                                    <div class="mt-4 flex gap-2">
+                                                        <form action="{{ route('upload.destroy', $doc->id) }}" method="POST">
+                                                            @csrf @method('DELETE')
+                                                            <button type="submit" class="btn-danger text-sm">Hapus</button>
+                                                        </form>
+                                                        <button @click="confirm = false" class="btn-secondary text-sm">Batal</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="flex flex-col items-center rounded-lg border-2 border-dashed border-gray-200 py-8">
+                                        <i class="fas fa-cloud-upload-alt text-3xl text-gray-300"></i>
+                                        <p class="mt-2 text-sm text-gray-400">Belum ada {{ strtolower($label) }}</p>
+                                    </div>
+                                @endforelse
+                            </div>
+
+                            @if ($key === 'sertifikat')
+                                <p class="mt-3 text-xs italic text-gray-400">*Jika Sudah Punya</p>
+                            @endif
+
+                            <button @click="showForm = !showForm" class="btn-secondary mt-4 w-full">
+                                <i class="fas mr-2" :class="showForm ? 'fa-times' : 'fa-upload'"></i>
+                                <span x-text="showForm ? 'Batal' : 'Upload {{ $label }}'"></span>
+                            </button>
+
+                            <form x-cloak x-show="showForm" action="{{ route('upload.store') }}" method="POST" enctype="multipart/form-data" class="mt-4 space-y-3 rounded-lg border border-disnaker-200 bg-disnaker-50 p-4">
+                                @csrf
+                                <input type="hidden" name="jenis_dokumen" value="{{ $key }}">
+                                <div>
+                                    <x-input-label for="file_{{ $key }}" value="File (jpg/png/pdf, max 5MB)" />
+                                    <input id="file_{{ $key }}" type="file" name="file" class="form-input" required>
+                                    <x-input-error :messages="$errors->get('file')" />
+                                </div>
+                                <button type="submit" class="btn-primary w-full">
+                                    <i class="fas fa-upload mr-2"></i>Upload
+                                </button>
+                            </form>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+
+        {{-- SIDEBAR --}}
+        <div class="space-y-6">
+            <div class="overflow-hidden rounded-xl bg-white card-shadow">
+                <div class="bg-gradient-to-r from-[#005aa7] to-blue-600 px-4 py-3">
+                    <h3 class="text-sm font-semibold text-white"><i class="fas fa-chart-line mr-2"></i>Progress Biodata</h3>
+                </div>
+                <div class="p-5">
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-600">Kelengkapan</span>
+                        <span class="font-semibold text-gray-900">{{ $completionPercentage }}%</span>
+                    </div>
+                    <div class="mt-2 h-2 w-full rounded-full bg-gray-200">
+                        <div class="h-2 rounded-full bg-disnaker-500 transition-all duration-300" style="width: {{ $completionPercentage }}%"></div>
+                    </div>
+                    <div class="mt-4 space-y-2 text-sm">
+                        @foreach ($progressFields as $label => $value)
+                            <div class="flex items-center {{ filled($value) ? 'text-green-600' : 'text-gray-400' }}">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                <span>{{ ucwords(str_replace('_', ' ', $label)) }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            <div class="overflow-hidden rounded-xl bg-white card-shadow">
+                <div class="bg-gradient-to-r from-[#005aa7] to-blue-600 px-4 py-3">
+                    <h3 class="text-sm font-semibold text-white"><i class="fas fa-id-card mr-2"></i>Mini Kartu Digital</h3>
+                </div>
+                <div class="p-5">
                     @if ($biodata?->status_verifikasi === 'verified')
-                        <span class="inline-flex rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">Terverifikasi Admin</span>
-                    @elseif ($biodata?->status_verifikasi === 'rejected')
-                        <span class="inline-flex rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">Ditolak, mohon perbaiki biodata</span>
-                    @elseif ($biodata)
-                        <span class="inline-flex rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700">Menunggu validasi admin</span>
+                        <div class="rounded-lg border border-green-200 bg-green-50 p-4">
+                            <p class="text-sm text-gray-600">Nomor AK-1</p>
+                            <p class="font-semibold text-gray-900">{{ $user->kartuKuning->nomor_ak1 ?? '-' }}</p>
+                            <p class="mt-2 text-xs text-gray-500">Berlaku hingga {{ $validUntil->format('d M Y') }}</p>
+                        </div>
+                        <a href="{{ route('kartu.show') }}" class="btn-primary mt-4">
+                            <i class="fas fa-eye mr-2"></i>Preview Kartu
+                        </a>
                     @else
-                        <span class="inline-flex rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">Biodata belum diisi</span>
+                        <div class="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+                            <p class="text-sm font-medium text-yellow-800">Kartu masih terkunci</p>
+                            <p class="mt-1 text-xs text-yellow-700">Kartu aktif setelah biodata diverifikasi admin.</p>
+                        </div>
+                        @if ($biodata)
+                            <form method="POST" action="{{ route('biodata.submit') }}" class="mt-4">
+                                @csrf
+                                <button type="submit" class="btn-secondary">
+                                    <i class="fas fa-paper-plane mr-2"></i>Ajukan Validasi Admin
+                                </button>
+                            </form>
+                        @endif
                     @endif
                 </div>
             </div>
 
-            <div class="rounded-xl bg-white p-6 card-shadow">
-                <h3 class="text-lg font-semibold text-gray-900">Aksi Cepat</h3>
-                <div class="mt-4 space-y-2">
-                    <a href="{{ route('profile.edit') }}#biodata" class="block rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                        <i class="fas fa-address-card mr-2 text-disnaker-600"></i>Isi / Update Biodata
-                    </a>
-                    <a href="{{ route('status.index') }}" class="block rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                        <i class="fas fa-sync-alt mr-2 text-disnaker-600"></i>Update Status Pekerjaan
-                    </a>
-                    <a href="{{ route('kartu.show') }}" class="block rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                        <i class="fas fa-id-card mr-2 text-disnaker-600"></i>Lihat Kartu Kuning
-                    </a>
-                    <a href="{{ route('notifikasi.index') }}" class="block rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                        <i class="fas fa-bell mr-2 text-disnaker-600"></i>Lihat Notifikasi
-                    </a>
+            <div class="overflow-hidden rounded-xl bg-white card-shadow">
+                <div class="bg-gradient-to-r from-[#005aa7] to-blue-600 px-4 py-3">
+                    <h3 class="text-sm font-semibold text-white"><i class="fas fa-check-circle mr-2"></i>Status Verifikasi</h3>
+                </div>
+                <div class="p-5">
+                    <p class="text-sm text-gray-600">Preview dan cetak kartu kuning hanya aktif setelah biodata terverifikasi admin.</p>
+                    <div class="mt-4">
+                        @if ($biodata?->status_verifikasi === 'verified')
+                            <span class="inline-flex rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">Terverifikasi Admin</span>
+                        @elseif ($biodata?->status_verifikasi === 'rejected')
+                            <span class="inline-flex rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">Ditolak, mohon perbaiki biodata</span>
+                        @elseif ($biodata)
+                            <span class="inline-flex rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700">Menunggu validasi admin</span>
+                        @else
+                            <span class="inline-flex rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">Biodata belum diisi</span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <div class="overflow-hidden rounded-xl bg-white card-shadow">
+                <div class="bg-gradient-to-r from-[#005aa7] to-blue-600 px-4 py-3">
+                    <h3 class="text-sm font-semibold text-white"><i class="fas fa-bolt mr-2"></i>Aksi Cepat</h3>
+                </div>
+                <div class="p-5">
+                    <div class="space-y-2">
+                        <a href="{{ route('profile.edit') }}#biodata" class="block rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                            <i class="fas fa-address-card mr-2 text-disnaker-600"></i>Isi / Update Biodata
+                        </a>
+                        <a href="{{ route('status.index') }}" class="block rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                            <i class="fas fa-sync-alt mr-2 text-disnaker-600"></i>Update Status Pekerjaan
+                        </a>
+                        <a href="{{ route('kartu.show') }}" class="block rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                            <i class="fas fa-id-card mr-2 text-disnaker-600"></i>Lihat Kartu Kuning
+                        </a>
+                        <a href="{{ route('notifikasi.index') }}" class="block rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                            <i class="fas fa-bell mr-2 text-disnaker-600"></i>Lihat Notifikasi
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

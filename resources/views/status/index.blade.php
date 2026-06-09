@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Update Status Pekerjaan')
+
 @section('content')
 <div class="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
   <div class="mb-6">

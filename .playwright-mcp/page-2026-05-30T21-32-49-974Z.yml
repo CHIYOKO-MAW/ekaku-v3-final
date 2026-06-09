@@ -1,0 +1,227 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e5]:
+      - link " e-Kaku V3" [ref=e6] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/dashboard/user
+        - generic [ref=e8]: 
+        - generic [ref=e9]: e-Kaku V3
+      - generic [ref=e10]:
+        - link " Dashboard" [ref=e11] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/dashboard/user
+          - generic [ref=e12]: 
+          - text: Dashboard
+        - link " Profil" [ref=e13] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/profile
+          - generic [ref=e14]: 
+          - text: Profil
+        - link " Update Status" [ref=e15] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/status-pekerjaan
+          - generic [ref=e16]: 
+          - text: Update Status
+        - link " Kartu Digital" [ref=e17] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/kartu-kuning
+          - generic [ref=e18]: 
+          - text: Kartu Digital
+      - generic [ref=e19]:
+        - button "" [ref=e21] [cursor=pointer]:
+          - generic [ref=e22]: 
+        - generic [ref=e23]:
+          - button "D" [ref=e24] [cursor=pointer]:
+            - generic [ref=e25]: D
+          - text:    
+      - text: 
+  - main [ref=e26]:
+    - generic [ref=e27]:
+      - generic [ref=e29]:
+        - generic [ref=e30]:
+          - generic [ref=e32]: 
+          - generic [ref=e33]:
+            - heading "Demo User" [level=1] [ref=e34]
+            - paragraph [ref=e35]: user@ekaku.test
+        - link " Kembali ke Dashboard" [ref=e36] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/dashboard/user
+          - generic [ref=e37]: 
+          - text: Kembali ke Dashboard
+      - generic [ref=e38]:
+        - generic [ref=e39]:
+          - generic [ref=e40]:
+            - heading "Informasi Akun" [level=2] [ref=e41]
+            - generic [ref=e42]:
+              - generic [ref=e43]:
+                - generic [ref=e44]: Nama Lengkap
+                - textbox "Nama Lengkap" [ref=e45]: Demo User
+              - generic [ref=e46]:
+                - generic [ref=e47]: Email
+                - textbox "Email" [ref=e48]: user@ekaku.test
+              - button " Simpan Informasi Akun" [ref=e50] [cursor=pointer]:
+                - generic [ref=e51]: 
+                - text: Simpan Informasi Akun
+          - generic [ref=e52]:
+            - generic [ref=e53]:
+              - generic [ref=e54]:
+                - heading "Form Biodata Pencari Kerja" [level=2] [ref=e55]
+                - paragraph [ref=e56]: Acuan pengisian disesuaikan dengan format E-Kaku v2 yang dipakai Disnaker.
+              - generic [ref=e57]: Menunggu Validasi Admin
+            - generic [ref=e58]:
+              - generic [ref=e59]:
+                - heading "Informasi Pribadi" [level=3] [ref=e60]
+                - generic [ref=e61]:
+                  - generic [ref=e62]:
+                    - generic [ref=e63]: NIK
+                    - textbox "NIK" [ref=e64]: "3601000000000001"
+                  - generic [ref=e65]:
+                    - generic [ref=e66]: Nama Lengkap
+                    - textbox [disabled] [ref=e67]: Demo User
+                  - generic [ref=e68]:
+                    - generic [ref=e69]: Tempat Lahir
+                    - textbox "Tempat Lahir" [ref=e70]: Pandeglang
+                  - generic [ref=e71]:
+                    - generic [ref=e72]: Tanggal Lahir
+                    - textbox "Tanggal Lahir" [ref=e73]: 2000-01-01
+                  - generic [ref=e74]:
+                    - generic [ref=e75]: Alamat
+                    - textbox "Alamat" [ref=e76]: Jl. Pandeglang, Desa Pandeglang, Kec. Pandeglang, Kab. Pandeglang, Banten
+                  - generic [ref=e77]:
+                    - generic [ref=e78]: Jenis Kelamin
+                    - combobox "Jenis Kelamin" [ref=e79]:
+                      - option "Pilih Jenis Kelamin" [selected]
+                      - option "Laki-laki"
+                      - option "Perempuan"
+                  - generic [ref=e80]:
+                    - generic [ref=e81]: Agama
+                    - textbox "Agama" [ref=e82]:
+                      - /placeholder: "Contoh: Islam"
+                  - generic [ref=e83]:
+                    - generic [ref=e84]: RT/RW
+                    - textbox "RT/RW" [ref=e85]:
+                      - /placeholder: "Contoh: 002/005"
+                  - generic [ref=e86]:
+                    - generic [ref=e87]: Kode Pos
+                    - textbox "Kode Pos" [ref=e88]:
+                      - /placeholder: "Contoh: 42211"
+                  - generic [ref=e89]:
+                    - generic [ref=e90]: Kecamatan
+                    - textbox "Kecamatan" [ref=e91]:
+                      - /placeholder: "Contoh: Pandeglang"
+                  - generic [ref=e92]:
+                    - generic [ref=e93]: Desa/Kelurahan
+                    - textbox "Desa/Kelurahan" [ref=e94]:
+                      - /placeholder: "Contoh: Pandeglang"
+                  - generic [ref=e95]:
+                    - generic [ref=e96]: Status Perkawinan
+                    - combobox "Status Perkawinan" [ref=e97]:
+                      - option "Pilih Status Perkawinan" [selected]
+                      - option "Belum Menikah"
+                      - option "Menikah"
+                      - option "Cerai Hidup"
+                      - option "Cerai Mati"
+                  - generic [ref=e98]:
+                    - generic [ref=e99]: Tinggi Badan (cm)
+                    - spinbutton "Tinggi Badan (cm)" [ref=e100]
+                  - generic [ref=e101]:
+                    - generic [ref=e102]: Berat Badan (kg)
+                    - spinbutton "Berat Badan (kg)" [ref=e103]
+                  - generic [ref=e105]:
+                    - checkbox "Penyandang disabilitas" [ref=e106]
+                    - text: Penyandang disabilitas
+              - generic [ref=e107]:
+                - heading "Pendidikan dan Pengalaman" [level=3] [ref=e108]
+                - generic [ref=e109]:
+                  - generic [ref=e110]:
+                    - generic [ref=e111]: Pendidikan Terakhir
+                    - textbox "Pendidikan Terakhir" [ref=e112]: SMA/SMK
+                  - generic [ref=e113]:
+                    - generic [ref=e114]: Tahun Lulus
+                    - textbox "Tahun Lulus" [ref=e115]:
+                      - /placeholder: "Contoh: 2020"
+                  - generic [ref=e116]:
+                    - generic [ref=e117]: Nama Institusi Pendidikan
+                    - textbox "Nama Institusi Pendidikan" [ref=e118]
+                  - generic [ref=e119]:
+                    - generic [ref=e120]: Jurusan
+                    - textbox "Jurusan" [ref=e121]
+                  - generic [ref=e122]:
+                    - generic [ref=e123]: Keterampilan / Keahlian
+                    - textbox "Keterampilan / Keahlian" [ref=e124]:
+                      - /placeholder: "Contoh: Microsoft Office, Administrasi, Bahasa Inggris"
+                      - text: Administrasi Perkantoran
+                  - generic [ref=e125]:
+                    - generic [ref=e126]: Pengalaman Kerja
+                    - textbox "Pengalaman Kerja" [ref=e127]:
+                      - /placeholder: Ringkasan pengalaman kerja Anda
+                  - generic [ref=e128]:
+                    - generic [ref=e129]: Tempat/Tujuan Melamar
+                    - textbox "Tempat/Tujuan Melamar" [ref=e130]:
+                      - /placeholder: "Contoh: PT Maju Bersama"
+              - generic [ref=e131]:
+                - heading "Berkas" [level=3] [ref=e132]
+                - paragraph [ref=e133]:
+                  - text: Upload dokumen tetap melalui modul upload saat ini.
+                  - link "Buka Upload Dokumen" [ref=e134] [cursor=pointer]:
+                    - /url: http://127.0.0.1:8000/upload
+              - button " Perbarui Biodata" [ref=e136] [cursor=pointer]:
+                - generic [ref=e137]: 
+                - text: Perbarui Biodata
+            - button " Ajukan Validasi Admin" [ref=e139] [cursor=pointer]:
+              - generic [ref=e140]: 
+              - text: Ajukan Validasi Admin
+        - generic [ref=e141]:
+          - generic [ref=e142]:
+            - heading "Progress Biodata" [level=3] [ref=e143]
+            - generic [ref=e144]:
+              - generic [ref=e145]: Kelengkapan
+              - generic [ref=e146]: 100%
+            - generic [ref=e149]:
+              - generic [ref=e150]:
+                - generic [ref=e151]: 
+                - generic [ref=e152]: Nik
+              - generic [ref=e153]:
+                - generic [ref=e154]: 
+                - generic [ref=e155]: Tempat Lahir
+              - generic [ref=e156]:
+                - generic [ref=e157]: 
+                - generic [ref=e158]: Tanggal Lahir
+              - generic [ref=e159]:
+                - generic [ref=e160]: 
+                - generic [ref=e161]: Alamat
+              - generic [ref=e162]:
+                - generic [ref=e163]: 
+                - generic [ref=e164]: Pendidikan
+              - generic [ref=e165]:
+                - generic [ref=e166]: 
+                - generic [ref=e167]: Keahlian
+          - generic [ref=e168]:
+            - heading "Mini Kartu Digital" [level=3] [ref=e169]
+            - generic [ref=e170]:
+              - paragraph [ref=e171]: Kartu masih terkunci
+              - paragraph [ref=e172]: Kartu aktif setelah biodata diverifikasi admin.
+            - button " Ajukan Validasi Admin" [ref=e174] [cursor=pointer]:
+              - generic [ref=e175]: 
+              - text: Ajukan Validasi Admin
+          - generic [ref=e176]:
+            - heading "Status Verifikasi" [level=3] [ref=e177]
+            - paragraph [ref=e178]: Preview dan cetak kartu kuning hanya aktif setelah biodata terverifikasi admin.
+            - generic [ref=e180]: Menunggu validasi admin
+          - generic [ref=e181]:
+            - heading "Aksi Cepat" [level=3] [ref=e182]
+            - generic [ref=e183]:
+              - link " Isi / Update Biodata" [ref=e184] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/profile#biodata
+                - generic [ref=e185]: 
+                - text: Isi / Update Biodata
+              - link " Update Status Pekerjaan" [ref=e186] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/status-pekerjaan
+                - generic [ref=e187]: 
+                - text: Update Status Pekerjaan
+              - link " Lihat Kartu Kuning" [ref=e188] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/kartu-kuning
+                - generic [ref=e189]: 
+                - text: Lihat Kartu Kuning
+              - link " Lihat Notifikasi" [ref=e190] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/notifikasi
+                - generic [ref=e191]: 
+                - text: Lihat Notifikasi
+  - contentinfo [ref=e192]:
+    - generic [ref=e193]:
+      - paragraph [ref=e194]: © 2026 Dinas Tenaga Kerja Pandeglang. All rights reserved.
+      - paragraph [ref=e195]: e-Kaku V3 - Digital Yellow Card System

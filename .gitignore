@@ -22,3 +22,12 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Local dev artifacts
+boost.json
+session-ses-*/
+generateQrCode()
+PROGRESS_TRACKING.md
+context-project.md
+RAILWAY_SETUP.md
+.playwright-mcp/

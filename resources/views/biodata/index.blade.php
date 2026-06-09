@@ -1,14 +1,20 @@
 @extends('layouts.app')
 
-@section('content')
-<div class="mx-auto max-w-7xl px-4 py-8">
-    <h1 class="mb-6 text-2xl font-bold">Data Biodata</h1>
+@section('title', 'Data Biodata')
 
-    <div class="mb-4">
-        <a href="{{ route('biodata.create') }}" class="rounded-md bg-disnaker-500 px-4 py-2 text-white hover:bg-disnaker-600">Tambah Biodata</a>
+@section('content')
+<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div class="mb-6 rounded-xl bg-white p-6 card-shadow">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Data Biodata</h1>
+                <p class="mt-1 text-sm text-gray-600">Daftar biodata pengguna yang telah diisi.</p>
+            </div>
+            <a href="{{ route('biodata.create') }}" class="btn-primary"><i class="fas fa-plus mr-2"></i>Tambah Biodata</a>
+        </div>
     </div>
 
-    <div class="overflow-x-auto rounded-lg bg-white shadow">
+    <div class="overflow-x-auto rounded-xl bg-white card-shadow">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
@@ -21,22 +27,21 @@
             <tbody class="divide-y divide-gray-100 bg-white">
                 @forelse ($datas as $item)
                     <tr>
-                        <td class="px-4 py-3">{{ $item->user->name ?? '-' }}</td>
-                        <td class="px-4 py-3">{{ $item->nik }}</td>
-                        <td class="px-4 py-3">{{ $item->status_verifikasi }}</td>
+                        <td class="px-4 py-3 text-gray-700">{{ $item->user->name ?? '-' }}</td>
+                        <td class="px-4 py-3 text-gray-700">{{ $item->nik }}</td>
+                        <td class="px-4 py-3 text-gray-700">{{ $item->status_verifikasi }}</td>
                         <td class="px-4 py-3">
-                            <a class="text-disnaker-600 hover:underline" href="{{ route('biodata.show', $item->id) }}">Detail</a>
+                            <a class="font-medium text-disnaker-600 hover:text-disnaker-700" href="{{ route('biodata.show', $item->id) }}">Detail</a>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td class="px-4 py-6 text-gray-500" colspan="4">Belum ada data.</td>
+                        <td class="px-4 py-12 text-center text-gray-500" colspan="4"><i class="fas fa-database mr-2"></i>Belum ada data.</td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
+        <div class="border-t border-gray-100 px-4 py-3">{{ $datas->links() }}</div>
     </div>
-
-    <div class="mt-4">{{ $datas->links() }}</div>
 </div>
 @endsection

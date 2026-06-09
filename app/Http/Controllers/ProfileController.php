@@ -18,13 +18,14 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        $authUser = $request->user()->load(['biodata', 'kartuKuning', 'statusPekerjaan']);
+        $authUser = $request->user()->load(['biodata', 'kartuKuning', 'statusPekerjaan', 'uploads']);
 
         return view('user.profile', [
             'user' => $authUser,
             'biodata' => $authUser->biodata,
             'status' => $authUser->statusPekerjaan,
             'unreadCount' => $authUser->notificationsE()->where('status_baca', false)->count(),
+            'uploads' => $authUser->uploads,
         ]);
     }
 
@@ -72,12 +73,11 @@ class ProfileController extends Controller
             abort(404, 'Foto profil tidak tersedia.');
         }
 
-        $path = storage_path('app/public/' . ltrim($user->profile_photo_path, '/'));
-        if (! is_file($path)) {
+        if (! Storage::disk('public')->exists($user->profile_photo_path)) {
             abort(404, 'Foto profil tidak ditemukan.');
         }
 
-        return response()->file($path);
+        return response()->file(Storage::disk('public')->path($user->profile_photo_path));
     }
 
     /**

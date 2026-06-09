@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use App\Models\Upload;
 
 class UploadController extends Controller
 {
@@ -18,20 +18,20 @@ class UploadController extends Controller
 
     public function index()
     {
-        $uploads = Auth::user()->uploads()->with('user')->latest()->paginate(10);
+        $uploads = Auth::user()->uploads()->latest()->get();
 
         return view('upload.index', compact('uploads'));
     }
 
     public function create()
     {
-        return view('upload.create');
+        return redirect()->route('upload.index');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'jenis_dokumen' => ['required', Rule::in(['ktp', 'ijazah', 'foto'])],
+            'jenis_dokumen' => ['required', Rule::in(['ktp', 'ijazah', 'foto', 'kk', 'sertifikat'])],
             'file' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
         ]);
 
@@ -51,8 +51,8 @@ class UploadController extends Controller
         $extension = $file->getClientOriginalExtension();
 
         $filename = Str::slug($originalName)
-            . '-' . time()
-            . '.' . $extension;
+            .'-'.time()
+            .'.'.$extension;
 
         $path = $file->storeAs(
             "uploads/{$user->id}",
@@ -81,25 +81,18 @@ class UploadController extends Controller
             abort(403, 'This action is unauthorized.');
         }
 
-        $candidatePaths = [
-            storage_path('app/' . ltrim($upload->file_path, '/')),
-            storage_path('app/public/' . ltrim($upload->file_path, '/')),
-            storage_path('app/public/' . ltrim(str_replace('public/', '', $upload->file_path), '/')),
-        ];
+        $relativePath = $upload->file_path;
+        $cleanPath = str_replace('public/', '', $relativePath);
 
-        $fullPath = null;
-        foreach ($candidatePaths as $candidatePath) {
-            if (is_file($candidatePath)) {
-                $fullPath = $candidatePath;
-                break;
-            }
+        if (Storage::disk('public')->exists($cleanPath)) {
+            return response()->file(Storage::disk('public')->path($cleanPath));
         }
 
-        if (! $fullPath) {
-            return redirect()->route('upload.index')->with('error', 'File tidak ditemukan di server. Upload ulang dokumen Anda.');
+        if (Storage::exists($relativePath)) {
+            return Storage::response($relativePath);
         }
 
-        return response()->file($fullPath);
+        return redirect()->route('upload.index')->with('error', 'File tidak ditemukan di server. Upload ulang dokumen Anda.');
     }
 
     public function destroy(Upload $upload)

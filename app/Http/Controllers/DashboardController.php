@@ -9,6 +9,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -44,44 +45,80 @@ class DashboardController extends Controller
     public function admin()
     {
         $districts = $this->getPandeglangWilayahData()['districts'];
-        $totalUsers = User::where('role', 'user')->count();
-        $totalActiveUsers = StatusPekerjaan::distinct('user_id')->count('user_id');
-        $usersNeedAttention = User::where('role', 'user')
-            ->where(function ($q) {
-                $q->doesntHave('biodata')
-                    ->orWhereHas('biodata', fn ($qb) => $qb->where('status_verifikasi', '!=', 'verified'));
-            })->count();
 
-        $pending = Biodata::where('status_verifikasi', 'pending')->count();
-        $verified = Biodata::where('status_verifikasi', 'verified')->count();
-        $rejected = Biodata::where('status_verifikasi', 'rejected')->count();
+        $stats = Cache::remember('dashboard.admin.stats', 300, function () {
+            return [
+                'totalUsers' => User::where('role', 'user')->count(),
+                'totalActiveUsers' => StatusPekerjaan::distinct('user_id')->count('user_id'),
+                'usersNeedAttention' => User::where('role', 'user')
+                    ->where(function ($q) {
+                        $q->doesntHave('biodata')
+                            ->orWhereHas('biodata', fn ($qb) => $qb->where('status_verifikasi', '!=', 'verified'));
+                    })->count(),
+                'pending' => Biodata::where('status_verifikasi', 'pending')->count(),
+                'verified' => Biodata::where('status_verifikasi', 'verified')->count(),
+                'rejected' => Biodata::where('status_verifikasi', 'rejected')->count(),
+            ];
+        });
 
-        $statusDistribution = StatusPekerjaan::selectRaw('status_pekerjaan, count(*) as total')
-            ->groupBy('status_pekerjaan')
-            ->pluck('total', 'status_pekerjaan');
+        $statusDistribution = Cache::remember('dashboard.admin.statusDistribution', 300, function () {
+            return StatusPekerjaan::selectRaw('status_pekerjaan, count(*) as total')
+                ->groupBy('status_pekerjaan')
+                ->pluck('total', 'status_pekerjaan');
+        });
 
-        $recentActivities = User::where('role', 'user')
-            ->with(['biodata', 'statusPekerjaan'])
-            ->whereHas('biodata')
-            ->latest()
-            ->take(8)
-            ->get();
+        $verificationData = [
+            'labels' => ['Pending', 'Verified', 'Rejected'],
+            'data' => [$stats['pending'], $stats['verified'], $stats['rejected']],
+            'colors' => ['#ffc107', '#28a745', '#dc3545'],
+        ];
 
-        $regionalSummary = $this->buildRegionalSummary($districts);
+        $jobStatusLabels = [];
+        $jobStatusData = [];
+        $jobStatusColors = ['#ffc107', '#28a745', '#17a2b8', '#fd7e14', '#6f42c1'];
+
+        $statusMapping = [
+            'belum_bekerja' => 'Belum Bekerja',
+            'sudah_bekerja' => 'Sudah Bekerja',
+            'pelatihan' => 'Sedang Pelatihan',
+            'pensiun' => 'Pensiun',
+            'cuti' => 'Cuti',
+        ];
+
+        foreach ($statusMapping as $key => $label) {
+            if ($statusDistribution->has($key)) {
+                $jobStatusLabels[] = $label;
+                $jobStatusData[] = $statusDistribution->get($key);
+            }
+        }
+
+        $recentActivities = Cache::remember('dashboard.admin.recentActivities', 300, function () {
+            return User::where('role', 'user')
+                ->with(['biodata', 'statusPekerjaan'])
+                ->whereHas('biodata')
+                ->latest()
+                ->take(8)
+                ->get();
+        });
+
+        $regionalSummary = Cache::remember('dashboard.admin.regionalSummary', 600, function () use ($districts) {
+            return $this->buildRegionalSummary($districts);
+        });
         $topAttentionDistricts = $regionalSummary['topAttentionDistricts'];
         $topWorkingDistricts = $regionalSummary['topWorkingDistricts'];
 
-        return view('admin.dashboard', compact(
-            'pending',
-            'verified',
-            'rejected',
-            'totalUsers',
-            'totalActiveUsers',
-            'usersNeedAttention',
-            'statusDistribution',
-            'recentActivities',
-            'topAttentionDistricts',
-            'topWorkingDistricts'
+        return view('admin.dashboard', array_merge(
+            $stats,
+            compact(
+                'statusDistribution',
+                'verificationData',
+                'jobStatusLabels',
+                'jobStatusData',
+                'jobStatusColors',
+                'recentActivities',
+                'topAttentionDistricts',
+                'topWorkingDistricts',
+            )
         ));
     }
 
@@ -133,7 +170,7 @@ class DashboardController extends Controller
         $rows = $this->buildLaporanQuery($request, $districts)->latest()->get();
         $areaMap = $this->buildAreaMap($rows, $districts, $selectedDistrictCode, $selectedVillageName);
 
-        $filename = 'laporan-status-pandeglang-' . now()->format('Ymd-His') . '.csv';
+        $filename = 'laporan-status-pandeglang-'.now()->format('Ymd-His').'.csv';
         $headers = [
             'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
@@ -141,7 +178,7 @@ class DashboardController extends Controller
 
         return response()->stream(function () use ($rows, $areaMap): void {
             $handle = fopen('php://output', 'wb');
-            fwrite($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fwrite($handle, chr(0xEF).chr(0xBB).chr(0xBF));
             fputcsv($handle, ['Nama', 'Email', 'NIK', 'Kecamatan', 'Kelurahan/Desa', 'Status Verifikasi', 'Status Pekerjaan', 'Tanggal Update']);
 
             foreach ($rows as $row) {
@@ -176,7 +213,7 @@ class DashboardController extends Controller
             'generatedAt' => now(),
         ])->setPaper('a4', 'landscape');
 
-        return $pdf->download('laporan-status-pandeglang-' . now()->format('Ymd-His') . '.pdf');
+        return $pdf->download('laporan-status-pandeglang-'.now()->format('Ymd-His').'.pdf');
     }
 
     public function villagesByDistrict(string $districtCode): JsonResponse
@@ -195,16 +232,20 @@ class DashboardController extends Controller
 
     public function atasan()
     {
-        $totalAdmin = User::where('role', 'admin')->count();
-        $totalUser = User::where('role', 'user')->count();
-        $pending = Biodata::where('status_verifikasi', 'pending')->count();
-        $verified = Biodata::where('status_verifikasi', 'verified')->count();
-        $rejected = Biodata::where('status_verifikasi', 'rejected')->count();
-        $statusDistribution = StatusPekerjaan::selectRaw('status_pekerjaan, count(*) as total')
-            ->groupBy('status_pekerjaan')
-            ->pluck('total', 'status_pekerjaan');
+        $stats = Cache::remember('dashboard.atasan.stats', 300, function () {
+            return [
+                'totalAdmin' => User::where('role', 'admin')->count(),
+                'totalUser' => User::where('role', 'user')->count(),
+                'pending' => Biodata::where('status_verifikasi', 'pending')->count(),
+                'verified' => Biodata::where('status_verifikasi', 'verified')->count(),
+                'rejected' => Biodata::where('status_verifikasi', 'rejected')->count(),
+                'statusDistribution' => StatusPekerjaan::selectRaw('status_pekerjaan, count(*) as total')
+                    ->groupBy('status_pekerjaan')
+                    ->pluck('total', 'status_pekerjaan'),
+            ];
+        });
 
-        return view('atasan.dashboard', compact('totalAdmin', 'totalUser', 'pending', 'verified', 'rejected', 'statusDistribution'));
+        return view('atasan.dashboard', $stats);
     }
 
     public function rekapAdmin()
@@ -260,17 +301,17 @@ class DashboardController extends Controller
         if ($district) {
             $districtName = Str::lower((string) $district['name']);
             $query->whereHas('biodata', function ($q) use ($districtName) {
-                $q->whereRaw('LOWER(COALESCE(kecamatan, "")) LIKE ?', ['%' . $districtName . '%'])
-                    ->orWhereRaw('LOWER(alamat) LIKE ?', ['%' . $districtName . '%']);
+                $q->whereRaw('LOWER(COALESCE(kecamatan, "")) LIKE ?', ['%'.$districtName.'%'])
+                    ->orWhereRaw('LOWER(alamat) LIKE ?', ['%'.$districtName.'%']);
             });
         }
 
-        $villageName = trim((string) $request->query('kelurahan_name', ''));
+        $villageName = trim(mb_substr((string) $request->query('kelurahan_name', ''), 0, 100));
         if ($villageName !== '') {
             $villageNameLower = Str::lower($villageName);
             $query->whereHas('biodata', function ($q) use ($villageNameLower) {
-                $q->whereRaw('LOWER(COALESCE(desa_kelurahan, "")) LIKE ?', ['%' . $villageNameLower . '%'])
-                    ->orWhereRaw('LOWER(alamat) LIKE ?', ['%' . $villageNameLower . '%']);
+                $q->whereRaw('LOWER(COALESCE(desa_kelurahan, "")) LIKE ?', ['%'.$villageNameLower.'%'])
+                    ->orWhereRaw('LOWER(alamat) LIKE ?', ['%'.$villageNameLower.'%']);
             });
         }
 
@@ -279,15 +320,17 @@ class DashboardController extends Controller
 
     private function getPandeglangWilayahData(): array
     {
-        $localPath = database_path('data/pandeglang_wilayah.json');
-        if (is_file($localPath)) {
-            $parsed = json_decode((string) file_get_contents($localPath), true);
-            if (is_array($parsed) && isset($parsed['districts']) && is_array($parsed['districts'])) {
-                return $parsed;
+        return Cache::remember('dashboard.wilayahData', 86400, function () {
+            $localPath = database_path('data/pandeglang_wilayah.json');
+            if (is_file($localPath)) {
+                $parsed = json_decode((string) file_get_contents($localPath), true);
+                if (is_array($parsed) && isset($parsed['districts']) && is_array($parsed['districts'])) {
+                    return $parsed;
+                }
             }
-        }
 
-        return ['districts' => []];
+            return ['districts' => []];
+        });
     }
 
     private function villagesForDistrict(array $districts, string $districtCode): array
@@ -395,6 +438,7 @@ class DashboardController extends Controller
             ->take(5)
             ->map(function ($item) {
                 $item['rasio_bekerja'] = round(($item['sudah_bekerja'] / max(1, $item['total'])) * 100, 1);
+
                 return $item;
             })
             ->values();

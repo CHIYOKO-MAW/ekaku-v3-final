@@ -63,3 +63,49 @@ php artisan test
 php artisan db:seed --class=DemoDataSeeder
 ```
 - Alternatif otomatis saat `db:seed`: set `.env` -> `SEED_DEMO_DATA=true`.
+
+## 8) Railway
+### Service web
+- Connect service Railway ke repo GitHub `CHIYOKO-MAW/E-KAKU-V3`.
+- Railway akan baca `nixpacks.toml`.
+- Build sudah disiapkan untuk PHP 8.3 + Node 20.
+
+### Variables yang wajib diisi
+- `APP_NAME=E-KAKU V3`
+- `APP_ENV=production`
+- `APP_DEBUG=false`
+- `APP_URL=<domain railway kamu>`
+- `APP_TIMEZONE=Asia/Jakarta`
+- `APP_KEY=<hasil php artisan key:generate --show>`
+- `DB_CONNECTION=mysql`
+- `DB_HOST=<host MySQL Railway>`
+- `DB_PORT=<port MySQL Railway>`
+- `DB_DATABASE=<nama database Railway>`
+- `DB_USERNAME=<username MySQL Railway>`
+- `DB_PASSWORD=<password MySQL Railway>`
+- `SESSION_DRIVER=database`
+- `QUEUE_CONNECTION=database`
+- `CACHE_STORE=database`
+- `FILESYSTEM_DISK=public`
+- `MAIL_MAILER=log` jika belum pakai SMTP
+- `SEED_DEMO_DATA=false`
+- Untuk MySQL, kamu bisa copy nilai dari service database Railway atau pakai reference variable ke service MySQL.
+
+### Langkah database
+1. Tambahkan plugin MySQL ke service Railway.
+2. Copy nilai koneksi MySQL dari plugin ke variables web service.
+3. Jalankan migrasi saat deploy. File `nixpacks.toml` sudah diset untuk `php artisan migrate --force`.
+
+### Worker dan scheduler
+- Karena queue dan cache memakai database, buat service worker terpisah jika ada job background aktif:
+```bash
+php artisan queue:work --tries=3 --timeout=120
+```
+- Scheduler Laravel juga perlu jalan tiap menit. Di Railway, buat cron/job terpisah yang menjalankan:
+```bash
+php artisan schedule:run
+```
+
+### Storage
+- Upload dan foto profil memakai disk `public`.
+- Kalau file upload harus tetap aman setelah redeploy, pakai Railway Volume atau storage eksternal. Kalau tidak, file bisa hilang saat container direfresh.

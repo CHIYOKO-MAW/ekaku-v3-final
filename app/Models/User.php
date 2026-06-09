@@ -2,12 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -58,9 +56,9 @@ class User extends Authenticatable
     }
 
     public function statusPekerjaan()
-{
-    return $this->hasOne(\App\Models\StatusPekerjaan::class);
-}
+    {
+        return $this->hasOne(\App\Models\StatusPekerjaan::class);
+    }
 
     /**
      * Check if the user has completed their profile.
@@ -70,6 +68,19 @@ class User extends Authenticatable
     public function hasCompletedProfile()
     {
         return $this->biodata && $this->biodata->nik && $this->biodata->tempat_lahir && $this->biodata->tanggal_lahir && $this->biodata->alamat && $this->biodata->pendidikan;
+    }
+
+    public function hasRequiredDocuments()
+    {
+        $required = ['ktp', 'ijazah', 'foto'];
+
+        $uploaded = $this->uploads()
+            ->whereIn('jenis_dokumen', $required)
+            ->pluck('jenis_dokumen')
+            ->unique()
+            ->toArray();
+
+        return empty(array_diff($required, $uploaded));
     }
 
     /**
@@ -86,20 +97,21 @@ class User extends Authenticatable
         }
 
         $nomor_ak1 = $this->kartuKuning->nomor_ak1;
-        $issuedAt  = now()->timestamp;
+        $issuedAt = now()->timestamp;
 
         // Buat HMAC token — tidak bisa dipalsukan tanpa APP_KEY
-        $hmacPayload = $this->id . ':' . $nomor_ak1 . ':' . $issuedAt;
+        $hmacPayload = $this->id.':'.$nomor_ak1.':'.$issuedAt;
         $token = hash_hmac('sha256', $hmacPayload, config('app.key'));
 
         // Simpan token ke database
         $this->kartuKuning->update([
-            'qr_token'     => $token,
+            'qr_token' => $token,
             'qr_issued_at' => now(),
+            'expired_at' => now()->addYears(2), // QR token expires in 2 years
         ]);
 
         // URL verifikasi publik yang akan di-encode ke QR
-        $verifyUrl = url('/verify/' . urlencode($nomor_ak1) . '?token=' . $token);
+        $verifyUrl = url('/verify/'.urlencode($nomor_ak1).'?token='.$token);
 
         // Simpan URL sebagai qr_code_path agar bisa diakses oleh getQrCodeAttribute()
         $this->kartuKuning->update(['qr_code_path' => $verifyUrl]);
@@ -133,5 +145,4 @@ class User extends Authenticatable
 
         return route('profile.photo', $this);
     }
-
 }

@@ -81,14 +81,14 @@
                                 <td class="px-3 py-2 font-medium text-gray-900">{{ $item->name }}</td>
                                 <td class="px-3 py-2 text-gray-700">{{ $item->biodata->nik ?? '-' }}</td>
                                 <td class="px-3 py-2">
-                                    @php($sv = $item->biodata->status_verifikasi ?? 'pending')
+                                    @php $sv = $item->biodata->status_verifikasi ?? 'pending'; @endphp
                                     <span class="rounded-full px-2 py-1 text-xs font-semibold {{ $sv === 'verified' ? 'bg-green-100 text-green-700' : ($sv === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }}">{{ strtoupper($sv) }}</span>
                                 </td>
                                 <td class="px-3 py-2 text-gray-700">{{ $item->statusPekerjaan?->status_pekerjaan ? str_replace('_', ' ', ucfirst($item->statusPekerjaan->status_pekerjaan)) : '-' }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="px-3 py-6 text-center text-gray-500">Belum ada aktivitas user terbaru.</td>
+                                <td colspan="4" class="px-3 py-12 text-center text-gray-500"><i class="fas fa-history mr-2"></i>Belum ada aktivitas user terbaru.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -97,53 +97,76 @@
         </div>
     </div>
 
-    <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <div class="rounded-xl bg-white p-6 card-shadow">
-            <h2 class="text-lg font-semibold text-gray-900">Wilayah Prioritas Intervensi</h2>
-            <p class="mt-1 text-xs text-gray-500">Skor prioritas berdasarkan jumlah belum bekerja + pending verifikasi.</p>
-            <div class="mt-4 overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 text-sm">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-3 py-2 text-left font-semibold text-gray-600">Kecamatan</th>
-                            <th class="px-3 py-2 text-left font-semibold text-gray-600">Belum Bekerja</th>
-                            <th class="px-3 py-2 text-left font-semibold text-gray-600">Pending Verifikasi</th>
-                            <th class="px-3 py-2 text-left font-semibold text-gray-600">Total User</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @forelse(($topAttentionDistricts ?? []) as $district)
-                            <tr>
-                                <td class="px-3 py-2 font-medium text-gray-900">{{ $district['kecamatan'] }}</td>
-                                <td class="px-3 py-2 text-yellow-700">{{ $district['belum_bekerja'] }}</td>
-                                <td class="px-3 py-2 text-red-700">{{ $district['pending_verifikasi'] }}</td>
-                                <td class="px-3 py-2 text-gray-700">{{ $district['total'] }}</td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="4" class="px-3 py-5 text-center text-gray-500">Belum ada ringkasan wilayah.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
+     <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
+         <div class="rounded-xl bg-white p-6 card-shadow">
+             <h2 class="text-lg font-semibold text-gray-900">Wilayah Prioritas Intervensi</h2>
+             <p class="mt-1 text-xs text-gray-500">Skor prioritas berdasarkan jumlah belum bekerja + pending verifikasi.</p>
+             <div class="mt-4 overflow-x-auto">
+                 <table class="min-w-full divide-y divide-gray-200 text-sm">
+                     <thead class="bg-gray-50">
+                         <tr>
+                             <th class="px-3 py-2 text-left font-semibold text-gray-600">Kecamatan</th>
+                             <th class="px-3 py-2 text-left font-semibold text-gray-600">Belum Bekerja</th>
+                             <th class="px-3 py-2 text-left font-semibold text-gray-600">Pending Verifikasi</th>
+                             <th class="px-3 py-2 text-left font-semibold text-gray-600">Total User</th>
+                         </tr>
+                     </thead>
+                     <tbody class="divide-y divide-gray-100">
+                         @forelse(($topAttentionDistricts ?? []) as $district)
+                             <tr>
+                                 <td class="px-3 py-2 font-medium text-gray-900">{{ $district['kecamatan'] }}</td>
+                                 <td class="px-3 py-2 text-yellow-700">{{ $district['belum_bekerja'] }}</td>
+                                 <td class="px-3 py-2 text-red-700">{{ $district['pending_verifikasi'] }}</td>
+                                 <td class="px-3 py-2 text-gray-700">{{ $district['total'] }}</td>
+                             </tr>
+                         @empty
+                             <tr><td colspan="4" class="px-3 py-12 text-center text-gray-500"><i class="fas fa-map-marked-alt mr-2"></i>Belum ada ringkasan wilayah.</td></tr>
+                         @endforelse
+                     </tbody>
+                 </table>
+             </div>
+         </div>
 
-        <div class="rounded-xl bg-white p-6 card-shadow">
-            <h2 class="text-lg font-semibold text-gray-900">Top Rasio Sudah Bekerja</h2>
-            <p class="mt-1 text-xs text-gray-500">Peringkat kecamatan dengan rasio user bekerja tertinggi.</p>
-            <div class="mt-4 space-y-3">
-                @forelse(($topWorkingDistricts ?? []) as $district)
-                    <div class="rounded-lg border border-gray-200 p-3">
-                        <div class="flex items-center justify-between">
-                            <p class="font-medium text-gray-900">{{ $district['kecamatan'] }}</p>
-                            <span class="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-700">{{ $district['rasio_bekerja'] }}%</span>
-                        </div>
-                        <p class="mt-1 text-xs text-gray-600">{{ $district['sudah_bekerja'] }} dari {{ $district['total'] }} pengguna berstatus sudah bekerja.</p>
-                    </div>
-                @empty
-                    <p class="text-sm text-gray-500">Belum ada data rasio wilayah.</p>
-                @endforelse
-            </div>
+         <div class="rounded-xl bg-white p-6 card-shadow">
+             <h2 class="text-lg font-semibold text-gray-900">Top Rasio Sudah Bekerja</h2>
+             <p class="mt-1 text-xs text-gray-500">Peringkat kecamatan dengan rasio user bekerja tertinggi.</p>
+             <div class="mt-4 space-y-3">
+                 @forelse(($topWorkingDistricts ?? []) as $district)
+                     <div class="rounded-lg border border-gray-200 p-3">
+                         <div class="flex items-center justify-between">
+                             <p class="font-medium text-gray-900">{{ $district['kecamatan'] }}</p>
+                             <span class="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-700">{{ $district['rasio_bekerja'] }}%</span>
+                         </div>
+                         <p class="mt-1 text-xs text-gray-600">{{ $district['sudah_bekerja'] }} dari {{ $district['total'] }} pengguna berstatus sudah bekerja.</p>
+                     </div>
+@empty
+    <div class="py-8 text-center">
+        <div class="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-gray-100">
+            <i class="fas fa-trophy text-gray-400"></i>
         </div>
+        <p class="text-sm text-gray-500">Belum ada data rasio wilayah.</p>
     </div>
-</div>
-@endsection
+@endforelse
+             </div>
+         </div>
+     </div>
+
+      <!-- Charts Row -->
+      <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
+          <div class="rounded-xl bg-white p-6 card-shadow">
+              <h2 class="text-lg font-semibold text-gray-900 mb-4">Status Verifikasi</h2>
+              <canvas id="verificationChart" height="80"
+                  data-ekaku-chart='@json(['labels' => $verificationData['labels'], 'values' => $verificationData['data'], 'colors' => $verificationData['colors']])'
+                  data-chart-type="doughnut">
+              </canvas>
+          </div>
+          <div class="rounded-xl bg-white p-6 card-shadow">
+              <h2 class="text-lg font-semibold text-gray-900 mb-4">Distribusi Status Pekerjaan</h2>
+              <canvas id="jobStatusChart" height="80"
+                  data-ekaku-chart='@json(['labels' => $jobStatusLabels, 'values' => $jobStatusData, 'colors' => $jobStatusColors])'
+                  data-chart-type="bar">
+              </canvas>
+          </div>
+      </div>
+  </div>
+  @endsection

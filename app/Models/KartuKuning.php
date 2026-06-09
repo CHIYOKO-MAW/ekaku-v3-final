@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class KartuKuning extends Model
@@ -20,12 +20,14 @@ class KartuKuning extends Model
         'status',
         'qr_token',
         'qr_issued_at',
+        'expired_at',
         'scan_count',
     ];
 
-    protected $dates = [
-        'tanggal_cetak',
-        'qr_issued_at',
+    protected $casts = [
+        'tanggal_cetak' => 'datetime',
+        'qr_issued_at' => 'datetime',
+        'expired_at' => 'datetime',
     ];
 
     public function user()

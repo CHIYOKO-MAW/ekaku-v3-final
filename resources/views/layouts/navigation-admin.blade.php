@@ -7,12 +7,8 @@
 <nav class="sticky top-0 z-50 border-b border-gray-200 bg-white" x-data="{ mobileOpen: false }">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between">
-            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
-                <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-disnaker-500 text-white">
-                    <i class="fas fa-id-card text-sm"></i>
-                </span>
-                <span class="font-bold text-gray-900">e-Kaku V3</span>
-                <span class="rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">Admin</span>
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2">
+                <img src="{{ asset('images/logo-ekaku.png') }}" alt="e-Kaku" class="h-8 w-auto">
             </a>
 
             <div class="hidden items-center gap-6 sm:flex">

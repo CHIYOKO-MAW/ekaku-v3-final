@@ -15,14 +15,15 @@ class BiodataRequest extends FormRequest
     public function rules()
     {
         $user = $this->user();
-        $biodataId = optional($user->biodata)->id;
+        $biodata = $user->biodata()?->withTrashed()->first();
+        $biodataId = optional($biodata)->id;
 
         return [
             'nik' => [
                 'required',
                 'digits_between:8,20',
                 'numeric',
-                Rule::unique('biodata','nik')->ignore($biodataId),
+                Rule::unique('biodata', 'nik')->ignore($biodataId),
             ],
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',

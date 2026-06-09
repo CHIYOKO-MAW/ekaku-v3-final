@@ -1,0 +1,56 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e5]:
+      - link " e-Kaku V3" [ref=e6] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/dashboard/user
+        - generic [ref=e8]: 
+        - generic [ref=e9]: e-Kaku V3
+      - generic [ref=e10]:
+        - link " Dashboard" [ref=e11] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/dashboard/user
+          - generic [ref=e12]: 
+          - text: Dashboard
+        - link " Profil" [ref=e13] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/profile
+          - generic [ref=e14]: 
+          - text: Profil
+        - link " Update Status" [ref=e15] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/status-pekerjaan
+          - generic [ref=e16]: 
+          - text: Update Status
+        - link " Kartu Digital" [ref=e17] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/kartu-kuning
+          - generic [ref=e18]: 
+          - text: Kartu Digital
+      - generic [ref=e19]:
+        - button "" [ref=e21] [cursor=pointer]:
+          - generic [ref=e22]: 
+        - generic [ref=e23]:
+          - button "D" [ref=e24] [cursor=pointer]:
+            - generic [ref=e25]: D
+          - text:    
+      - text: 
+  - main [ref=e26]:
+    - generic [ref=e27]:
+      - heading "Upload Dokumen" [level=1] [ref=e28]
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - generic [ref=e32]: Jenis Dokumen
+          - combobox "Jenis Dokumen" [ref=e33]:
+            - option "-- Pilih --" [selected]
+            - option "KTP"
+            - option "Ijazah"
+            - option "Foto"
+        - generic [ref=e34]:
+          - generic [ref=e35]: File (jpg/png/pdf, max 5MB)
+          - button "File (jpg/png/pdf, max 5MB)" [ref=e36]
+        - generic [ref=e37]:
+          - button " Upload" [ref=e38] [cursor=pointer]:
+            - generic [ref=e39]: 
+            - text: Upload
+          - link "Kembali" [ref=e40] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/upload
+  - contentinfo [ref=e41]:
+    - generic [ref=e42]:
+      - paragraph [ref=e43]: © 2026 Dinas Tenaga Kerja Pandeglang. All rights reserved.
+      - paragraph [ref=e44]: e-Kaku V3 - Digital Yellow Card System

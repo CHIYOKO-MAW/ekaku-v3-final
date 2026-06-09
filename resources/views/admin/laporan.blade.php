@@ -17,7 +17,8 @@
             <option value="belum_bekerja" @selected(request('status') === 'belum_bekerja')>Belum Bekerja</option>
             <option value="sudah_bekerja" @selected(request('status') === 'sudah_bekerja')>Sudah Bekerja</option>
         </select>
-        <select name="kecamatan_code" class="form-input">
+        <select name="kecamatan_code" class="form-input"
+            x-on:change="document.querySelector('select[name=\'kelurahan_name\']').__x.$data.loadVillages($event.target.value)">
             <option value="">Semua Kecamatan</option>
             @foreach(($districts ?? []) as $district)
                 <option value="{{ $district['code'] }}" @selected(($selectedDistrictCode ?? '') === $district['code'])>
@@ -25,7 +26,35 @@
                 </option>
             @endforeach
         </select>
-        <select name="kelurahan_name" class="form-input">
+        <select name="kelurahan_name" class="form-input"
+            x-data="{
+                loading: false,
+                error: false,
+                async loadVillages(code) {
+                    this.loading = true;
+                    this.error = false;
+                    const el = $el;
+                    el.innerHTML = '<option value=\"\">Memuat desa...</option>';
+                    try {
+                        const res = await fetch(`/admin/wilayah/${code}/villages`, {
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        });
+                        const payload = await res.json();
+                        el.innerHTML = '<option value=\"\">Semua Desa/Kelurahan</option>';
+                        (payload.villages || []).forEach((v) => {
+                            const opt = document.createElement('option');
+                            opt.value = v.name;
+                            opt.textContent = v.name;
+                            el.appendChild(opt);
+                        });
+                    } catch {
+                        el.innerHTML = '<option value=\"\" class=\"text-red-500\">Gagal memuat desa</option>';
+                        this.error = true;
+                    } finally {
+                        this.loading = false;
+                    }
+                }
+            }">
             <option value="">Semua Desa/Kelurahan</option>
             @foreach(($villagesForSelectedDistrict ?? []) as $village)
                 <option value="{{ $village['name'] }}" @selected(($selectedVillageName ?? '') === $village['name'])>
@@ -74,7 +103,7 @@
                             <td class="px-4 py-3 text-gray-700">{{ optional($row->statusPekerjaan?->tanggal_update)->format('d M Y') ?? '-' }}</td>
                         </tr>
                     @empty
-                        <tr><td colspan="7" class="px-4 py-6 text-center text-gray-500">Tidak ada data laporan untuk filter ini.</td></tr>
+                        <tr><td colspan="7" class="px-4 py-12 text-center text-gray-500"><i class="fas fa-file-alt mr-2"></i>Tidak ada data laporan untuk filter ini.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -83,34 +112,5 @@
     </div>
 </div>
 
-@if(($districts ?? []) !== [])
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const districtSelect = document.querySelector('select[name="kecamatan_code"]');
-    const villageSelect = document.querySelector('select[name="kelurahan_name"]');
-    if (!districtSelect || !villageSelect) return;
 
-    districtSelect.addEventListener('change', async (event) => {
-        const districtCode = event.target.value;
-        villageSelect.innerHTML = '<option value="">Semua Desa/Kelurahan</option>';
-        if (!districtCode) return;
-
-        try {
-            const res = await fetch(`{{ url('/admin/wilayah') }}/${districtCode}/villages`, {
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            });
-            const payload = await res.json();
-            (payload.villages || []).forEach((village) => {
-                const option = document.createElement('option');
-                option.value = village.name;
-                option.textContent = village.name;
-                villageSelect.appendChild(option);
-            });
-        } catch (err) {
-            console.error('Gagal memuat daftar desa/kelurahan', err);
-        }
-    });
-});
-</script>
-@endif
 @endsection

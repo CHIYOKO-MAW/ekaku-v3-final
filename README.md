@@ -1,66 +1,147 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# e-Kaku V3
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Kartu Kuning (AK1) management — Disnaker Pandeglang, Banten.
 
-## e-Kaku V3 Notes
+Laravel 12, PHP 8.3, Tailwind CSS v3, Alpine.js v3.
 
-- Panduan deploy production ada di `DEPLOYMENT.md`.
-- Master wilayah Pandeglang untuk filter laporan admin ada di `database/data/pandeglang_wilayah.json`.
-- Seed demo massal: `php artisan db:seed --class=DemoDataSeeder` (opsional untuk data presentasi).
-- Paket presentasi otomatis (Windows): `PRESENTATION_PACKAGE.md`.
+---
 
-## About Laravel
+## Setup (first time)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Prerequisites
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- PHP 8.3+ (laragon recommended: `C:\laragon\bin\php\php-8.3.16-Win32-vs16-x64\php.exe`)
+- [Composer](https://getcomposer.org)
+- [Node.js](https://nodejs.org) 20+
+- [Laragon](https://laragon.org) or XAMPP with MySQL (optional, SQLite works for dev)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Quick setup
 
-## Learning Laravel
+```bash
+composer run setup
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+This runs: `composer install` → create `.env` → `php artisan key:generate` → `php artisan migrate` → `npm install` → `npm run build`.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+If you prefer step by step:
 
-## Laravel Sponsors
+```bash
+# 1. Install PHP dependencies
+composer install
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# 2. Copy environment file
+copy .env.example .env
 
-### Premium Partners
+# 3. Generate app key
+php.bat artisan key:generate
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# 4. Run migrations (default SQLite)
+php.bat artisan migrate
 
-## Contributing
+# 5. Install & build frontend
+npm install
+npm run build
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+> **Note:** On Windows, use `php.bat` instead of `php` (PHP is not in PATH, wrapper provided).
 
-## Code of Conduct
+### Database
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Default uses **SQLite** (`database/database.sqlite`). No setup needed.
 
-## Security Vulnerabilities
+For **MySQL**, edit `.env`:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ekaku-v3
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### Seed demo data
+
+```bash
+php.bat artisan db:seed --class=DemoDataSeeder
+```
+
+Or set in `.env`:
+```
+SEED_DEMO_DATA=true
+```
+Then re-run `php artisan db:seed`.
+
+Pre-seeded accounts (password: `password`):
+
+| Email | Role |
+|-------|------|
+| `user@ekaku.test` | User |
+| `admin@ekaku.test` | Admin |
+| `atasan@ekaku.test` | Atasan |
+
+---
+
+## Dev server
+
+```bash
+composer run dev
+```
+
+Starts everything at once: PHP server (`http://localhost:8000`) + queue worker + logs (`pail`) + Vite hot reload.
+
+Or run individually:
+
+```bash
+php.bat artisan serve          # dev server
+php.bat artisan queue:work     # queue (required for reminders)
+php.bat artisan schedule:work  # scheduler (required for daily reminders)
+npm run dev                    # Vite HMR
+```
+
+---
+
+## Testing
+
+```bash
+composer run test
+```
+
+Also resets config before running. Single test:
+
+```bash
+php.bat artisan test --compact --filter={TestName}
+```
+
+Uses Pest with SQLite in-memory (`RefreshDatabase`). Key test: `Ak1WorkflowTest`.
+
+---
+
+## Format code
+
+```bash
+vendor/bin/pint --dirty
+```
+
+Run before finalizing changes.
+
+---
+
+## Deployment
+
+See [`DEPLOYMENT.md`](DEPLOYMENT.md) for production checklist.
+
+Railway config via [`nixpacks.toml`](nixpacks.toml) + [`Procfile`](Procfile).
+Session, queue, cache default to `database` driver. Worker + cron defined in `Procfile`.
+
+---
+
+## Wilayah data
+
+`database/data/pandeglang_wilayah.json` — master wilayah Pandeglang for admin report filters.
+
+---
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+[MIT](LICENSE)
