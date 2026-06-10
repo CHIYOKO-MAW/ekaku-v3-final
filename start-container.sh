@@ -1,13 +1,15 @@
 #!/bin/bash
 
-echo "=== DEBUG: DB-related env vars ==="
-env | grep -iE '^(DB_|DATABASE_|MYSQL_|MARIADB_)' || echo "(none found)"
-echo "=== END DEBUG ==="
-
-# Alias Railway DATABASE_URL to Laravel DB_URL
-if [[ -z "$DB_URL" && -n "$DATABASE_URL" ]]; then
-  echo "Found DATABASE_URL=$DATABASE_URL, aliasing to DB_URL"
+# Set Laravel DB_* from Railway DATABASE_URL or MYSQL_* env vars
+if [[ -n "$DATABASE_URL" ]]; then
   export DB_URL="$DATABASE_URL"
+elif [[ -n "$MYSQL_HOST" ]]; then
+  export DB_CONNECTION=mysql
+  export DB_HOST="$MYSQL_HOST"
+  export DB_PORT="${MYSQL_PORT:-3306}"
+  export DB_DATABASE="${MYSQL_DATABASE:-railway}"
+  export DB_USERNAME="${MYSQL_USER:-railway}"
+  export DB_PASSWORD="$MYSQL_PASSWORD"
 fi
 
 php artisan storage:link 2>/dev/null || true
