@@ -1,17 +1,5 @@
 #!/bin/bash
 
-# Debug: check Railway MySQL env vars via PHP (guaranteed to appear in logs)
-php -r "
-echo 'MYSQL_HOST=[' . (getenv('MYSQL_HOST') ?: '') . ']\n';
-echo 'MYSQL_PORT=[' . (getenv('MYSQL_PORT') ?: '') . ']\n';
-echo 'MYSQL_DATABASE=[' . (getenv('MYSQL_DATABASE') ?: '') . ']\n';
-echo 'MYSQL_USER=[' . (getenv('MYSQL_USER') ?: '') . ']\n';
-echo 'MYSQL_PASSWORD=[' . (getenv('MYSQL_PASSWORD') ? 'SET' : '') . ']\n';
-echo 'MYSQL_URL=[' . (getenv('MYSQL_URL') ?: '') . ']\n';
-echo 'DATABASE_URL=[' . (getenv('DATABASE_URL') ?: '') . ']\n';
-echo 'DB_URL=[' . (getenv('DB_URL') ?: '') . ']\n';
-"
-
 # Set Laravel DB_* from Railway DATABASE_URL or MYSQL_* env vars
 if [[ -n "$DATABASE_URL" ]]; then
   export DB_CONNECTION=mysql
@@ -28,6 +16,8 @@ elif [[ -n "$MYSQL_HOST" ]]; then
   export DB_PASSWORD="$MYSQL_PASSWORD"
 fi
 
+cd /app
+npm run build 2>/dev/null || true
 php artisan storage:link 2>/dev/null || true
 php artisan migrate --force 2>/dev/null || true
 php artisan optimize:clear 2>/dev/null || true
