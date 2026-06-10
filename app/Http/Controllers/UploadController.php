@@ -6,6 +6,7 @@ use App\Models\Upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -30,10 +31,17 @@ class UploadController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'jenis_dokumen' => ['required', Rule::in(['ktp', 'ijazah', 'foto', 'kk', 'sertifikat'])],
             'file' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
         ]);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->to(route('profile.edit') . '#berkas')
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $user = Auth::user();
 

@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
     @vite(['resources/css/app.css'])
 
     <style>
@@ -282,8 +283,8 @@
         {{-- Profile --}}
         <div class="profile-section">
             <div class="avatar">
-                @if($user->profile_photo_path)
-                    <img src="{{ route('profile.photo', $user) }}" alt="{{ $user->name }}">
+                @if($photoBase64)
+                    <img src="{{ $photoBase64 }}" alt="{{ $user->name }}">
                 @else
                     <i class="fas fa-user"></i>
                 @endif

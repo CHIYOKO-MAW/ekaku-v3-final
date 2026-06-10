@@ -8,6 +8,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class KartuKuningController extends Controller
@@ -149,6 +150,13 @@ class KartuKuningController extends Controller
             ]);
         }
 
+        $photoBase64 = null;
+        if ($user->profile_photo_path && Storage::disk('public')->exists($user->profile_photo_path)) {
+            $photoData = Storage::disk('public')->get($user->profile_photo_path);
+            $mime = Storage::disk('public')->mimeType($user->profile_photo_path);
+            $photoBase64 = 'data:' . $mime . ';base64,' . base64_encode($photoData);
+        }
+
         $kartu->update([
             'last_scanned_at' => now(),
         ]);
@@ -158,6 +166,7 @@ class KartuKuningController extends Controller
             'valid' => true,
             'user' => $user,
             'kartu' => $kartu->fresh(),
+            'photoBase64' => $photoBase64,
             'validUntil' => $kartu->tanggal_cetak
                 ? \Carbon\Carbon::parse($kartu->tanggal_cetak)->addYears(2)
                 : now()->addYears(2),

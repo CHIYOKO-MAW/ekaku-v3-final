@@ -23,8 +23,8 @@ class SecurityHeaders
         $csp = [
             "default-src 'self'",
             "script-src 'self' 'unsafe-inline' 'unsafe-eval'{$viteHttp}",
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com{$viteHttp}",
-            "font-src 'self' data: https://fonts.gstatic.com{$viteHttp}",
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com{$viteHttp}",
+            "font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com{$viteHttp}",
             "img-src 'self' data:",
             "connect-src 'self'{$viteHttp}{$viteWs}",
             "frame-ancestors 'self'",
