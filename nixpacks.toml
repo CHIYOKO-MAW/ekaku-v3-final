@@ -10,5 +10,5 @@ cmds = ["npm run build"]
 [phases.postbuild]
 cmds = ["php artisan storage:link", "php artisan migrate --force"]
 
-[phases.deploy]
-cmds = ["/app/start-container.sh"]
+[start]
+cmd = "bash start-container.sh"
