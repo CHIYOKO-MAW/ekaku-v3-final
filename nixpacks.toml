@@ -9,3 +9,6 @@ cmds = ["npm run build"]
 
 [phases.release]
 cmds = ["echo build-complete"]
+
+[start]
+cmd = "bash /app/start-container.sh"
