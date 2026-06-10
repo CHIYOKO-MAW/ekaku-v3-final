@@ -18,6 +18,22 @@ fi
 
 php artisan storage:link 2>/dev/null || true
 php artisan migrate --force 2>/dev/null || true
+
+# Create demo accounts if they don't exist
+php artisan tinker <<'EOT' 2>/dev/null || true
+$users = [
+  ['name' => 'Demo Admin', 'email' => 'admin@ekaku.test', 'role' => 'admin'],
+  ['name' => 'Demo User',  'email' => 'user@ekaku.test',  'role' => 'user'],
+  ['name' => 'Demo Atasan','email' => 'atasan@ekaku.test','role' => 'atasan'],
+];
+foreach ($users as $u) {
+  if (!\App\Models\User::where('email', $u['email'])->exists()) {
+    \App\Models\User::create($u + ['password' => bcrypt('password'), 'email_verified_at' => now()]);
+    echo 'Created: ' . $u['email'] . PHP_EOL;
+  }
+}
+EOT
+
 php artisan optimize:clear 2>/dev/null || true
 php artisan optimize 2>/dev/null || true
 
