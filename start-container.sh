@@ -1,7 +1,12 @@
 #!/bin/bash
 
+echo "=== DEBUG: DB-related env vars ==="
+env | grep -iE '^(DB_|DATABASE_|MYSQL_|MARIADB_)' || echo "(none found)"
+echo "=== END DEBUG ==="
+
 # Alias Railway DATABASE_URL to Laravel DB_URL
 if [[ -z "$DB_URL" && -n "$DATABASE_URL" ]]; then
+  echo "Found DATABASE_URL=$DATABASE_URL, aliasing to DB_URL"
   export DB_URL="$DATABASE_URL"
 fi
 
