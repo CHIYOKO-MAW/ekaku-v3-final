@@ -20,10 +20,9 @@ class SecurityHeaders
         // Content Security Policy - allow Vite dev server in local environment
         $viteHttp = app()->isLocal() ? ' http://localhost:5173 http://127.0.0.1:5173' : '';
         $viteWs = app()->isLocal() ? ' ws://localhost:5173 ws://127.0.0.1:5173' : '';
-        $unsafeEval = app()->isLocal() ? " 'unsafe-eval'" : '';
         $csp = [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline'{$unsafeEval}{$viteHttp}",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval'{$viteHttp}",
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com{$viteHttp}",
             "font-src 'self' data: https://fonts.gstatic.com{$viteHttp}",
             "img-src 'self' data:",
