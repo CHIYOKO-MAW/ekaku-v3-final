@@ -86,16 +86,17 @@
                     <span x-text="showForm ? 'Batal' : 'Upload {{ $label }}'"></span>
                 </button>
 
-                <form x-cloak x-show="showForm" action="{{ route('upload.store') }}" method="POST" enctype="multipart/form-data" class="mt-4 space-y-3 rounded-lg border border-disnaker-200 bg-disnaker-50 p-4">
+                <form x-cloak x-show="showForm" action="{{ route('upload.store') }}" method="POST" enctype="multipart/form-data" class="mt-4 space-y-3 rounded-lg border border-disnaker-200 bg-disnaker-50 p-4" x-data="{ uploading: false }" @submit="uploading = true">
                     @csrf
                     <input type="hidden" name="jenis_dokumen" value="{{ $key }}">
                     <div>
                         <x-input-label for="file_{{ $key }}" value="File (jpg/png/pdf, max 5MB)" />
-                        <input id="file_{{ $key }}" type="file" name="file" class="form-input" required>
+                        <input id="file_{{ $key }}" type="file" name="file" class="form-input" required accept=".jpg,.jpeg,.png,.pdf">
                         <x-input-error :messages="$errors->get('file')" />
                     </div>
-                    <button type="submit" class="btn-primary w-full">
-                        <i class="fas fa-upload mr-2"></i>Upload
+                    <button type="submit" class="btn-primary w-full" :disabled="uploading">
+                        <i class="fas mr-2" :class="uploading ? 'fa-spinner fa-spin' : 'fa-upload'"></i>
+                        <span x-text="uploading ? 'Mengupload...' : 'Upload'"></span>
                     </button>
                 </form>
             </div>

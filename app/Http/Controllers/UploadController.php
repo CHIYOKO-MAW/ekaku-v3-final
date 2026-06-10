@@ -43,6 +43,12 @@ class UploadController extends Controller
 
         $file = $request->file('file');
 
+        if (! $file) {
+            return redirect()
+                ->to(route('profile.edit') . '#berkas')
+                ->with('error', 'File tidak terbaca. Ukuran file mungkin melebihi batas server.');
+        }
+
         $originalName = pathinfo(
             $file->getClientOriginalName(),
             PATHINFO_FILENAME
@@ -66,9 +72,10 @@ class UploadController extends Controller
             'file_path' => $path,
         ]);
 
-        return redirect()
-            ->route('upload.index')
-            ->with('success', 'File berhasil diupload.');
+        session()->flash('success', 'File berhasil diupload.');
+        session()->flash('active_tab', 'berkas');
+
+        return redirect()->to(route('profile.edit') . '#berkas');
     }
 
     public function preview(Upload $upload)
@@ -92,7 +99,7 @@ class UploadController extends Controller
             return Storage::response($relativePath);
         }
 
-        return redirect()->route('upload.index')->with('error', 'File tidak ditemukan di server. Upload ulang dokumen Anda.');
+        return redirect()->to(route('profile.edit') . '#berkas')->with('error', 'File tidak ditemukan di server. Upload ulang dokumen Anda.');
     }
 
     public function destroy(Upload $upload)
@@ -115,8 +122,9 @@ class UploadController extends Controller
 
         $upload->delete();
 
-        return redirect()
-            ->route('upload.index')
-            ->with('success', 'File berhasil dihapus.');
+        session()->flash('success', 'File berhasil dihapus.');
+        session()->flash('active_tab', 'berkas');
+
+        return redirect()->to(route('profile.edit') . '#berkas');
     }
 }
