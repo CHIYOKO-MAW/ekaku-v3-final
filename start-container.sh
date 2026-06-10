@@ -14,8 +14,10 @@ echo 'DB_URL=[' . (getenv('DB_URL') ?: '') . ']\n';
 
 # Set Laravel DB_* from Railway DATABASE_URL or MYSQL_* env vars
 if [[ -n "$DATABASE_URL" ]]; then
+  export DB_CONNECTION=mysql
   export DB_URL="$DATABASE_URL"
 elif [[ -n "$MYSQL_URL" ]]; then
+  export DB_CONNECTION=mysql
   export DB_URL="$MYSQL_URL"
 elif [[ -n "$MYSQL_HOST" ]]; then
   export DB_CONNECTION=mysql
