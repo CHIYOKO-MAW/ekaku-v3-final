@@ -16,8 +16,6 @@ elif [[ -n "$MYSQL_HOST" ]]; then
   export DB_PASSWORD="$MYSQL_PASSWORD"
 fi
 
-cd /app
-npm run build 2>/dev/null || true
 php artisan storage:link 2>/dev/null || true
 php artisan migrate --force 2>/dev/null || true
 php artisan optimize:clear 2>/dev/null || true
