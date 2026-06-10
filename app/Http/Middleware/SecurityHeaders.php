@@ -18,14 +18,16 @@ class SecurityHeaders
         $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), interest-cohort=()');
 
         // Content Security Policy - allow Vite dev server in local environment
-        $viteDev = app()->isLocal() ? ' http://localhost:5173 http://127.0.0.1:5173' : '';
+        $viteHttp = app()->isLocal() ? ' http://localhost:5173 http://127.0.0.1:5173' : '';
+        $viteWs = app()->isLocal() ? ' ws://localhost:5173 ws://127.0.0.1:5173' : '';
+        $unsafeEval = app()->isLocal() ? " 'unsafe-eval'" : '';
         $csp = [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com{$viteDev}",
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com{$viteDev}",
-            "font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
-            "img-src 'self' data: https:",
-            "connect-src 'self'{$viteDev}",
+            "script-src 'self' 'unsafe-inline'{$unsafeEval}{$viteHttp}",
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com{$viteHttp}",
+            "font-src 'self' data: https://fonts.gstatic.com{$viteHttp}",
+            "img-src 'self' data:",
+            "connect-src 'self'{$viteHttp}{$viteWs}",
             "frame-ancestors 'self'",
             "form-action 'self'",
             "base-uri 'self'",

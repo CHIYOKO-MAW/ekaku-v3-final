@@ -1,19 +1,8 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
-import {
-    ArcElement,
-    BarElement,
-    CategoryScale,
-    Chart,
-    Legend,
-    LinearScale,
-    Tooltip,
-} from 'chart.js';
 
 window.Alpine = Alpine;
 Alpine.start();
-
-Chart.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const defaultPalette = ['#eab308', '#16a34a', '#2563eb', '#dc2626', '#7c3aed', '#0891b2'];
 
@@ -30,8 +19,35 @@ const parseChartConfig = (raw) => {
     }
 };
 
-const initEkakuCharts = () => {
+const initEkakuCharts = async () => {
     const chartNodes = document.querySelectorAll('[data-ekaku-chart]');
+    if (!chartNodes.length) return;
+
+    let chartModule;
+    try {
+        chartModule = await import('chart.js');
+    } catch (error) {
+        console.error('Unable to load chart module:', error);
+        chartNodes.forEach((canvas) => {
+            canvas.classList.add('hidden');
+
+            if (canvas.parentElement?.querySelector('[data-ekaku-chart-error]')) {
+                return;
+            }
+
+            const message = document.createElement('p');
+            message.dataset.ekakuChartError = 'true';
+            message.className = 'mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700';
+            message.textContent = 'Grafik gagal dimuat. Muat ulang halaman untuk mencoba lagi.';
+            canvas.parentElement?.appendChild(message);
+        });
+        return;
+    }
+
+    const { default: Chart, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend } = chartModule;
+
+    Chart.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+
     chartNodes.forEach((canvas) => {
         const config = parseChartConfig(canvas.getAttribute('data-ekaku-chart'));
         if (!config || !Array.isArray(config.labels) || !Array.isArray(config.values)) {
@@ -92,7 +108,9 @@ const initEkakuCharts = () => {
     });
 };
 
-document.addEventListener('DOMContentLoaded', initEkakuCharts);
+document.addEventListener('DOMContentLoaded', () => {
+    initEkakuCharts().catch((err) => console.error('Chart init failed:', err));
+});
 
 document.addEventListener('submit', (e) => {
     const targetButtons = e.submitter

@@ -3,6 +3,10 @@
 @section('title', 'Beranda')
 @section('description', 'e-Kaku V3 - Sistem Digital Kartu Kuning (AK1) Dinas Tenaga Kerja Kabupaten Pandeglang. Kelola biodata, upload berkas, verifikasi admin, dan cetak kartu kuning secara online. Daftar sekarang!')
 
+@push('styles')
+<link rel="preload" as="image" href="{{ asset('images/lambang-pandeglang.webp') }}" type="image/webp">
+@endpush
+
 @section('navigation')
     @include('layouts.navigation-guest')
 @endsection
