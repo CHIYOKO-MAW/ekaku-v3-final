@@ -37,4 +37,4 @@ EOT
 php artisan optimize:clear 2>/dev/null || true
 php artisan optimize 2>/dev/null || true
 
-exec php -c /app/php.ini artisan serve --host=0.0.0.0 --port=${PORT:-8000}
+exec php -d upload_max_filesize=10M -d post_max_size=12M -d max_execution_time=120 -d max_input_time=120 -d memory_limit=256M -S 0.0.0.0:${PORT:-8000} -t public
