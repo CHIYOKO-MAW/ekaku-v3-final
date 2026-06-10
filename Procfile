@@ -1,3 +1,3 @@
-web: /start-container.sh
+web: bash /app/start-container.sh
 worker: php artisan queue:work --tries=3 --timeout=120
 cron: php artisan schedule:work
