@@ -18,6 +18,7 @@ fi
 
 php artisan storage:link 2>/dev/null || true
 php artisan migrate --force 2>/dev/null || true
+php artisan db:seed --class=DemoDataSeeder --force 2>/dev/null || true
 php artisan optimize:clear 2>/dev/null || true
 php artisan optimize 2>/dev/null || true
 
