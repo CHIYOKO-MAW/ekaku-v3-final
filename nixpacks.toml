@@ -7,5 +7,5 @@ cmds = ["composer install --optimize-autoloader --no-dev", "npm ci"]
 [phases.build]
 cmds = ["npm run build"]
 
-[start]
-cmd = "bash start-container.sh"
+[phases.release]
+cmds = ["echo build-complete"]
