@@ -7,8 +7,5 @@ cmds = ["composer install --optimize-autoloader --no-dev", "npm ci"]
 [phases.build]
 cmds = ["npm run build"]
 
-[phases.postbuild]
-cmds = ["php artisan storage:link", "php artisan migrate --force"]
-
 [start]
 cmd = "bash start-container.sh"
