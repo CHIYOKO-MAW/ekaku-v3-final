@@ -1,14 +1,16 @@
 #!/bin/bash
 
-# Debug: check Railway MySQL env vars
-echo "MYSQL_HOST=[${MYSQL_HOST}]"
-echo "MYSQL_PORT=[${MYSQL_PORT}]"
-echo "MYSQL_DATABASE=[${MYSQL_DATABASE}]"
-echo "MYSQL_USER=[${MYSQL_USER}]"
-echo "MYSQL_PASSWORD=[${MYSQL_PASSWORD:+SET}]"
-echo "MYSQL_URL=[${MYSQL_URL}]"
-echo "DATABASE_URL=[${DATABASE_URL}]"
-echo "DB_URL=[${DB_URL}]"
+# Debug: check Railway MySQL env vars via PHP (guaranteed to appear in logs)
+php -r "
+echo 'MYSQL_HOST=[' . (getenv('MYSQL_HOST') ?: '') . ']\n';
+echo 'MYSQL_PORT=[' . (getenv('MYSQL_PORT') ?: '') . ']\n';
+echo 'MYSQL_DATABASE=[' . (getenv('MYSQL_DATABASE') ?: '') . ']\n';
+echo 'MYSQL_USER=[' . (getenv('MYSQL_USER') ?: '') . ']\n';
+echo 'MYSQL_PASSWORD=[' . (getenv('MYSQL_PASSWORD') ? 'SET' : '') . ']\n';
+echo 'MYSQL_URL=[' . (getenv('MYSQL_URL') ?: '') . ']\n';
+echo 'DATABASE_URL=[' . (getenv('DATABASE_URL') ?: '') . ']\n';
+echo 'DB_URL=[' . (getenv('DB_URL') ?: '') . ']\n';
+"
 
 # Set Laravel DB_* from Railway DATABASE_URL or MYSQL_* env vars
 if [[ -n "$DATABASE_URL" ]]; then
