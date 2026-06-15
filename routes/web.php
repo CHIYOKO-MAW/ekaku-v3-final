@@ -28,7 +28,7 @@ Route::middleware(['auth', 'role:admin', DoNotCacheResponse::class])->get('/forc
     }
 });
 
-Route::middleware(CacheResponse::using(3600))->get('/', function () {
+Route::get('/', function () {
     $stats = [
         'pencari_kerja' => User::count(),
         'kartu_terbit' => KartuKuning::count(),
@@ -37,7 +37,7 @@ Route::middleware(CacheResponse::using(3600))->get('/', function () {
 
     return view('welcome', compact('stats'));
 })->name('welcome');
-Route::middleware(CacheResponse::using(3600))->get('/landing', fn () => redirect()->route('welcome'))->name('landing');
+Route::get('/landing', fn () => redirect()->route('welcome'))->name('landing');
 
 if (file_exists(__DIR__.'/auth.php')) {
     require __DIR__.'/auth.php';
