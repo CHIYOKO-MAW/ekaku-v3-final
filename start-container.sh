@@ -37,7 +37,8 @@ EOT
 # Warm caches at startup — avoid per-request overhead
 php artisan config:cache 2>/dev/null || true
 php artisan route:cache 2>/dev/null || true
-php artisan view:cache 2>/dev/null || true
+# php artisan view:cache conflicts with Blaze::optimize — let Blaze handle compilation
+# php artisan view:cache 2>/dev/null || true
 php artisan event:cache 2>/dev/null || true
 
 # Ensure public disk link (idempotent)
