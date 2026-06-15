@@ -38,7 +38,7 @@ Route::get('/', function () {
     ];
 
     return view('welcome', compact('stats'));
-})->name('welcome');
+})->middleware(CacheResponse::using(3600))->name('welcome');
 Route::get('/landing', fn () => redirect()->route('welcome'))->name('landing');
 
 if (file_exists(__DIR__.'/auth.php')) {
