@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
-use Livewire\Blaze\Blaze;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,13 +34,6 @@ class AppServiceProvider extends ServiceProvider
         // Prefetch Vite assets on idle (Laravel built-in)
         if (config('app.env') === 'production') {
             Vite::prefetch(concurrency: 3);
-        }
-
-        // Blaze: pre-compile Blade components for faster rendering
-        if (class_exists(Blaze::class)) {
-            Blaze::optimize()
-                ->in(resource_path('views/components'), compile: true)
-                ->in(resource_path('views/layouts'), compile: true, fold: true);
         }
 
         // Listen for biodata status changes and send notification
