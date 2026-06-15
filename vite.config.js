@@ -15,7 +15,7 @@ export default defineConfig({
         strictPort: true,
     },
     build: {
-        manifest: true,
+        manifest: 'manifest.json',
         outDir: 'public/build',
         rollupOptions: {
             output: {
