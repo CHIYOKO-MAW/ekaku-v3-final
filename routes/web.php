@@ -28,6 +28,16 @@ Route::middleware(['auth', 'role:admin', DoNotCacheResponse::class])->get('/forc
     }
 });
 
+Route::get('/debug', function () {
+    $manifestExists = file_exists(public_path('build/manifest.json')) ? 'YES' : 'NO';
+    $hotExists = file_exists(public_path('hot')) ? 'YES' : 'NO';
+    $zlib = ini_get('zlib.output_compression');
+    $obLevel = ob_get_level();
+
+    return response("PHP OK | APP_ENV=" . app()->environment() . " | manifest: $manifestExists | hot: $hotExists | zlib=$zlib | ob_level=$obLevel")
+        ->header('Content-Type', 'text/plain');
+});
+
 Route::get('/', function () {
     $stats = [
         'pencari_kerja' => User::count(),
