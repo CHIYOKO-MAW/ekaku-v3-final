@@ -33,9 +33,28 @@ Route::get('/debug', function () {
     $hotExists = file_exists(public_path('hot')) ? 'YES' : 'NO';
     $zlib = ini_get('zlib.output_compression');
     $obLevel = ob_get_level();
+    $viteError = '';
+    try {
+        $viteOutput = app(\Illuminate\Foundation\Vite::class)(['resources/css/app.css', 'resources/js/app.js'])->toHtml();
+        $viteOutput = 'OK: ' . substr($viteOutput, 0, 100);
+    } catch (\Throwable $e) {
+        $viteError = get_class($e) . ': ' . $e->getMessage();
+    }
+    $viewError = '';
+    try {
+        $viewHtml = view('welcome', ['stats' => ['pencari_kerja' => 0, 'kartu_terbit' => 0, 'biodata_terverifikasi' => 0]])->render();
+        $viewLen = strlen($viewHtml);
+    } catch (\Throwable $e) {
+        $viewError = get_class($e) . ': ' . $e->getMessage();
+    }
 
-    return response("PHP OK | APP_ENV=" . app()->environment() . " | manifest: $manifestExists | hot: $hotExists | zlib=$zlib | ob_level=$obLevel")
-        ->header('Content-Type', 'text/plain');
+    return response(
+        "PHP OK\nAPP_ENV=" . app()->environment() . "\nmanifest=$manifestExists\nhot=$hotExists\nzlib=$zlib\nob_level=$obLevel" .
+        "\nvite=$viteOutput" .
+        "\nvite_err=$viteError" .
+        "\nview_len=" . ($viewLen ?? 'FAIL') .
+        "\nview_err=$viewError"
+    )->header('Content-Type', 'text/plain');
 });
 
 Route::get('/', function () {
