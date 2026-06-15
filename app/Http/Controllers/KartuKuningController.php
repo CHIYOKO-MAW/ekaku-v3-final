@@ -8,6 +8,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -47,10 +48,13 @@ class KartuKuningController extends Controller
 
         $this->ensureKartuKuningReady($user);
 
-        $qrSvg = QrCode::format('svg')
-            ->size(200)
-            ->generate($user->qr_code);
-        $qrBase64 = base64_encode($qrSvg);
+        $qrBase64 = Cache::remember('kartu.qr_svg.'.$user->id, 86400, function () use ($user) {
+            $svg = QrCode::format('svg')
+                ->size(200)
+                ->generate($user->qr_code);
+
+            return base64_encode($svg);
+        });
 
         return view('user.card-show', [
             'user' => $user,
@@ -93,18 +97,30 @@ class KartuKuningController extends Controller
             $user->refresh(['biodata', 'kartuKuning']);
         }
 
-        $qrSvg = QrCode::format('svg')
-            ->size(200)
-            ->generate($user->qr_code);
-        $qrBase64 = base64_encode($qrSvg);
+        $qrBase64 = Cache::remember('kartu.qr_svg.'.$user->id, 86400, function () use ($user) {
+            $svg = QrCode::format('svg')
+                ->size(200)
+                ->generate($user->qr_code);
 
-        $pdf = Pdf::loadView('kartu.cetak', [
-            'user' => $user->fresh(['biodata', 'kartuKuning']),
-            'qrBase64' => $qrBase64,
-            'validUntil' => now()->addYears(2),
-        ])->setPaper('a4', 'portrait');
+            return base64_encode($svg);
+        });
 
-        return $pdf->download('kartu-kuning-'.$user->id.'.pdf');
+        $pdfCacheKey = 'kartu.pdf.'.$user->id;
+        $pdfOutput = Cache::remember($pdfCacheKey, 604800, function () use ($user, $qrBase64) {
+            $pdf = Pdf::loadView('kartu.cetak', [
+                'user' => $user->fresh(['biodata', 'kartuKuning']),
+                'qrBase64' => $qrBase64,
+                'validUntil' => now()->addYears(2),
+            ])->setPaper('a4', 'portrait');
+
+            return $pdf->output();
+        });
+
+        return response()->streamDownload(function () use ($pdfOutput) {
+            echo $pdfOutput;
+        }, 'kartu-kuning-'.$user->id.'.pdf', [
+            'Content-Type' => 'application/pdf',
+        ]);
     }
 
     /**

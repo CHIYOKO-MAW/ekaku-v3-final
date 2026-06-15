@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 
 class User extends Authenticatable
 {
@@ -115,6 +116,10 @@ class User extends Authenticatable
 
         // Simpan URL sebagai qr_code_path agar bisa diakses oleh getQrCodeAttribute()
         $this->kartuKuning->update(['qr_code_path' => $verifyUrl]);
+
+        // Batal cache QR SVG dan PDF — konten sudah berubah
+        Cache::forget('kartu.qr_svg.'.$this->id);
+        Cache::forget('kartu.pdf.'.$this->id);
     }
 
     /**

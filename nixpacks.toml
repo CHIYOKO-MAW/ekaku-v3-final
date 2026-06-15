@@ -1,11 +1,11 @@
 [phases.setup]
-nixPkgs = ["php83", "php83Extensions.gd", "php83Extensions.mbstring", "php83Extensions.pdo_mysql", "php83Extensions.fileinfo", "php83Extensions.zip", "php83Extensions.openssl", "php83Packages.composer", "nodejs_20"]
+nixPkgs = ["php83", "php83Extensions.gd", "php83Extensions.mbstring", "php83Extensions.pdo_mysql", "php83Extensions.fileinfo", "php83Extensions.zip", "php83Extensions.openssl", "php83Packages.composer", "nodejs_20", "frankenphp"]
 
 [phases.install]
 cmds = ["composer install --optimize-autoloader --no-dev --no-scripts", "npm ci"]
 
 [phases.build]
-cmds = ["npm run build"]
+cmds = ["composer dump-autoload --optimize --no-dev", "npm run build"]
 
 [phases.release]
 cmds = ["echo build-complete"]

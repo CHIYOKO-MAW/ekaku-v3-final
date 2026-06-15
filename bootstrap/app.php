@@ -23,7 +23,6 @@ return Application::configure(basePath: dirname(__DIR__))
         // Railway uses dynamic public IPs — trust all proxies for HTTPS detection
         $middleware->trustProxies(at: '*');
 
-        $middleware->append(\App\Http\Middleware\CompressionMiddleware::class);
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
 
     })

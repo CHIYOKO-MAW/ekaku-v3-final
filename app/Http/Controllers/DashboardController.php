@@ -36,8 +36,10 @@ class DashboardController extends Controller
         $user = Auth::user();
         $biodata = $user->biodata;
         $status = $user->statusPekerjaan;
-        $notifications = $user->notificationsE()->latest()->take(5)->get();
-        $unreadCount = $user->notificationsE()->where('status_baca', false)->count();
+
+        $notificationsQuery = $user->notificationsE()->latest();
+        $notifications = (clone $notificationsQuery)->take(5)->get();
+        $unreadCount = (clone $notificationsQuery)->where('status_baca', false)->count();
 
         return view('user.dashboard', compact('user', 'biodata', 'status', 'notifications', 'unreadCount'));
     }
@@ -101,7 +103,7 @@ class DashboardController extends Controller
                 ->get();
         });
 
-        $regionalSummary = Cache::remember('dashboard.admin.regionalSummary', 600, function () use ($districts) {
+        $regionalSummary = Cache::remember('dashboard.admin.regionalSummary', 3600, function () use ($districts) {
             return $this->buildRegionalSummary($districts);
         });
         $topAttentionDistricts = $regionalSummary['topAttentionDistricts'];
@@ -398,7 +400,10 @@ class DashboardController extends Controller
         }
 
         $districtNames = collect($districts)->pluck('name')->all();
-        $users = User::where('role', 'user')->with(['biodata', 'statusPekerjaan'])->get();
+        $users = User::where('role', 'user')
+            ->has('biodata')
+            ->with(['biodata', 'statusPekerjaan'])
+            ->get();
         $bucket = [];
 
         foreach ($users as $user) {
