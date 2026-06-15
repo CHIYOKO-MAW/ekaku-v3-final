@@ -59,7 +59,7 @@ class Ak1WorkflowTest extends TestCase
                 'file' => $file,
                 'jenis_dokumen' => $jenis,
             ]);
-            $response->assertRedirect(route('upload.index'));
+            $response->assertRedirect(route('profile.edit').'#berkas');
             $response->assertSessionHas('success');
         }
 

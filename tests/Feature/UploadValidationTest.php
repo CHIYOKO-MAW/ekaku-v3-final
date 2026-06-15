@@ -67,7 +67,7 @@ class UploadValidationTest extends TestCase
             'file' => UploadedFile::fake()->image('kk.jpg', 200, 200),
         ]);
 
-        $response->assertRedirect(route('upload.index'));
+        $response->assertRedirect(route('profile.edit').'#berkas');
         $response->assertSessionHas('success');
         $this->assertEquals(1, $user->uploads()->count());
     }
@@ -81,7 +81,7 @@ class UploadValidationTest extends TestCase
             'file' => UploadedFile::fake()->create('sertifikat.pdf', 500),
         ]);
 
-        $response->assertRedirect(route('upload.index'));
+        $response->assertRedirect(route('profile.edit').'#berkas');
         $response->assertSessionHas('success');
         $this->assertEquals(1, $user->uploads()->count());
     }
@@ -95,7 +95,7 @@ class UploadValidationTest extends TestCase
             'file' => UploadedFile::fake()->image('ktp.jpg', 200, 200),
         ]);
 
-        $response->assertRedirect(route('upload.index'));
+        $response->assertRedirect(route('profile.edit').'#berkas');
         $response->assertSessionHas('success');
         $this->assertEquals(1, $user->uploads()->count());
     }
