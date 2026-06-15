@@ -15,7 +15,9 @@
         "fakerphp/faker": "^1.23",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "simplesoftwareio/simple-qrcode": "*"
+        "livewire/blaze": "^1.0",
+        "simplesoftwareio/simple-qrcode": "*",
+        "spatie/laravel-responsecache": "*"
     },
     "require-dev": {
         "laravel/boost": "^1.8",

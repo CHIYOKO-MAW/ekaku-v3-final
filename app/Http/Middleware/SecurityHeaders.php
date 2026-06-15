@@ -17,6 +17,14 @@ class SecurityHeaders
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), interest-cohort=()');
 
+        // Cache static build assets immutably; private for everything else
+        $path = $request->getPathInfo();
+        if (preg_match('#^/(build|favicon|images)/#', $path)) {
+            $response->headers->set('Cache-Control', 'public, max-age=31536000, immutable');
+        } else {
+            $response->headers->set('Cache-Control', 'no-cache, private');
+        }
+
         // Content Security Policy - allow Vite dev server in local environment
         $viteHttp = app()->isLocal() ? ' http://localhost:5173 http://127.0.0.1:5173' : '';
         $viteWs = app()->isLocal() ? ' ws://localhost:5173 ws://127.0.0.1:5173' : '';

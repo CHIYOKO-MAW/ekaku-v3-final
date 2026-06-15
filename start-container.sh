@@ -34,7 +34,13 @@ foreach ($users as $u) {
 }
 EOT
 
-php artisan optimize:clear 2>/dev/null || true
-php artisan optimize 2>/dev/null || true
+# Warm caches at startup — avoid per-request overhead
+php artisan config:cache 2>/dev/null || true
+php artisan route:cache 2>/dev/null || true
+php artisan view:cache 2>/dev/null || true
+php artisan event:cache 2>/dev/null || true
 
-exec php -d upload_max_filesize=10M -d post_max_size=12M -d max_execution_time=120 -d max_input_time=120 -d memory_limit=256M -S 0.0.0.0:${PORT:-8000} -t public
+# Ensure public disk link (idempotent)
+php artisan storage:link 2>/dev/null || true
+
+exec php -d upload_max_filesize=10M -d post_max_size=12M -d max_execution_time=120 -d max_input_time=120 -d memory_limit=256M -d zlib.output_compression=On -d opcache.enable=1 -d opcache.memory_consumption=128 -d opcache.max_accelerated_files=10000 -d opcache.validate_timestamps=0 -d opcache.revalidate_freq=0 -d opcache.save_comments=0 -S 0.0.0.0:${PORT:-8000} -t public

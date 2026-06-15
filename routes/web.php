@@ -14,8 +14,10 @@ use App\Models\KartuKuning;
 use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+use Spatie\ResponseCache\Middlewares\CacheResponse;
+use Spatie\ResponseCache\Middlewares\DoNotCacheResponse;
 
-Route::middleware(['auth', 'role:admin'])->get('/force-seed', function () {
+Route::middleware(['auth', 'role:admin', DoNotCacheResponse::class])->get('/force-seed', function () {
     try {
         echo 'Starting seeding...<br>';
         Artisan::call('db:seed', ['--force' => true]);
@@ -26,7 +28,7 @@ Route::middleware(['auth', 'role:admin'])->get('/force-seed', function () {
     }
 });
 
-Route::get('/', function () {
+Route::middleware(CacheResponse::using(3600))->get('/', function () {
     $stats = [
         'pencari_kerja' => User::count(),
         'kartu_terbit' => KartuKuning::count(),
@@ -35,13 +37,13 @@ Route::get('/', function () {
 
     return view('welcome', compact('stats'));
 })->name('welcome');
-Route::get('/landing', fn () => redirect()->route('welcome'))->name('landing');
+Route::middleware(CacheResponse::using(3600))->get('/landing', fn () => redirect()->route('welcome'))->name('landing');
 
 if (file_exists(__DIR__.'/auth.php')) {
     require __DIR__.'/auth.php';
 }
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', DoNotCacheResponse::class])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -115,11 +117,11 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-Route::middleware('auth')->get('/kartu-scan/{id}', [KartuKuningController::class, 'scanData'])->name('kartu.scan.data');
+Route::middleware(['auth', DoNotCacheResponse::class])->get('/kartu-scan/{id}', [KartuKuningController::class, 'scanData'])->name('kartu.scan.data');
 
 // Halaman verifikasi publik — dibuka saat QR discan (tidak perlu login)
 Route::middleware('throttle:30,1')->get('/verify/{nomor_ak1}', [KartuKuningController::class, 'verify'])->name('kartu.verify');
 
 Route::get('/dashboard/user', [DashboardController::class, 'user'])
-    ->middleware(['auth', 'role:user'])
+    ->middleware(['auth', 'role:user', DoNotCacheResponse::class])
     ->name('dashboard.user');

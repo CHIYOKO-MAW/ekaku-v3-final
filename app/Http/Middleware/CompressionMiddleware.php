@@ -33,6 +33,12 @@ class CompressionMiddleware
             return $response;
         }
 
+        // If zlib.output_compression is on globally, let PHP handle it
+        if (ini_get('zlib.output_compression')) {
+            $response->headers->set('Vary', 'Accept-Encoding');
+            return $response;
+        }
+
         if (str_contains($acceptEncoding, 'br') && function_exists('brotli_compress')) {
             $compressed = brotli_compress($content);
             if ($compressed !== false && strlen($compressed) < strlen($content)) {
