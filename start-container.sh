@@ -27,4 +27,14 @@ php artisan event:cache 2>/dev/null || true
 
 php artisan storage:link 2>/dev/null || true
 
-exec frankenphp run --config /app/Caddyfile
+exec php -S 0.0.0.0:${PORT:-8000} -t public \
+  -d upload_max_filesize=10M \
+  -d post_max_size=12M \
+  -d max_execution_time=120 \
+  -d max_input_time=120 \
+  -d memory_limit=256M \
+  -d opcache.enable=1 \
+  -d opcache.memory_consumption=128 \
+  -d opcache.max_accelerated_files=10000 \
+  -d opcache.validate_timestamps=0 \
+  -d opcache.save_comments=0
