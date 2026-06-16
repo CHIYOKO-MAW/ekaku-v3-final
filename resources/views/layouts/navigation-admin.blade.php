@@ -1,7 +1,7 @@
 @php
     $currentUser = auth()->user();
-    $unreadNotes = $currentUser->notificationsE()->where('status_baca', false)->count();
-    $latestNotes = $currentUser->notificationsE()->latest()->take(5)->get();
+    $unreadNotes = $unreadNotes ?? $currentUser->notificationsE()->where('status_baca', false)->count();
+    $latestNotes = $latestNotes ?? $currentUser->notificationsE()->latest()->take(5)->get();
 @endphp
 
 <nav class="sticky top-0 z-50 border-b border-gray-200 bg-white" x-data="{ mobileOpen: false }">

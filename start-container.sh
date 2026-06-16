@@ -19,6 +19,9 @@ fi
 php artisan storage:link 2>/dev/null || true
 php artisan migrate --force 2>/dev/null || true
 
+# Ensure file-based session/cache directories exist
+mkdir -p storage/framework/sessions storage/framework/cache/data
+
 # Warm caches after env vars are set
 php artisan config:cache 2>/dev/null || true
 php artisan route:cache 2>/dev/null || true

@@ -34,6 +34,8 @@ class DashboardController extends Controller
     public function user()
     {
         $user = Auth::user();
+        $user->load(['kartuKuning', 'biodata', 'statusPekerjaan']);
+
         $biodata = $user->biodata;
         $status = $user->statusPekerjaan;
 
@@ -41,12 +43,22 @@ class DashboardController extends Controller
         $notifications = (clone $notificationsQuery)->take(5)->get();
         $unreadCount = (clone $notificationsQuery)->where('status_baca', false)->count();
 
+        \Illuminate\Support\Facades\View::share('unreadNotes', $unreadCount);
+        \Illuminate\Support\Facades\View::share('latestNotes', $notifications);
+
         return view('user.dashboard', compact('user', 'biodata', 'status', 'notifications', 'unreadCount'));
     }
 
     public function admin()
     {
         $districts = $this->getPandeglangWilayahData()['districts'];
+
+        $user = Auth::user();
+        $notificationsQuery = $user->notificationsE()->latest();
+        $notifications = (clone $notificationsQuery)->take(5)->get();
+        $unreadCount = (clone $notificationsQuery)->where('status_baca', false)->count();
+        \Illuminate\Support\Facades\View::share('unreadNotes', $unreadCount);
+        \Illuminate\Support\Facades\View::share('latestNotes', $notifications);
 
         $stats = Cache::remember('dashboard.admin.stats', 300, function () {
             return [
@@ -234,6 +246,13 @@ class DashboardController extends Controller
 
     public function atasan()
     {
+        $user = Auth::user();
+        $notificationsQuery = $user->notificationsE()->latest();
+        $notifications = (clone $notificationsQuery)->take(5)->get();
+        $unreadCount = (clone $notificationsQuery)->where('status_baca', false)->count();
+        \Illuminate\Support\Facades\View::share('unreadNotes', $unreadCount);
+        \Illuminate\Support\Facades\View::share('latestNotes', $notifications);
+
         $stats = Cache::remember('dashboard.atasan.stats', 300, function () {
             return [
                 'totalAdmin' => User::where('role', 'admin')->count(),
