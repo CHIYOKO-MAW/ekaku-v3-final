@@ -9,12 +9,8 @@
     <title>{{ config('app.name', 'e-Kaku V3') }} - @yield('title', 'Digital Yellow Card')</title>
 
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon.ico') }}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('css/fa-subset.css') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
