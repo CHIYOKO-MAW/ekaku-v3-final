@@ -121,11 +121,15 @@ class KartuKuningController extends Controller
 
             // Logo as base64 data URI (DOMPDF can't access public_path in production)
             $logoBase64 = Cache::rememberForever('kartu.logo_base64', function () {
-                $logoPath = public_path('images/lambang-pandeglang.png');
-                if (file_exists($logoPath)) {
-                    $mime = mime_content_type($logoPath);
-                    return 'data:'.$mime.';base64,'.base64_encode(file_get_contents($logoPath));
+                // Try both .png and .webp (production has .webp)
+                foreach (['png', 'webp'] as $ext) {
+                    $logoPath = public_path("images/lambang-pandeglang.{$ext}");
+                    if (file_exists($logoPath)) {
+                        $mime = mime_content_type($logoPath);
+                        return 'data:'.$mime.';base64,'.base64_encode(file_get_contents($logoPath));
+                    }
                 }
+                Log::warning('Logo file not found in public/images/');
                 return null;
             });
 
