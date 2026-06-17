@@ -8,6 +8,7 @@
     <title>@yield('title', 'Auth') - {{ config('app.name', 'e-Kaku V3') }}</title>
 
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon.ico') }}">
+    <link rel="preload" href="{{ asset('fa-solid-900.woff2') }}" as="font" type="font/woff2" crossorigin>
 
     <style>
     @font-face{font-family:"Font Awesome 6 Free";font-style:normal;font-weight:900;font-display:swap;src:url({{ asset('fa-solid-900.woff2') }}) format("woff2")}.fa,.fa-solid,.fas{-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased;display:inline-block;font-style:normal;font-variant:normal;line-height:1;text-rendering:auto}.fa-classic,.fa-solid,.fas{font-family:"Font Awesome 6 Free"}.fas{font-weight:900}.fas:before{content:var(--fa)}.fa-fw{text-align:center;width:1.25em}.fa-ul{list-style-type:none;margin-left:2.5em;padding-left:0}.fa-ul>li{position:relative}.fa-li{left:calc(2em * -1);position:absolute;text-align:center;width:2em;line-height:inherit}@keyframes fa-spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}.fa-spin{animation:fa-spin 1s infinite linear}.fa-address-card{--fa:"\f2be"}.fa-arrow-left{--fa:"\f060"}.fa-arrow-right{--fa:"\f061"}.fa-bars{--fa:"\f0c9"}.fa-bell{--fa:"\f0f3"}.fa-bell-slash{--fa:"\f1f6"}.fa-bolt{--fa:"\f0e7"}.fa-building-columns{--fa:"\f19c"}.fa-calendar-check{--fa:"\f272"}.fa-camera{--fa:"\f030"}.fa-certificate{--fa:"\f0a3"}.fa-chart-line{--fa:"\f201"}.fa-check-circle{--fa:"\f058"}.fa-chevron-down{--fa:"\f078"}.fa-chevron-up{--fa:"\f077"}.fa-circle-check{--fa:"\f058"}.fa-circle-xmark{--fa:"\f057"}.fa-clock-rotate-left{--fa:"\f1da"}.fa-cloud-upload-alt{--fa:"\f0ee"}.fa-database{--fa:"\f1c0"}.fa-envelope{--fa:"\f0e0"}.fa-exclamation-circle{--fa:"\f06a"}.fa-exclamation-triangle{--fa:"\f071"}.fa-eye{--fa:"\f06e"}.fa-eye-slash{--fa:"\f070"}.fa-file{--fa:"\f15b"}.fa-file-alt{--fa:"\f15c"}.fa-file-pdf{--fa:"\f1c1"}.fa-file-upload{--fa:"\f574"}.fa-graduation-cap{--fa:"\f501"}.fa-history{--fa:"\f1da"}.fa-id-card{--fa:"\f2c2"}.fa-info-circle{--fa:"\f05a"}.fa-lock{--fa:"\f023"}.fa-map-marked-alt{--fa:"\f5a0"}.fa-paper-plane{--fa:"\f1d8"}.fa-plus{--fa:"\f067"}.fa-print{--fa:"\f02f"}.fa-qrcode{--fa:"\f029"}.fa-save{--fa:"\f0c7"}.fa-shield-halved{--fa:"\f3ed"}.fa-sign-out-alt{--fa:"\f2f5"}.fa-spinner{--fa:"\f110"}.fa-sync-alt{--fa:"\f2f1"}.fa-tachometer-alt{--fa:"\f3fd"}.fa-times{--fa:"\f00d"}.fa-trash-alt{--fa:"\f2ed"}.fa-triangle-exclamation{--fa:"\f071"}.fa-trophy{--fa:"\f091"}.fa-upload{--fa:"\f093"}.fa-user{--fa:"\f007"}.fa-user-shield{--fa:\f505}.fa-users{--fa:"\f0c0"}.fa-building{--fa:"\f1ad"}.fa-chart-pie{--fa:"\f200"}.fa-check{--fa:"\f00c"}.fa-download{--fa:"\f019"}.fa-file-export{--fa:"\f56e"}.fa-map-marker-alt{--fa:"\f3c5"}.fa-mobile-alt{--fa:"\f3cd"}.fa-phone{--fa:"\f095"}.fa-sign-in-alt{--fa:"\f2f6"}.fa-user-edit{--fa:"\f4ff"}.fa-user-plus{--fa:"\f234"}
@@ -35,7 +36,7 @@
                 <div class="mb-6 flex justify-center lg:justify-start">
                     <picture>
                         <source srcset="{{ asset('images/logo-ekaku.webp') }}" type="image/webp">
-                        <img src="{{ asset('images/logo-ekaku.png') }}" alt="e-Kaku" class="h-14 object-contain brightness-0 invert">
+                        <img src="{{ asset('images/logo-ekaku.png') }}" alt="e-Kaku" class="h-14 object-contain brightness-0 invert" width="56" height="56">
                     </picture>
                 </div>
                 <h1 class="text-3xl font-bold leading-tight md:text-4xl">e-Kaku V3</h1>
@@ -44,7 +45,7 @@
                 <div class="mt-8 hidden lg:flex justify-center lg:justify-start">
                     <picture>
                         <source srcset="{{ asset('images/lambang-pandeglang.webp') }}" type="image/webp">
-                        <img src="{{ asset('images/lambang-pandeglang.png') }}" alt="Lambang Pandeglang" class="h-28 w-28 animate-float opacity-30">
+                        <img src="{{ asset('images/lambang-pandeglang.png') }}" alt="Lambang Pandeglang" class="h-28 w-28 animate-float opacity-30" width="112" height="112">
                     </picture>
                 </div>
             </div>
@@ -55,7 +56,7 @@
                 <div class="text-center lg:hidden">
                     <picture>
                         <source srcset="{{ asset('images/logo-ekaku.webp') }}" type="image/webp">
-                        <img src="{{ asset('images/logo-ekaku.png') }}" alt="e-Kaku" class="mx-auto mb-6 h-10 object-contain">
+                        <img src="{{ asset('images/logo-ekaku.png') }}" alt="e-Kaku" class="mx-auto mb-6 h-10 object-contain" width="40" height="40">
                     </picture>
                 </div>
                 <div class="rounded-2xl border border-gray-100 bg-white shadow-xl shadow-gray-200/50">
