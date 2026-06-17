@@ -43,7 +43,7 @@ body{font-family:DejaVu Sans,sans-serif;color:#0f172a;margin:0;padding:0}
                 <td width="20"></td>
                 <td valign="middle" align="right" style="white-space:nowrap">
                     <div style="font-size:5px;color:rgba(255,255,255,0.45);text-transform:uppercase">No. Registrasi</div>
-                    <div style="font-size:8px;font-weight:bold">{{ $user->kartuKuning->nomor_ak1 ?? '-' }}</div>
+                    <div style="font-size:8px;font-weight:bold">{{ $user->kartuKuning?->nomor_ak1 ?? '-' }}</div>
                 </td>
             </tr>
         </table>
@@ -155,7 +155,7 @@ body{font-family:DejaVu Sans,sans-serif;color:#0f172a;margin:0;padding:0}
                     <table width="100%" cellpadding="0" cellspacing="0">
                         <tr>
                             <td width="80"><span class="fl">Tanggal Cetak</span></td>
-                            <td><span class="fv">{{ optional($user->kartuKuning->tanggal_cetak)->format('d/m/Y') ?? now()->format('d/m/Y') }}</span></td>
+                            <td><span class="fv">{{ $user->kartuKuning?->tanggal_cetak?->format('d/m/Y') ?? now()->format('d/m/Y') }}</span></td>
                         </tr>
                         <tr>
                             <td><span class="fl">Berlaku Hingga</span></td>
