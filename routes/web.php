@@ -104,30 +104,6 @@ Route::middleware(['auth', DoNotCacheResponse::class])->group(function () {
         Route::get('/wilayah/{districtCode}/villages', [DashboardController::class, 'villagesByDistrict'])->name('wilayah.villages');
         Route::view('/notifikasi', 'admin.notification')->name('notification');
         Route::get('/user-management', fn () => redirect()->route('admin.pengguna.index'))->name('user-management');
-
-        // Temporary debug route — REMOVE after fixing PDF issue
-        Route::get('/debug/logs', function () {
-            $logPath = storage_path('logs/laravel.log');
-            if (! file_exists($logPath)) {
-                return response()->json(['error' => 'Log file not found']);
-            }
-            $size = filesize($logPath);
-            $lines = 100;
-            $handle = fopen($logPath, 'r');
-            if (! $handle) {
-                return response()->json(['error' => 'Cannot open log file']);
-            }
-            $buffer = '';
-            $chunk = 8192;
-            fseek($handle, max(0, $size - ($chunk * $lines)));
-            while (!feof($handle)) {
-                $buffer .= fread($handle, $chunk);
-            }
-            fclose($handle);
-            $logLines = explode("\n", $buffer);
-            $logLines = array_slice($logLines, -$lines);
-            return response(implode("\n", $logLines), 200, ['Content-Type' => 'text/plain']);
-        })->name('admin.debug.logs');
     });
 
     Route::middleware('role:atasan')->prefix('atasan')->name('atasan.')->group(function () {

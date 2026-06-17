@@ -77,11 +77,9 @@ class KartuKuningController extends Controller
     public function generatePdf(int $id)
     {
         ini_set('memory_limit', '512M');
-        Log::info("PDF generatePdf START user={$id}");
 
         try {
             $currentUser = Auth::user();
-            Log::info("PDF auth ok user_id={$currentUser?->id}");
 
             if (! $currentUser) {
                 abort(403);
@@ -92,7 +90,6 @@ class KartuKuningController extends Controller
             }
 
             $user = User::with(['biodata', 'kartuKuning'])->findOrFail($id);
-            Log::info("PDF user loaded id={$user->id} name={$user->name}");
 
             if (
                 $currentUser->id === $user->id &&
@@ -103,7 +100,6 @@ class KartuKuningController extends Controller
             }
 
             $this->ensureKartuKuningReady($user);
-            Log::info('PDF ensureKartuKuningReady done');
 
             $user->kartuKuning()->updateOrCreate(
                 ['user_id' => $user->id],
@@ -116,7 +112,6 @@ class KartuKuningController extends Controller
                 $user->generateQrCode();
                 $user->refresh(['biodata', 'kartuKuning']);
             }
-            Log::info('PDF qr ready');
 
             $qrBase64 = Cache::remember('kartu.qr_svg.'.$user->id, 86400, function () use ($user) {
                 $svg = QrCode::format('svg')
@@ -125,10 +120,8 @@ class KartuKuningController extends Controller
 
                 return base64_encode($svg);
             });
-            Log::info('PDF qr svg encoded len='.strlen($qrBase64));
 
             $logoBase64 = $this->getLogoBase64();
-            Log::info('PDF logo ready len='.strlen((string) $logoBase64));
 
             $freshUser = $user->fresh(['biodata', 'kartuKuning']);
 
@@ -140,9 +133,7 @@ class KartuKuningController extends Controller
                     $photoBase64 = 'data:'.$mime.';base64,'.base64_encode(file_get_contents($photoPath));
                 }
             }
-            Log::info('PDF photo ready len='.strlen((string) $photoBase64).' path='.($freshUser->profile_photo_path ?? 'null'));
 
-            Log::info('PDF calling Pdf::loadView...');
             $pdf = Pdf::loadView('kartu.cetak', [
                 'user' => $freshUser,
                 'qrBase64' => $qrBase64,
@@ -150,20 +141,15 @@ class KartuKuningController extends Controller
                 'photoBase64' => $photoBase64,
                 'validUntil' => now()->addYears(2),
             ])->setPaper('a4', 'portrait');
-            Log::info('PDF loadView done');
 
-            Log::info('PDF calling output()...');
             $pdfOutput = $pdf->output();
-            Log::info('PDF output done len='.strlen($pdfOutput));
 
-            $response = response($pdfOutput, 200, [
+            return response($pdfOutput, 200, [
                 'Content-Type' => 'application/pdf',
                 'Content-Disposition' => 'attachment; filename="kartu-kuning-'.$user->id.'.pdf"',
             ]);
-            Log::info('PDF generatePdf END success');
-            return $response;
         } catch (\Throwable $e) {
-            Log::error('PDF generation FAILED for user '.$id, [
+            Log::error('PDF generation failed for user '.$id, [
                 'error' => $e->getMessage(),
                 'class' => get_class($e),
                 'file' => str_replace(base_path(), '', $e->getFile()),
