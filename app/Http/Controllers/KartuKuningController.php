@@ -145,10 +145,19 @@ class KartuKuningController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
+            $prev = $e->getPrevious();
             return response()->json([
                 'error' => $e->getMessage(),
+                'class' => get_class($e),
                 'file' => str_replace(base_path(), '', $e->getFile()),
                 'line' => $e->getLine(),
+                'prev_error' => $prev ? [
+                    'message' => $prev->getMessage(),
+                    'class' => get_class($prev),
+                    'file' => str_replace(base_path(), '', $prev->getFile()),
+                    'line' => $prev->getLine(),
+                ] : null,
+                'trace' => collect(explode("\n", $e->getTraceAsString()))->take(15)->implode("\n"),
             ], 500);
         }
     }
