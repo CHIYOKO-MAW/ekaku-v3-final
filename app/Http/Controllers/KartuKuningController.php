@@ -76,8 +76,12 @@ class KartuKuningController extends Controller
 
     public function generatePdf(int $id)
     {
+        ini_set('memory_limit', '512M');
+        Log::info("PDF generatePdf START user={$id}");
+
         try {
             $currentUser = Auth::user();
+            Log::info("PDF auth ok user_id={$currentUser?->id}");
 
             if (! $currentUser) {
                 abort(403);
@@ -88,6 +92,7 @@ class KartuKuningController extends Controller
             }
 
             $user = User::with(['biodata', 'kartuKuning'])->findOrFail($id);
+            Log::info("PDF user loaded id={$user->id} name={$user->name}");
 
             if (
                 $currentUser->id === $user->id &&
@@ -98,6 +103,7 @@ class KartuKuningController extends Controller
             }
 
             $this->ensureKartuKuningReady($user);
+            Log::info('PDF ensureKartuKuningReady done');
 
             $user->kartuKuning()->updateOrCreate(
                 ['user_id' => $user->id],
@@ -110,6 +116,7 @@ class KartuKuningController extends Controller
                 $user->generateQrCode();
                 $user->refresh(['biodata', 'kartuKuning']);
             }
+            Log::info('PDF qr ready');
 
             $qrBase64 = Cache::remember('kartu.qr_svg.'.$user->id, 86400, function () use ($user) {
                 $svg = QrCode::format('svg')
@@ -118,27 +125,13 @@ class KartuKuningController extends Controller
 
                 return base64_encode($svg);
             });
+            Log::info('PDF qr svg encoded len='.strlen($qrBase64));
 
-            // Logo as base64 data URI (DOMPDF can't access public_path in production)
-            $logoBase64 = Cache::rememberForever('kartu.logo_base64', function () {
-                // Try both .png and .webp (production has .webp)
-                foreach (['png', 'webp'] as $ext) {
-                    $logoPath = public_path("images/lambang-pandeglang.{$ext}");
-                    if (file_exists($logoPath)) {
-                        $mime = mime_content_type($logoPath);
-                        return 'data:'.$mime.';base64,'.base64_encode(file_get_contents($logoPath));
-                    }
-                }
-                Log::warning('Logo file not found in public/images/');
-                return null;
-            });
+            $logoBase64 = $this->getLogoBase64();
+            Log::info('PDF logo ready len='.strlen((string) $logoBase64));
 
-            $pdfCacheKey = 'kartu.pdf.'.$user->id;
-            
-            // Generate PDF without cache first to catch any errors
             $freshUser = $user->fresh(['biodata', 'kartuKuning']);
 
-            // Profile photo as base64 data URI
             $photoBase64 = null;
             if ($freshUser->profile_photo_path) {
                 $photoPath = storage_path('app/public/'.ltrim($freshUser->profile_photo_path, '/'));
@@ -147,7 +140,9 @@ class KartuKuningController extends Controller
                     $photoBase64 = 'data:'.$mime.';base64,'.base64_encode(file_get_contents($photoPath));
                 }
             }
+            Log::info('PDF photo ready len='.strlen((string) $photoBase64).' path='.($freshUser->profile_photo_path ?? 'null'));
 
+            Log::info('PDF calling Pdf::loadView...');
             $pdf = Pdf::loadView('kartu.cetak', [
                 'user' => $freshUser,
                 'qrBase64' => $qrBase64,
@@ -155,33 +150,46 @@ class KartuKuningController extends Controller
                 'photoBase64' => $photoBase64,
                 'validUntil' => now()->addYears(2),
             ])->setPaper('a4', 'portrait');
+            Log::info('PDF loadView done');
 
+            Log::info('PDF calling output()...');
             $pdfOutput = $pdf->output();
-            
-            // Cache the successful output
-            Cache::put($pdfCacheKey, $pdfOutput, 604800);
+            Log::info('PDF output done len='.strlen($pdfOutput));
 
-            return response($pdfOutput, 200, [
+            $response = response($pdfOutput, 200, [
                 'Content-Type' => 'application/pdf',
                 'Content-Disposition' => 'attachment; filename="kartu-kuning-'.$user->id.'.pdf"',
             ]);
+            Log::info('PDF generatePdf END success');
+            return $response;
         } catch (\Throwable $e) {
-            Log::error('PDF generation failed for user '.$id, [
+            Log::error('PDF generation FAILED for user '.$id, [
                 'error' => $e->getMessage(),
-                'file' => $e->getFile(),
+                'class' => get_class($e),
+                'file' => str_replace(base_path(), '', $e->getFile()),
                 'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString(),
             ]);
 
-            // Return detailed error in JSON for debugging
             return response()->json([
                 'error' => $e->getMessage(),
                 'class' => get_class($e),
                 'file' => str_replace(base_path(), '', $e->getFile()),
                 'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString(),
             ], 500);
         }
+    }
+
+    private function getLogoBase64(): ?string
+    {
+        foreach (['png', 'webp'] as $ext) {
+            $logoPath = public_path("images/lambang-pandeglang.{$ext}");
+            if (file_exists($logoPath)) {
+                $mime = mime_content_type($logoPath);
+                return 'data:'.$mime.';base64,'.base64_encode(file_get_contents($logoPath));
+            }
+        }
+        Log::warning('Logo file not found in public/images/');
+        return null;
     }
 
     /**
