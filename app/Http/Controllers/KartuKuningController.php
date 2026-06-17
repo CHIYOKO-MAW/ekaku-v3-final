@@ -145,7 +145,11 @@ class KartuKuningController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            abort(500, 'Gagal generate PDF: '.$e->getMessage());
+            return response()->json([
+                'error' => $e->getMessage(),
+                'file' => str_replace(base_path(), '', $e->getFile()),
+                'line' => $e->getLine(),
+            ], 500);
         }
     }
 
