@@ -120,17 +120,19 @@ class KartuKuningController extends Controller
             });
 
             $pdfCacheKey = 'kartu.pdf.'.$user->id;
-            $pdfOutput = Cache::remember($pdfCacheKey, 604800, function () use ($user, $qrBase64) {
-                $freshUser = $user->fresh(['biodata', 'kartuKuning']);
+            
+            // Generate PDF without cache first to catch any errors
+            $freshUser = $user->fresh(['biodata', 'kartuKuning']);
+            $pdf = Pdf::loadView('kartu.cetak', [
+                'user' => $freshUser,
+                'qrBase64' => $qrBase64,
+                'validUntil' => now()->addYears(2),
+            ])->setPaper('a4', 'portrait');
 
-                $pdf = Pdf::loadView('kartu.cetak', [
-                    'user' => $freshUser,
-                    'qrBase64' => $qrBase64,
-                    'validUntil' => now()->addYears(2),
-                ])->setPaper('a4', 'portrait');
-
-                return $pdf->output();
-            });
+            $pdfOutput = $pdf->output();
+            
+            // Cache the successful output
+            Cache::put($pdfCacheKey, $pdfOutput, 604800);
 
             return response($pdfOutput, 200, [
                 'Content-Type' => 'application/pdf',
