@@ -16,10 +16,15 @@ class CompressionMiddleware
             return $response;
         }
 
+        $content = $response->getContent();
+
+        if (! is_string($content) || $content === '') {
+            return $response;
+        }
+
         $acceptEncoding = $request->header('Accept-Encoding', '');
 
         if (str_contains($acceptEncoding, 'br') && function_exists('brotli_compress')) {
-            $content = $response->getContent();
             $compressed = brotli_compress($content, 6);
             if ($compressed !== false) {
                 $response->setContent($compressed);
@@ -27,7 +32,6 @@ class CompressionMiddleware
                 $response->headers->set('Vary', 'Accept-Encoding', true);
             }
         } elseif (str_contains($acceptEncoding, 'gzip') && function_exists('gzencode')) {
-            $content = $response->getContent();
             $compressed = gzencode($content, 6);
             if ($compressed !== false) {
                 $response->setContent($compressed);
