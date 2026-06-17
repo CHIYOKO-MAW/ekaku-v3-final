@@ -33,7 +33,11 @@ body{font-family:DejaVu Sans,sans-serif;color:#0f172a;margin:0;padding:0}
         <table width="100%" cellpadding="0" cellspacing="0">
             <tr>
                 <td width="34" valign="middle">
-                    <img src="{{ public_path('images/lambang-pandeglang.png') }}" width="28" height="28" alt="">
+                    @if ($logoBase64)
+                        <img src="{{ $logoBase64 }}" width="28" height="28" alt="">
+                    @else
+                        <div style="width:28px;height:28px;background:#fefce8;border:1px dashed #cbd5e1"></div>
+                    @endif
                 </td>
                 <td valign="middle">
                     <div style="font-size:9px;font-weight:bold;text-transform:uppercase;letter-spacing:0.3px">Pemerintah Kab. Pandeglang</div>
@@ -57,13 +61,8 @@ body{font-family:DejaVu Sans,sans-serif;color:#0f172a;margin:0;padding:0}
             <tr>
                 {{-- Foto --}}
                 <td width="75" valign="top" style="padding-right:10px">
-                    @php
-                        $fotoPath = $user->profile_photo_path
-                            ? storage_path('app/public/'.ltrim($user->profile_photo_path, '/'))
-                            : null;
-                    @endphp
-                    @if ($fotoPath && file_exists($fotoPath))
-                        <img src="{{ $fotoPath }}" width="65" height="87" alt="" style="border:1.5px solid #1e3a5f;display:block;border-radius:2px">
+                    @if ($photoBase64)
+                        <img src="{{ $photoBase64 }}" width="65" height="87" alt="" style="border:1.5px solid #1e3a5f;display:block;border-radius:2px">
                     @else
                         <table width="65" height="87" cellpadding="0" cellspacing="0" style="border:1.5px dashed #cbd5e1;background:#fefce8;border-radius:2px">
                             <tr><td align="center" valign="middle" style="font-size:6px;color:#94a3b8">[Foto 3x4]</td></tr>

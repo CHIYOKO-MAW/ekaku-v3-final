@@ -119,13 +119,36 @@ class KartuKuningController extends Controller
                 return base64_encode($svg);
             });
 
+            // Logo as base64 data URI (DOMPDF can't access public_path in production)
+            $logoBase64 = Cache::rememberForever('kartu.logo_base64', function () {
+                $logoPath = public_path('images/lambang-pandeglang.png');
+                if (file_exists($logoPath)) {
+                    $mime = mime_content_type($logoPath);
+                    return 'data:'.$mime.';base64,'.base64_encode(file_get_contents($logoPath));
+                }
+                return null;
+            });
+
             $pdfCacheKey = 'kartu.pdf.'.$user->id;
             
             // Generate PDF without cache first to catch any errors
             $freshUser = $user->fresh(['biodata', 'kartuKuning']);
+
+            // Profile photo as base64 data URI
+            $photoBase64 = null;
+            if ($freshUser->profile_photo_path) {
+                $photoPath = storage_path('app/public/'.ltrim($freshUser->profile_photo_path, '/'));
+                if (file_exists($photoPath)) {
+                    $mime = mime_content_type($photoPath);
+                    $photoBase64 = 'data:'.$mime.';base64,'.base64_encode(file_get_contents($photoPath));
+                }
+            }
+
             $pdf = Pdf::loadView('kartu.cetak', [
                 'user' => $freshUser,
                 'qrBase64' => $qrBase64,
+                'logoBase64' => $logoBase64,
+                'photoBase64' => $photoBase64,
                 'validUntil' => now()->addYears(2),
             ])->setPaper('a4', 'portrait');
 
