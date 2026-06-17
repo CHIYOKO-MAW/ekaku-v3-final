@@ -16,6 +16,17 @@ class CompressionMiddleware
             return $response;
         }
 
+        $contentType = $response->headers->get('Content-Type', '');
+        if (str_starts_with($contentType, 'application/pdf')
+            || str_starts_with($contentType, 'image/')
+            || str_starts_with($contentType, 'video/')
+            || str_starts_with($contentType, 'audio/')
+            || str_starts_with($contentType, 'application/zip')
+            || str_starts_with($contentType, 'application/octet-stream')
+        ) {
+            return $response;
+        }
+
         $content = $response->getContent();
 
         if (! is_string($content) || $content === '') {
