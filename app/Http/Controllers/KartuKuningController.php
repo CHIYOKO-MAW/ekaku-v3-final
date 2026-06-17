@@ -132,10 +132,9 @@ class KartuKuningController extends Controller
                 return $pdf->output();
             });
 
-            return response()->streamDownload(function () use ($pdfOutput) {
-                echo $pdfOutput;
-            }, 'kartu-kuning-'.$user->id.'.pdf', [
+            return response($pdfOutput, 200, [
                 'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="kartu-kuning-'.$user->id.'.pdf"',
             ]);
         } catch (\Throwable $e) {
             Log::error('PDF generation failed for user '.$id, [
@@ -145,20 +144,7 @@ class KartuKuningController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            $prev = $e->getPrevious();
-            return response()->json([
-                'error' => $e->getMessage(),
-                'class' => get_class($e),
-                'file' => str_replace(base_path(), '', $e->getFile()),
-                'line' => $e->getLine(),
-                'prev_error' => $prev ? [
-                    'message' => $prev->getMessage(),
-                    'class' => get_class($prev),
-                    'file' => str_replace(base_path(), '', $prev->getFile()),
-                    'line' => $prev->getLine(),
-                ] : null,
-                'trace' => collect(explode("\n", $e->getTraceAsString()))->take(15)->implode("\n"),
-            ], 500);
+            abort(500, 'Gagal generate PDF: '.$e->getMessage());
         }
     }
 
