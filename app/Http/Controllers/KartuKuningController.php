@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -26,101 +27,126 @@ class KartuKuningController extends Controller
 
     public function preview(int $id)
     {
-        $currentUser = Auth::user();
+        try {
+            $currentUser = Auth::user();
 
-        if (! $currentUser) {
-            abort(403);
+            if (! $currentUser) {
+                abort(403);
+            }
+
+            if (! in_array($currentUser->role, ['admin', 'atasan'], true) && $currentUser->id !== $id) {
+                abort(403);
+            }
+
+            $user = User::with(['biodata', 'kartuKuning'])->findOrFail($id);
+
+            if (
+                $currentUser->id === $user->id &&
+                (! $user->biodata || $user->biodata->status_verifikasi !== 'verified')
+            ) {
+                return redirect()->route($user->biodata ? 'biodata.show' : 'biodata.create', $user->biodata ? [$user->biodata->id] : [])
+                    ->with('error', 'Biodata Anda belum diverifikasi admin. Kartu kuning belum bisa dipreview.');
+            }
+
+            $this->ensureKartuKuningReady($user);
+
+            $qrBase64 = Cache::remember('kartu.qr_svg.'.$user->id, 86400, function () use ($user) {
+                $svg = QrCode::format('svg')
+                    ->size(200)
+                    ->generate($user->qr_code);
+
+                return base64_encode($svg);
+            });
+
+            return view('user.card-show', [
+                'user' => $user,
+                'qrBase64' => $qrBase64,
+                'validUntil' => now()->addYears(2),
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Card preview failed for user '.$id, [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
+            abort(500, 'Gagal preview kartu: '.$e->getMessage());
         }
-
-        if (! in_array($currentUser->role, ['admin', 'atasan'], true) && $currentUser->id !== $id) {
-            abort(403);
-        }
-
-        $user = User::with(['biodata', 'kartuKuning'])->findOrFail($id);
-
-        if (
-            $currentUser->id === $user->id &&
-            (! $user->biodata || $user->biodata->status_verifikasi !== 'verified')
-        ) {
-            return redirect()->route($user->biodata ? 'biodata.show' : 'biodata.create', $user->biodata ? [$user->biodata->id] : [])
-                ->with('error', 'Biodata Anda belum diverifikasi admin. Kartu kuning belum bisa dipreview.');
-        }
-
-        $this->ensureKartuKuningReady($user);
-
-        $qrBase64 = Cache::remember('kartu.qr_svg.'.$user->id, 86400, function () use ($user) {
-            $svg = QrCode::format('svg')
-                ->size(200)
-                ->generate($user->qr_code);
-
-            return base64_encode($svg);
-        });
-
-        return view('user.card-show', [
-            'user' => $user,
-            'qrBase64' => $qrBase64,
-            'validUntil' => now()->addYears(2),
-        ]);
     }
 
     public function generatePdf(int $id)
     {
-        $currentUser = Auth::user();
+        try {
+            $currentUser = Auth::user();
 
-        if (! $currentUser) {
-            abort(403);
-        }
+            if (! $currentUser) {
+                abort(403);
+            }
 
-        if (! in_array($currentUser->role, ['admin', 'atasan'], true) && $currentUser->id !== $id) {
-            abort(403);
-        }
+            if (! in_array($currentUser->role, ['admin', 'atasan'], true) && $currentUser->id !== $id) {
+                abort(403);
+            }
 
-        $user = User::with(['biodata', 'kartuKuning'])->findOrFail($id);
+            $user = User::with(['biodata', 'kartuKuning'])->findOrFail($id);
 
-        if (
-            $currentUser->id === $user->id &&
-            (! $user->biodata || $user->biodata->status_verifikasi !== 'verified')
-        ) {
-            return redirect()->route($user->biodata ? 'biodata.show' : 'biodata.create', $user->biodata ? [$user->biodata->id] : [])
-                ->with('error', 'Biodata Anda belum diverifikasi admin. Kartu kuning belum bisa dicetak.');
-        }
+            if (
+                $currentUser->id === $user->id &&
+                (! $user->biodata || $user->biodata->status_verifikasi !== 'verified')
+            ) {
+                return redirect()->route($user->biodata ? 'biodata.show' : 'biodata.create', $user->biodata ? [$user->biodata->id] : [])
+                    ->with('error', 'Biodata Anda belum diverifikasi admin. Kartu kuning belum bisa dicetak.');
+            }
 
-        $this->ensureKartuKuningReady($user);
+            $this->ensureKartuKuningReady($user);
 
-        $user->kartuKuning()->updateOrCreate(
-            ['user_id' => $user->id],
-            ['tanggal_cetak' => now()]
-        );
+            $user->kartuKuning()->updateOrCreate(
+                ['user_id' => $user->id],
+                ['tanggal_cetak' => now()]
+            );
 
-        if (! $user->kartuKuning->qr_token || ($user->kartuKuning->expired_at && $user->kartuKuning->expired_at->isPast())) {
-            $user->generateQrCode();
             $user->refresh(['biodata', 'kartuKuning']);
+
+            if (! $user->kartuKuning->qr_token || ($user->kartuKuning->expired_at && $user->kartuKuning->expired_at->isPast())) {
+                $user->generateQrCode();
+                $user->refresh(['biodata', 'kartuKuning']);
+            }
+
+            $qrBase64 = Cache::remember('kartu.qr_svg.'.$user->id, 86400, function () use ($user) {
+                $svg = QrCode::format('svg')
+                    ->size(200)
+                    ->generate($user->qr_code);
+
+                return base64_encode($svg);
+            });
+
+            $pdfCacheKey = 'kartu.pdf.'.$user->id;
+            $pdfOutput = Cache::remember($pdfCacheKey, 604800, function () use ($user, $qrBase64) {
+                $freshUser = $user->fresh(['biodata', 'kartuKuning']);
+
+                $pdf = Pdf::loadView('kartu.cetak', [
+                    'user' => $freshUser,
+                    'qrBase64' => $qrBase64,
+                    'validUntil' => now()->addYears(2),
+                ])->setPaper('a4', 'portrait');
+
+                return $pdf->output();
+            });
+
+            return response()->streamDownload(function () use ($pdfOutput) {
+                echo $pdfOutput;
+            }, 'kartu-kuning-'.$user->id.'.pdf', [
+                'Content-Type' => 'application/pdf',
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('PDF generation failed for user '.$id, [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            abort(500, 'Gagal generate PDF: '.$e->getMessage());
         }
-
-        $qrBase64 = Cache::remember('kartu.qr_svg.'.$user->id, 86400, function () use ($user) {
-            $svg = QrCode::format('svg')
-                ->size(200)
-                ->generate($user->qr_code);
-
-            return base64_encode($svg);
-        });
-
-        $pdfCacheKey = 'kartu.pdf.'.$user->id;
-        $pdfOutput = Cache::remember($pdfCacheKey, 604800, function () use ($user, $qrBase64) {
-            $pdf = Pdf::loadView('kartu.cetak', [
-                'user' => $user->fresh(['biodata', 'kartuKuning']),
-                'qrBase64' => $qrBase64,
-                'validUntil' => now()->addYears(2),
-            ])->setPaper('a4', 'portrait');
-
-            return $pdf->output();
-        });
-
-        return response()->streamDownload(function () use ($pdfOutput) {
-            echo $pdfOutput;
-        }, 'kartu-kuning-'.$user->id.'.pdf', [
-            'Content-Type' => 'application/pdf',
-        ]);
     }
 
     /**
