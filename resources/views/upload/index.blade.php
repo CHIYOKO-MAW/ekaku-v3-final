@@ -8,7 +8,42 @@
     $grouped = $uploads->groupBy('jenis_dokumen');
     $icons = ['ktp' => 'fa-id-card', 'ijazah' => 'fa-graduation-cap', 'foto' => 'fa-camera', 'kk' => 'fa-users', 'sertifikat' => 'fa-certificate'];
 @endphp
-<div class="page-wrap">
+<div class="page-wrap" x-data="{ loaded: false }" x-init="setTimeout(() => loaded = true, 150)">
+    {{-- SKELETON: HEADER --}}
+    <div x-show="!loaded" class="mb-6">
+        <x-skeleton type="title" class="w-1/3" />
+        <x-skeleton type="text" class="mt-2 w-1/2" />
+    </div>
+
+    {{-- SKELETON: CARDS --}}
+    <div x-show="!loaded" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        @foreach([1,2,3,4,5] as $i)
+        <div class="rounded-xl bg-gray-200 p-6 card-shadow animate-pulse">
+            <div class="mb-4 flex items-center gap-3">
+                <x-skeleton type="circle" class="h-12 w-12" />
+                <div class="space-y-2">
+                    <x-skeleton type="text" class="w-16" />
+                    <x-skeleton type="text-sm" class="w-20" />
+                </div>
+            </div>
+            <div class="space-y-2">
+                @foreach([1,2] as $j)
+                <div class="flex items-center gap-3 rounded-lg bg-gray-300 p-2 animate-pulse">
+                    <x-skeleton type="circle" class="h-10 w-10" />
+                    <div class="flex-1 space-y-1">
+                        <x-skeleton type="text" class="w-3/4" />
+                        <x-skeleton type="text-sm" class="w-1/2" />
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            <x-skeleton type="btn" class="mt-4 w-full" />
+        </div>
+        @endforeach
+    </div>
+
+    {{-- REAL CONTENT --}}
+    <div x-show="loaded" x-cloak class="space-y-6">
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-900">Dokumen Saya</h1>
         <p class="mt-1 text-sm text-gray-600">Upload KTP, Ijazah, dan Foto untuk kelengkapan biodata.</p>
@@ -102,5 +137,6 @@
             </div>
         @endforeach
     </div>
+    </div> {{-- end x-show loaded --}}
 </div>
 @endsection

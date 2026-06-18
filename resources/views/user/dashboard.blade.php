@@ -4,8 +4,88 @@
 @section('description', 'Dashboard pengguna e-Kaku V3 - Kelola biodata, status pekerjaan, kartu kuning digital, dan notifikasi. Pantau status verifikasi dan update profil Anda.')
 
 @section('content')
-<div class="page-wrap">
+<div class="page-wrap" x-data="{ loaded: false }" x-init="setTimeout(() => loaded = true, 150)">
 
+    {{-- SKELETON: WELCOME CARD --}}
+    <div x-show="!loaded" class="rounded-xl bg-gray-200 p-6 card-shadow animate-pulse">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="space-y-3">
+                <x-skeleton type="title" class="w-1/2" />
+                <x-skeleton type="text-sm" class="w-1/3" />
+            </div>
+            <x-skeleton type="circle" class="hidden sm:block" />
+        </div>
+    </div>
+
+    {{-- SKELETON: STAT BAR --}}
+    <div x-show="!loaded" class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        @foreach([1,2,3] as $i)
+        <div class="rounded-xl bg-gray-200 p-4 card-shadow animate-pulse">
+            <div class="flex items-center gap-3">
+                <x-skeleton type="circle" class="h-11 w-11" />
+                <div class="flex-1 space-y-2">
+                    <x-skeleton type="text-sm" class="w-1/3" />
+                    <x-skeleton type="text" class="w-2/3" />
+                </div>
+            </div>
+            <x-skeleton type="btn" class="mt-3" />
+        </div>
+        @endforeach
+    </div>
+
+    {{-- SKELETON: MAIN GRID --}}
+    <div x-show="!loaded" class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div class="lg:col-span-2 rounded-xl bg-gray-200 p-6 card-shadow animate-pulse">
+            <div class="flex items-center justify-between">
+                <x-skeleton type="title" />
+                <x-skeleton type="badge" />
+            </div>
+            <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                @foreach([1,2,3] as $i)
+                <div class="rounded-lg bg-gray-300 p-4 animate-pulse">
+                    <x-skeleton type="text-sm" class="w-1/4" />
+                    <x-skeleton type="text" class="mt-2 w-2/3" />
+                </div>
+                @endforeach
+            </div>
+            <div class="mt-6 flex gap-3">
+                <x-skeleton type="btn" />
+                <x-skeleton type="btn" />
+            </div>
+        </div>
+        <div class="space-y-4">
+            <div class="rounded-xl bg-gray-200 p-5 card-shadow animate-pulse">
+                <x-skeleton type="text" class="w-1/2" />
+                <x-skeleton type="title" class="mt-2 w-1/4" />
+                <x-skeleton type="btn" class="mt-3" />
+            </div>
+            <div class="rounded-xl bg-gray-200 p-5 card-shadow animate-pulse">
+                <x-skeleton type="text" class="w-1/2" />
+                <x-skeleton type="text-sm" class="mt-2 w-3/4" />
+                <x-skeleton type="btn" class="mt-3" />
+            </div>
+        </div>
+    </div>
+
+    {{-- SKELETON: NOTIFIKASI --}}
+    <div x-show="!loaded" class="mt-6 rounded-xl bg-gray-200 p-6 card-shadow animate-pulse">
+        <div class="mb-4 flex items-center justify-between">
+            <x-skeleton type="title" />
+            <x-skeleton type="text-sm" />
+        </div>
+        <div class="space-y-3">
+            @foreach([1,2,3] as $i)
+            <div class="rounded-lg bg-gray-300 p-4 animate-pulse">
+                <x-skeleton type="text" class="w-2/3" />
+                <x-skeleton type="text-sm" class="mt-2 w-full" />
+                <x-skeleton type="text-sm" class="mt-1 w-1/4" />
+            </div>
+            @endforeach
+        </div>
+    </div>
+
+    {{-- REAL CONTENT --}}
+    <div x-show="loaded" x-cloak class="space-y-6">
     {{-- WELCOME CARD GRADIENT --}}
     <div class="rounded-xl bg-gradient-to-r from-[#005aa7] to-blue-600 p-6 card-shadow">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -165,6 +245,7 @@
             @endforelse
         </div>
     </div>
+    </div> {{-- end x-show loaded --}}
 
 </div>
 @endsection

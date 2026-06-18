@@ -3,8 +3,87 @@
 @section('title', 'Dashboard Admin')
 
 @section('content')
-<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-    <div class="mb-8 rounded-xl bg-white p-6 card-shadow">
+<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8" x-data="{ loaded: false }" x-init="setTimeout(() => loaded = true, 150)">
+
+    {{-- SKELETON: HEADER --}}
+    <div x-show="!loaded" class="mb-8 rounded-xl bg-gray-200 p-6 card-shadow animate-pulse">
+        <div class="flex items-center justify-between">
+            <div class="space-y-3">
+                <x-skeleton type="title" class="w-1/3" />
+                <x-skeleton type="text" class="w-1/2" />
+            </div>
+            <x-skeleton type="circle" class="hidden sm:block h-14 w-14" />
+        </div>
+    </div>
+
+    {{-- SKELETON: STAT CARDS --}}
+    <div x-show="!loaded" class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+        @foreach([1,2,3,4] as $i)
+        <div class="rounded-xl bg-gray-200 p-6 card-shadow animate-pulse">
+            <x-skeleton type="text-sm" class="w-1/2" />
+            <x-skeleton type="title" class="mt-2 w-1/3" />
+        </div>
+        @endforeach
+    </div>
+
+    {{-- SKELETON: GRID --}}
+    <div x-show="!loaded" class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div class="rounded-xl bg-gray-200 p-6 card-shadow lg:col-span-1 animate-pulse">
+            <x-skeleton type="text" class="w-1/2" />
+            <div class="mt-4 space-y-3">
+                @foreach([1,2,3] as $i)
+                <div class="flex items-center justify-between rounded-lg bg-gray-300 px-3 py-2 animate-pulse">
+                    <x-skeleton type="text-sm" class="w-1/2" />
+                    <x-skeleton type="text-sm" class="w-8" />
+                </div>
+                @endforeach
+            </div>
+        </div>
+        <div class="rounded-xl bg-gray-200 p-6 card-shadow lg:col-span-2 animate-pulse">
+            <x-skeleton type="text" class="w-1/3" />
+            <div class="mt-4 space-y-3">
+                @foreach([1,2,3,4] as $i)
+                <div class="flex gap-4">
+                    <x-skeleton type="text" class="w-1/4" />
+                    <x-skeleton type="text" class="w-1/4" />
+                    <x-skeleton type="badge" class="w-1/4" />
+                    <x-skeleton type="text" class="w-1/4" />
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+    {{-- SKELETON: TABLES --}}
+    <div x-show="!loaded" class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
+        @foreach([1,2] as $i)
+        <div class="rounded-xl bg-gray-200 p-6 card-shadow animate-pulse">
+            <x-skeleton type="text" class="w-1/2" />
+            <div class="mt-4 space-y-3">
+                @foreach([1,2,3] as $j)
+                <div class="flex items-center justify-between rounded-lg bg-gray-300 px-3 py-2 animate-pulse">
+                    <x-skeleton type="text" class="w-1/3" />
+                    <x-skeleton type="text-sm" class="w-8" />
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endforeach
+    </div>
+
+    {{-- SKELETON: CHARTS --}}
+    <div x-show="!loaded" class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
+        @foreach([1,2] as $i)
+        <div class="rounded-xl bg-gray-200 p-6 card-shadow animate-pulse">
+            <x-skeleton type="text" class="w-1/3" />
+            <x-skeleton type="card" class="mt-4 h-40" />
+        </div>
+        @endforeach
+    </div>
+
+    {{-- REAL CONTENT --}}
+    <div x-show="loaded" x-cloak class="space-y-8">
+    <div class="rounded-xl bg-white p-6 card-shadow">
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">Dashboard Admin</h1>
@@ -168,5 +247,6 @@
               </canvas>
           </div>
       </div>
+    </div> {{-- end x-show loaded --}}
   </div>
   @endsection

@@ -20,8 +20,57 @@
         ? \Carbon\Carbon::parse($user->kartuKuning->tanggal_cetak)->addYears(5)
         : null;
 @endphp
-<div class="page-wrap" x-data="{ activeTab: 'akun', openPribadi: true, openPendidikan: true }" x-init="setTimeout(() => activeTab = window.location.hash === '#biodata' ? 'biodata' : window.location.hash === '#berkas' ? 'berkas' : 'akun', 50)">
+<div class="page-wrap" x-data="{ activeTab: 'akun', openPribadi: true, openPendidikan: true, loaded: false }" x-init="setTimeout(() => { activeTab = window.location.hash === '#biodata' ? 'biodata' : window.location.hash === '#berkas' ? 'berkas' : 'akun'; loaded = true; }, 150)">
 
+    {{-- SKELETON: HEADER --}}
+    <div x-show="!loaded" class="rounded-xl bg-gray-200 p-6 card-shadow animate-pulse">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-center gap-4">
+                <x-skeleton type="avatar" class="h-16 w-16" />
+                <div class="space-y-2">
+                    <x-skeleton type="title" class="w-32" />
+                    <x-skeleton type="text-sm" class="w-40" />
+                </div>
+            </div>
+            <x-skeleton type="btn" class="hidden sm:block" />
+        </div>
+    </div>
+
+    {{-- SKELETON: TAB BAR --}}
+    <div x-show="!loaded" class="mt-6 rounded-lg bg-gray-200 px-4 py-3 animate-pulse">
+        <div class="flex gap-6">
+            @foreach([1,2,3] as $i)
+            <x-skeleton type="text" class="w-16" />
+            @endforeach
+        </div>
+    </div>
+
+    {{-- SKELETON: CONTENT --}}
+    <div x-show="!loaded" class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div class="space-y-6 lg:col-span-2">
+            <div class="rounded-xl bg-gray-200 p-6 card-shadow animate-pulse">
+                <x-skeleton type="title" class="w-1/3" />
+                <div class="mt-4 space-y-4">
+                    @foreach([1,2,3] as $i)
+                    <div class="flex items-center gap-4">
+                        <x-skeleton type="text-sm" class="w-1/4" />
+                        <x-skeleton type="text" class="w-3/4" />
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        <div class="space-y-4">
+            <div class="rounded-xl bg-gray-200 p-5 card-shadow animate-pulse">
+                <x-skeleton type="text" class="w-1/2" />
+                <x-skeleton type="title" class="mt-2 w-1/4" />
+                <x-skeleton type="btn" class="mt-3" />
+            </div>
+        </div>
+    </div>
+
+    {{-- REAL CONTENT --}}
+    <div x-show="loaded" x-cloak class="space-y-6">
     {{-- HEADER GRADIENT --}}
     <div class="rounded-xl bg-gradient-to-r from-[#005aa7] to-blue-600 p-6 card-shadow">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
