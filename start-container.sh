@@ -27,16 +27,23 @@ php artisan storage:link 2>/dev/null || true
 rm -f bootstrap/cache/services.php bootstrap/cache/packages.php
 
 # Regenerate clean services.php (exclude dev providers via dont-discover)
-php artisan package:discover --force 2>/dev/null || true
+php artisan package:discover --force 2>&1 || true
 
-# Final safety: strip any dev providers that slipped through
-php clean_services.php 2>/dev/null || true
+# Strip dev providers that slipped through
+php clean_services.php 2>&1 || true
 
-# Warm caches
+# Verify cleanup
+echo "=== services.php provider count ===" 
+php -r '$_ = require "bootstrap/cache/services.php"; echo count($_["providers"] ?? []) . " providers\n";' 2>&1 || true
+
+# Warm caches (DO NOT run package:discover again)
 php artisan config:cache 2>/dev/null || true
 php artisan route:cache 2>/dev/null || true
 php artisan view:cache 2>/dev/null || true
 php artisan event:cache 2>/dev/null || true
+
+echo "=== After cache warm, provider count ===" 
+php -r '$_ = require "bootstrap/cache/services.php"; echo count($_["providers"] ?? []) . " providers\n";' 2>&1 || true
 
 # Start Nixpacks nginx + php-fpm pipeline
 # prestart.mjs processes nginx.template.conf (substitutes ${PORT}, $if(IS_LARAVEL) etc.)
