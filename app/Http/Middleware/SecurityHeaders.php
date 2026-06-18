@@ -14,10 +14,13 @@ class SecurityHeaders
 
         $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), interest-cohort=()');
 
-        // Cache static build assets immutably; don't override Cache-Control for cached responses
+        // Cache static build assets immutably; allow browser caching for ResponseCache'd pages
         $path = $request->getPathInfo();
         if (preg_match('#^/(build|favicon|images)/#', $path)) {
             $response->headers->set('Cache-Control', 'public, max-age=31536000, immutable');
+        } elseif ($response->headers->has('laravel-responsecache')) {
+            // ResponseCache hit — tell browser to cache for 5 min (s-maxage for CDN/proxy: 1 hr)
+            $response->headers->set('Cache-Control', 'public, max-age=300, s-maxage=3600');
         } elseif (! $response->headers->has('Cache-Control')) {
             $response->headers->set('Cache-Control', 'no-cache, private');
         }

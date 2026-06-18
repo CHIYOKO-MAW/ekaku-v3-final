@@ -126,7 +126,8 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', DoNotCacheResponse::class])->get('/kartu-scan/{id}', [KartuKuningController::class, 'scanData'])->name('kartu.scan.data');
 
 // Halaman verifikasi publik — dibuka saat QR discan (tidak perlu login)
-Route::middleware('throttle:30,1')->get('/verify/{nomor_ak1}', [KartuKuningController::class, 'verify'])->name('kartu.verify');
+Route::middleware('throttle:30,1')->get('/verify/{nomor_ak1}', [KartuKuningController::class, 'verify'])->name('kartu.verify')
+    ->middleware(CacheResponse::using(60));
 
 Route::get('/dashboard/user', [DashboardController::class, 'user'])
     ->middleware(['auth', 'role:user'])
