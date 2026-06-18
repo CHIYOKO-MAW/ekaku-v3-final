@@ -34,7 +34,7 @@ php -r '
 $f = "bootstrap/cache/services.php";
 if (file_exists($f)) {
     $m = require $f;
-    $dev = ["Boost","Mcp\\Server","Telescope\\","TelescopeMcp","Pail","Sentinel\\","Collision","Termwind","Pest","Breeze","Sail","Roster","Tinker"];
+    $dev = ["Boost","Mcp\\Server","Telescope\\","TelescopeMcp","Pail","Sentinel\\","Collision\\Adapters","Pest\\Laravel","Breeze","Sail","Roster"];
     $clean = [];
     foreach ($m["providers"] ?? [] as $k => $v) {
         $skip = false;
