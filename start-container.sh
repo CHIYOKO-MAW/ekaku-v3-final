@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 # Set Laravel DB_* from Railway DATABASE_URL or MYSQL_* env vars
 if [[ -n "$DATABASE_URL" ]]; then
@@ -17,12 +16,9 @@ elif [[ -n "$MYSQL_HOST" ]]; then
   export DB_PASSWORD="$MYSQL_PASSWORD"
 fi
 
-php artisan storage:link 2>/dev/null || true
+# Laravel startup commands
 php artisan migrate --force 2>/dev/null || true
-
-# Ensure directories exist
-mkdir -p storage/framework/sessions storage/framework/cache/data storage/fonts
-mkdir -p /var/log/nginx /var/run /etc/nginx
+php artisan storage:link 2>/dev/null || true
 
 # Warm caches
 php artisan config:cache 2>/dev/null || true
@@ -30,55 +26,8 @@ php artisan route:cache 2>/dev/null || true
 php artisan view:cache 2>/dev/null || true
 php artisan event:cache 2>/dev/null || true
 
-php artisan storage:link 2>/dev/null || true
-
-# Detect PHP-FPM binary
-PHP_FPM_BIN=""
-for bin in php-fpm8.3 php-fpm8.4 php-fpm; do
-  if command -v "$bin" >/dev/null 2>&1; then
-    PHP_FPM_BIN="$bin"
-    break
-  fi
-done
-
-# Try nginx + php-fpm first (concurrent requests)
-if command -v nginx >/dev/null 2>&1 && [ -n "$PHP_FPM_BIN" ]; then
-  # Create www-data user for php-fpm (it refuses to run as root)
-  adduser -D -H -s /sbin/nologin www-data 2>/dev/null || \
-    useradd -r -s /sbin/nologin www-data 2>/dev/null || true
-
-  # Process nginx template: substitute ${PORT}
-  if [ -f /app/nginx.conf ]; then
-    sed "s/\${PORT}/${PORT:-8000}/g" /app/nginx.conf > /etc/nginx/nginx.conf
-  fi
-
-  # Create php-fpm run directory
-  mkdir -p /var/run
-
-  # Start PHP-FPM in background (as www-data)
-  $PHP_FPM_BIN --daemonize --fpm-config /app/php-fpm.conf 2>&1 || true
-
-  # Give php-fpm a moment to create the socket
-  sleep 2
-
-  # Verify php-fpm socket exists
-  if [ -S /var/run/php-fpm.sock ]; then
-    # Start nginx in foreground (keeps container alive)
-    exec nginx -g 'daemon off;'
-  else
-    echo "Warning: php-fpm socket not found, falling back to php -S"
-  fi
-fi
-
-# Fallback: php -S (single-threaded, but works)
-exec php -S 0.0.0.0:${PORT:-8000} -t public \
-  -d upload_max_filesize=10M \
-  -d post_max_size=12M \
-  -d max_execution_time=120 \
-  -d max_input_time=120 \
-  -d memory_limit=256M \
-  -d opcache.enable=1 \
-  -d opcache.memory_consumption=128 \
-  -d opcache.max_accelerated_files=10000 \
-  -d opcache.validate_timestamps=0 \
-  -d opcache.save_comments=0
+# Start Nixpacks nginx + php-fpm pipeline
+# prestart.mjs processes nginx.template.conf (substitutes ${PORT}, $if(IS_LARAVEL) etc.)
+# php-fpm uses Nixpacks built-in php-fpm.conf (127.0.0.1:9000)
+# nginx runs in foreground (daemon off) keeping the container alive
+node /assets/scripts/prestart.mjs /app/nginx.template.conf /nginx.conf && (php-fpm -y /assets/php-fpm.conf & nginx -c /nginx.conf)
