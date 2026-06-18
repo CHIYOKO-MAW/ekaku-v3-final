@@ -69,6 +69,10 @@ class DashboardController extends Controller
         \Illuminate\Support\Facades\View::share('latestNotes', $notifications);
 
         $stats = Cache::remember('dashboard.admin.stats', 300, function () {
+            $verificationCounts = Biodata::selectRaw('status_verifikasi, count(*) as total')
+                ->groupBy('status_verifikasi')
+                ->pluck('total', 'status_verifikasi');
+
             return [
                 'totalUsers' => User::where('role', 'user')->count(),
                 'totalActiveUsers' => StatusPekerjaan::distinct('user_id')->count('user_id'),
@@ -77,9 +81,9 @@ class DashboardController extends Controller
                         $q->doesntHave('biodata')
                             ->orWhereHas('biodata', fn ($qb) => $qb->where('status_verifikasi', '!=', 'verified'));
                     })->count(),
-                'pending' => Biodata::where('status_verifikasi', 'pending')->count(),
-                'verified' => Biodata::where('status_verifikasi', 'verified')->count(),
-                'rejected' => Biodata::where('status_verifikasi', 'rejected')->count(),
+                'pending' => $verificationCounts->get('pending', 0),
+                'verified' => $verificationCounts->get('verified', 0),
+                'rejected' => $verificationCounts->get('rejected', 0),
             ];
         });
 
@@ -429,16 +433,26 @@ class DashboardController extends Controller
             ];
         }
 
-        $districtNames = collect($districts)->pluck('name')->all();
-        $users = User::where('role', 'user')
-            ->has('biodata')
-            ->with(['biodata', 'statusPekerjaan'])
+        // Pre-sort district names ONCE (was re-sorted per user causing O(N*M) allocation)
+        $sortedDistricts = collect($districts)
+            ->pluck('name')
+            ->filter()
+            ->sortByDesc(fn ($name) => strlen((string) $name))
+            ->values()
+            ->all();
+
+        // Use select()+join() instead of full Eloquent model hydration (saves memory + CPU)
+        $rows = User::where('role', 'user')
+            ->join('biodata', 'users.id', '=', 'biodata.user_id')
+            ->leftJoin('status_pekerjaan', 'users.id', '=', 'status_pekerjaan.user_id')
+            ->select('biodata.alamat', 'biodata.status_verifikasi', 'status_pekerjaan.status_pekerjaan')
             ->get();
+
         $bucket = [];
 
-        foreach ($users as $user) {
-            $address = (string) optional($user->biodata)->alamat;
-            $district = $this->findNameInAddress($address, $districtNames) ?: 'Tidak Terpetakan';
+        foreach ($rows as $row) {
+            $address = (string) $row->alamat;
+            $district = $this->findNameInAddress($address, $sortedDistricts) ?: 'Tidak Terpetakan';
             if (! isset($bucket[$district])) {
                 $bucket[$district] = [
                     'kecamatan' => $district,
@@ -450,14 +464,13 @@ class DashboardController extends Controller
             }
 
             $bucket[$district]['total']++;
-            $statusPekerjaan = optional($user->statusPekerjaan)->status_pekerjaan;
-            if ($statusPekerjaan === 'belum_bekerja') {
+            if ($row->status_pekerjaan === 'belum_bekerja') {
                 $bucket[$district]['belum_bekerja']++;
-            } elseif ($statusPekerjaan === 'sudah_bekerja') {
+            } elseif ($row->status_pekerjaan === 'sudah_bekerja') {
                 $bucket[$district]['sudah_bekerja']++;
             }
 
-            if (optional($user->biodata)->status_verifikasi !== 'verified') {
+            if ($row->status_verifikasi !== 'verified') {
                 $bucket[$district]['pending_verifikasi']++;
             }
         }

@@ -87,7 +87,9 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'admin'])
+            ->middleware(CacheResponse::using(300))
+            ->name('dashboard');
         Route::get('/verifikasi', [VerifikasiController::class, 'index'])->name('verifikasi.index');
         Route::get('/pengguna', [UserController::class, 'index'])->name('pengguna.index');
         Route::get('/pengguna/perhatian', [UserController::class, 'attention'])->name('pengguna.perhatian');
