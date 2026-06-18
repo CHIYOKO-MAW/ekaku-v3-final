@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class KartuKuningController extends Controller
@@ -146,7 +147,7 @@ class KartuKuningController extends Controller
 
             return response($pdfOutput, 200, [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'attachment; filename="kartu-kuning-'.$user->id.'.pdf"',
+                'Content-Disposition' => 'attachment; filename="AK1-'.Str::slug($freshUser->name).'.pdf"',
             ]);
         } catch (\Throwable $e) {
             Log::error('PDF generation failed for user '.$id, [
@@ -171,10 +172,12 @@ class KartuKuningController extends Controller
             $logoPath = public_path("images/lambang-pandeglang.{$ext}");
             if (file_exists($logoPath)) {
                 $mime = mime_content_type($logoPath);
+
                 return 'data:'.$mime.';base64,'.base64_encode(file_get_contents($logoPath));
             }
         }
         Log::warning('Logo file not found in public/images/');
+
         return null;
     }
 
@@ -225,7 +228,7 @@ class KartuKuningController extends Controller
         if ($user->profile_photo_path && Storage::disk('public')->exists($user->profile_photo_path)) {
             $photoData = Storage::disk('public')->get($user->profile_photo_path);
             $mime = Storage::disk('public')->mimeType($user->profile_photo_path);
-            $photoBase64 = 'data:' . $mime . ';base64,' . base64_encode($photoData);
+            $photoBase64 = 'data:'.$mime.';base64,'.base64_encode($photoData);
         }
 
         $kartu->update([
