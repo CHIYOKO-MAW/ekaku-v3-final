@@ -17,10 +17,13 @@ class NotificationController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
-        $cacheKey = 'notification.unread.'.$user->id;
+        $userId = $user->id;
+        $cacheKey = 'notification.unread.'.$userId;
         if ($request->boolean('mark_read')) {
             $user->notificationsE()->where('status_baca', false)->update(['status_baca' => true]);
             Cache::forget($cacheKey);
+            Cache::forget("dashboard.user.{$userId}.notifications");
+            Cache::forget("dashboard.user.{$userId}.unread");
         }
 
         $notes = $user->notificationsE()->latest()->paginate(10);
@@ -38,6 +41,11 @@ class NotificationController extends Controller
         }
 
         $notification->update(['status_baca' => true]);
+
+        $userId = auth()->id();
+        Cache::forget('notification.unread.'.$userId);
+        Cache::forget("dashboard.user.{$userId}.notifications");
+        Cache::forget("dashboard.user.{$userId}.unread");
 
         return back()->with('success', 'Notifikasi ditandai sudah dibaca.');
     }

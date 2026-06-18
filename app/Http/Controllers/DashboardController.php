@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -34,17 +35,21 @@ class DashboardController extends Controller
     public function user()
     {
         $user = Auth::user();
-        $user->load(['kartuKuning', 'biodata', 'statusPekerjaan']);
+        $userId = $user->id;
 
-        $biodata = $user->biodata;
-        $status = $user->statusPekerjaan;
+        $biodata = Cache::remember("dashboard.user.{$userId}.biodata", 60, fn () => $user->biodata);
+        $status = Cache::remember("dashboard.user.{$userId}.status", 60, fn () => $user->statusPekerjaan);
+        $kartuKuning = Cache::remember("dashboard.user.{$userId}.kartu", 60, fn () => $user->kartuKuning);
 
-        $notificationsQuery = $user->notificationsE()->latest();
-        $notifications = (clone $notificationsQuery)->take(5)->get();
-        $unreadCount = (clone $notificationsQuery)->where('status_baca', false)->count();
+        $notifications = Cache::remember("dashboard.user.{$userId}.notifications", 60, function () use ($user) {
+            return $user->notificationsE()->latest()->take(5)->get();
+        });
+        $unreadCount = Cache::remember("dashboard.user.{$userId}.unread", 60, function () use ($user) {
+            return $user->notificationsE()->where('status_baca', false)->count();
+        });
 
-        \Illuminate\Support\Facades\View::share('unreadNotes', $unreadCount);
-        \Illuminate\Support\Facades\View::share('latestNotes', $notifications);
+        View::share('unreadNotes', $unreadCount);
+        View::share('latestNotes', $notifications);
 
         return view('user.dashboard', compact('user', 'biodata', 'status', 'notifications', 'unreadCount'));
     }

@@ -7,6 +7,7 @@ use App\Models\Biodata;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class BiodataController extends Controller
 {
@@ -71,6 +72,9 @@ class BiodataController extends Controller
             throw $e;
         }
 
+        $userId = $user->id;
+        Cache::forget("dashboard.user.{$userId}.biodata");
+
         return redirect()->to(route('profile.edit').'#biodata')
             ->with('success', 'Biodata berhasil disimpan.');
     }
@@ -120,6 +124,9 @@ class BiodataController extends Controller
             throw $e;
         }
 
+        $userId = $user->id;
+        Cache::forget("dashboard.user.{$userId}.biodata");
+
         return redirect()->to(route('profile.edit').'#biodata')
             ->with('success', 'Biodata berhasil diperbarui.');
     }
@@ -157,6 +164,9 @@ class BiodataController extends Controller
             'tanggal_verifikasi' => null,
             'verifikator_id' => null,
         ]);
+
+        $userId = $user->id;
+        Cache::forget("dashboard.user.{$userId}.biodata");
 
         return redirect()->to(route('profile.edit').'#biodata')
             ->with('success', 'Pengajuan verifikasi berhasil dikirim. Menunggu validasi admin.');
