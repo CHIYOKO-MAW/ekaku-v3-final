@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Set Laravel DB_* from Railway DATABASE_URL or MYSQL_* env vars
 if [[ -n "$DATABASE_URL" ]]; then
@@ -19,10 +20,11 @@ fi
 php artisan storage:link 2>/dev/null || true
 php artisan migrate --force 2>/dev/null || true
 
-# Ensure file-based session/cache directories exist
+# Ensure directories exist
 mkdir -p storage/framework/sessions storage/framework/cache/data storage/fonts
+mkdir -p /var/log/nginx /var/run /etc/nginx
 
-# Warm caches after env vars are set
+# Warm caches
 php artisan config:cache 2>/dev/null || true
 php artisan route:cache 2>/dev/null || true
 php artisan view:cache 2>/dev/null || true
@@ -30,6 +32,36 @@ php artisan event:cache 2>/dev/null || true
 
 php artisan storage:link 2>/dev/null || true
 
+# Detect PHP-FPM binary
+PHP_FPM_BIN=""
+for bin in php-fpm8.3 php-fpm8.4 php-fpm; do
+  if command -v "$bin" >/dev/null 2>&1; then
+    PHP_FPM_BIN="$bin"
+    break
+  fi
+done
+
+# Try nginx + php-fpm first (concurrent requests)
+if command -v nginx >/dev/null 2>&1 && [ -n "$PHP_FPM_BIN" ]; then
+  # Process nginx template: substitute ${PORT}
+  if [ -f /app/nginx.conf ]; then
+    sed "s/\${PORT}/${PORT:-8000}/g" /app/nginx.conf > /etc/nginx/nginx.conf
+  fi
+
+  # Create php-fpm run directory
+  mkdir -p /var/run
+
+  # Start PHP-FPM in background
+  $PHP_FPM_BIN --daemonize --fpm-config /app/php-fpm.conf 2>&1 || true
+
+  # Give php-fpm a moment to create the socket
+  sleep 1
+
+  # Start nginx in foreground (keeps container alive)
+  exec nginx -g 'daemon off;'
+fi
+
+# Fallback: php -S (single-threaded, but works)
 exec php -S 0.0.0.0:${PORT:-8000} -t public \
   -d upload_max_filesize=10M \
   -d post_max_size=12M \
