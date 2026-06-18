@@ -16,7 +16,7 @@ return [
 
     'cache_time_header_name' => env('RESPONSE_CACHE_HEADER_NAME', 'laravel-responsecache'),
 
-    'add_cache_age_header' => env('RESPONSE_CACHE_AGE_HEADER', false),
+    'add_cache_age_header' => env('RESPONSE_CACHE_AGE_HEADER', true),
 
     'cache_age_header_name' => env('RESPONSE_CACHE_AGE_HEADER_NAME', 'laravel-responsecache-age'),
 
