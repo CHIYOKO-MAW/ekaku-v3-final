@@ -28,7 +28,6 @@ class ProfileController extends Controller
             'user' => $authUser,
             'biodata' => $authUser->biodata,
             'status' => $authUser->statusPekerjaan,
-            'unreadCount' => $authUser->notificationsE()->where('status_baca', false)->count(),
             'uploads' => $authUser->uploads,
         ]);
     }
@@ -81,7 +80,9 @@ class ProfileController extends Controller
             abort(404, 'Foto profil tidak ditemukan.');
         }
 
-        return response()->file(Storage::disk('public')->path($user->profile_photo_path));
+        return response()->file(Storage::disk('public')->path($user->profile_photo_path), [
+            'Cache-Control' => 'private, max-age=86400',
+        ]);
     }
 
     /**

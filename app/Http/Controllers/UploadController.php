@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Intervention\Image\Laravel\Facades\Image;
 
 class UploadController extends Controller
 {
@@ -37,6 +39,10 @@ class UploadController extends Controller
         ]);
 
         if ($validator->fails()) {
+            if ($request->header('X-Requested-With') === 'XMLHttpRequest') {
+                return response()->json(['message' => 'Validation error', 'errors' => $validator->errors()], 422);
+            }
+
             return redirect()
                 ->to(route('profile.edit') . '#berkas')
                 ->withErrors($validator)
@@ -80,6 +86,27 @@ class UploadController extends Controller
             'file_path' => $path,
         ]);
 
+        $mime = $file->getMimeType();
+        if (str_starts_with($mime, 'image/') && $extension !== 'pdf') {
+            try {
+                $thumbDir = "uploads/{$user->id}/thumb";
+                if (! Storage::disk('public')->exists($thumbDir)) {
+                    Storage::disk('public')->makeDirectory($thumbDir);
+                }
+                $thumbFilename = 'thumb-' . pathinfo($filename, PATHINFO_FILENAME) . '.webp';
+                $img = Image::read(Storage::disk('public')->path("uploads/{$user->id}/{$filename}"));
+                $img->coverDown(100, 100);
+                $img->encodeByMediaType('image/webp', quality: 80);
+                $img->save(Storage::disk('public')->path("{$thumbDir}/{$thumbFilename}"));
+            } catch (\Throwable $e) {
+                Log::warning('Thumbnail generation failed', ['error' => $e->getMessage()]);
+            }
+        }
+
+        if ($request->header('X-Requested-With') === 'XMLHttpRequest') {
+            return response()->json(['message' => 'File berhasil diupload.', 'redirect' => route('profile.edit') . '#berkas']);
+        }
+
         session()->flash('success', 'File berhasil diupload.');
         session()->flash('active_tab', 'berkas');
 
@@ -100,11 +127,15 @@ class UploadController extends Controller
         $cleanPath = str_replace('public/', '', $relativePath);
 
         if (Storage::disk('public')->exists($cleanPath)) {
-            return response()->file(Storage::disk('public')->path($cleanPath));
+            return response()->file(Storage::disk('public')->path($cleanPath), [
+                'Cache-Control' => 'private, max-age=86400',
+            ]);
         }
 
         if (Storage::exists($relativePath)) {
-            return Storage::response($relativePath);
+            return Storage::response($relativePath, null, [
+                'Cache-Control' => 'private, max-age=86400',
+            ]);
         }
 
         return redirect()->to(route('profile.edit') . '#berkas')->with('error', 'File tidak ditemukan di server. Upload ulang dokumen Anda.');
@@ -134,5 +165,30 @@ class UploadController extends Controller
         session()->flash('active_tab', 'berkas');
 
         return redirect()->to(route('profile.edit') . '#berkas');
+    }
+
+    public function thumbnail(Upload $upload)
+    {
+        $user = Auth::user();
+        if (! $user) {
+            abort(403, 'Unauthorized');
+        }
+        if (! in_array($user->role, ['admin', 'atasan'], true) && (int) $upload->user_id !== (int) $user->id) {
+            abort(403, 'This action is unauthorized.');
+        }
+
+        $originalPath = str_replace('public/', '', $upload->file_path);
+        $filename = basename($originalPath);
+        $dir = dirname($originalPath);
+        $thumbPath = "{$dir}/thumb/thumb-{$filename}";
+
+        $thumbPathWebp = preg_replace('/\.\w+$/', '.webp', $thumbPath);
+        if (Storage::disk('public')->exists($thumbPathWebp)) {
+            return response()->file(Storage::disk('public')->path($thumbPathWebp), [
+                'Cache-Control' => 'private, max-age=86400',
+            ]);
+        }
+
+        return $this->preview($upload);
     }
 }

@@ -60,6 +60,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/upload', [UploadController::class, 'index'])->name('upload.index');
         Route::get('/upload/create', [UploadController::class, 'create'])->name('upload.create');
         Route::get('/upload/{upload}', [UploadController::class, 'preview'])->name('upload.preview');
+        Route::get('/upload/{upload}/thumb', [UploadController::class, 'thumbnail'])->name('upload.thumbnail');
 
         Route::get('/kartu-kuning', [KartuKuningController::class, 'show'])->name('kartu.show');
         Route::get('/kartu-kuning/download', [KartuKuningController::class, 'download'])->name('kartu.download.self');

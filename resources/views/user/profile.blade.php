@@ -128,6 +128,7 @@
                                 <div class="relative flex-shrink-0">
                                     @if ($user->profile_photo_path)
                                         <img src="{{ route('profile.photo', $user) }}" alt="{{ $user->name }}"
+                                             loading="lazy"
                                              class="h-20 w-20 rounded-full border-2 border-gray-200 object-cover shadow-sm">
                                     @else
                                         <div class="flex h-20 w-20 items-center justify-center rounded-full bg-disnaker-100 border-2 border-gray-200">
@@ -413,7 +414,8 @@
                 $icons = ['ktp' => 'fa-id-card', 'ijazah' => 'fa-graduation-cap', 'foto' => 'fa-camera', 'kk' => 'fa-users', 'sertifikat' => 'fa-certificate'];
                 $allRequiredUploaded = collect($requiredDocs)->every(fn ($key) => $groupedUploads->get($key)?->isNotEmpty());
             @endphp
-            <div x-show="activeTab === 'berkas'" class="space-y-6">
+            <template x-if="activeTab === 'berkas'">
+            <div class="space-y-6">
                 @if (! $allRequiredUploaded)
                     <div class="rounded-xl border border-red-200 bg-red-50 p-4 card-shadow">
                         <div class="flex items-start gap-3">
@@ -483,13 +485,13 @@
                                 @forelse ($docs as $doc)
                                     @php $ext = pathinfo($doc->file_path, PATHINFO_EXTENSION); @endphp
                                     <div class="flex items-center gap-3 rounded-lg border border-gray-200 p-2">
-                                        <a href="{{ route('upload.preview', $doc->id) }}" target="_blank" class="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-100">
-                                            @if (in_array($ext, ['jpg', 'jpeg', 'png']))
-                                                <img src="{{ route('upload.preview', $doc->id) }}" alt="preview" class="h-full w-full object-cover">
-                                            @else
-                                                <i class="fas fa-file-pdf text-red-500"></i>
-                                            @endif
-                                        </a>
+                                         <a href="{{ route('upload.preview', $doc->id) }}" target="_blank" class="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-100">
+                                             @if (in_array($ext, ['jpg', 'jpeg', 'png']))
+                                                 <img src="{{ route('upload.thumbnail', $doc->id) }}" alt="preview" class="h-full w-full object-cover" loading="lazy">
+                                             @else
+                                                 <i class="fas fa-file-pdf text-red-500"></i>
+                                             @endif
+                                         </a>
                                         <div class="min-w-0 flex-1">
                                             <a href="{{ route('upload.preview', $doc->id) }}" target="_blank" class="block truncate text-sm font-medium text-gray-900 hover:text-disnaker-600">
                                                 {{ basename($doc->file_path) }}
@@ -526,13 +528,27 @@
                                 <p class="mt-3 text-xs italic text-gray-400">*Jika Sudah Punya</p>
                             @endif
 
-                            <form action="{{ route('upload.store') }}" method="POST" enctype="multipart/form-data" class="mt-4 space-y-3 rounded-lg border border-disnaker-200 bg-disnaker-50 p-4" x-data="{ uploading: false }" @submit="uploading = true">
+                            <form action="{{ route('upload.store') }}" method="POST" enctype="multipart/form-data" class="mt-4 space-y-3 rounded-lg border border-disnaker-200 bg-disnaker-50 p-4" x-data="{ uploading: false, error: '' }" @submit.prevent="
+                                uploading = true; error = '';
+                                const formData = new FormData($el);
+                                fetch('{{ route('upload.store') }}', {
+                                    method: 'POST',
+                                    body: formData,
+                                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                                }).then(r => r.json().then(data => ({ status: r.status, data })))
+                                  .then(({ status, data }) => {
+                                      uploading = false;
+                                      if (status === 422) { error = data.errors?.file?.[0] || data.message || 'Validation error'; return; }
+                                      if (status === 200 || status === 302) { window.location.hash = '#berkas'; window.location.reload(); }
+                                  }).catch(() => { uploading = false; error = 'Upload gagal. Coba lagi.'; });
+                            ">
                                 @csrf
                                 <input type="hidden" name="jenis_dokumen" value="{{ $key }}">
                                 <div>
                                     <x-input-label for="file_{{ $key }}" value="File (jpg/png/pdf, max 5MB)" />
                                     <input id="file_{{ $key }}" type="file" name="file" class="form-input" required accept=".jpg,.jpeg,.png,.pdf">
                                     <x-input-error :messages="$errors->get('file')" />
+                                    <p x-show="error" x-text="error" class="mt-1 text-xs text-red-500"></p>
                                 </div>
                                 <button type="submit" class="btn-primary w-full" :disabled="uploading">
                                     <i class="fas mr-2" :class="uploading ? 'fa-spinner fa-spin' : 'fa-upload'"></i>
@@ -543,11 +559,13 @@
                     @endforeach
                 </div>
             </div>
+            </template>
         </div>
     </div>
 
     {{-- SIDEBAR --}}
     <div class="space-y-6">
+            @cache("profile-sidebar-{$user->id}", now()->addMinutes(5))
             <div class="overflow-hidden rounded-xl bg-white card-shadow">
                 <div class="bg-gradient-to-r from-[#005aa7] to-blue-600 px-4 py-3">
                     <h3 class="text-sm font-semibold text-white"><i class="fas fa-chart-line mr-2"></i>Progress Biodata</h3>
@@ -662,6 +680,7 @@
                     </div>
                 </div>
             </div>
+            @endcache
     </div>
 </div>
 @endsection
