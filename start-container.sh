@@ -23,14 +23,30 @@ fi
 php artisan migrate --force 2>/dev/null || true
 php artisan storage:link 2>/dev/null || true
 
-# Ensure production-only packages (remove dev deps if stale cache left them)
-composer install --no-dev --optimize-autoloader --no-interaction 2>/dev/null || true
-
 # Clear stale bootstrap cache (services.php may contain dev-only providers)
 rm -f bootstrap/cache/services.php bootstrap/cache/packages.php
 
-# Regenerate clean services.php without dev providers
+# Regenerate clean services.php (exclude dev providers via dont-discover)
 php artisan package:discover --force 2>/dev/null || true
+
+# Final safety: strip any dev providers that slipped through
+php -r '
+$f = "bootstrap/cache/services.php";
+if (file_exists($f)) {
+    $m = require $f;
+    $dev = ["Boost","Mcp\\Server","Telescope\\","TelescopeMcp","Pail","Sentinel\\","Collision","Termwind","Pest","Breeze","Sail","Roster","Tinker"];
+    $clean = [];
+    foreach ($m["providers"] ?? [] as $k => $v) {
+        $skip = false;
+        $str = is_array($v) ? implode($v) : (string)$v;
+        foreach ($dev as $d) { if (strpos($str, $d) !== false) { $skip = true; break; } }
+        if (!$skip) $clean[$k] = $v;
+    }
+    $m["providers"] = $clean;
+    file_put_contents($f, "<?php\nreturn " . var_export($m, true) . ";\n");
+    echo "Stripped " . count($m["providers"]) . " providers\n";
+}
+' 2>/dev/null || true
 
 # Warm caches
 php artisan config:cache 2>/dev/null || true
