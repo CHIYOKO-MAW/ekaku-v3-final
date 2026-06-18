@@ -59,9 +59,12 @@ class DashboardController extends Controller
         $districts = $this->getPandeglangWilayahData()['districts'];
 
         $user = Auth::user();
-        $notificationsQuery = $user->notificationsE()->latest();
-        $notifications = (clone $notificationsQuery)->take(5)->get();
-        $unreadCount = (clone $notificationsQuery)->where('status_baca', false)->count();
+        $notifications = Cache::remember("dashboard.admin.{$user->id}.notifications", 60, function () use ($user) {
+            return $user->notificationsE()->latest()->take(5)->get();
+        });
+        $unreadCount = Cache::remember("dashboard.admin.{$user->id}.unread", 60, function () use ($user) {
+            return $user->notificationsE()->where('status_baca', false)->count();
+        });
         \Illuminate\Support\Facades\View::share('unreadNotes', $unreadCount);
         \Illuminate\Support\Facades\View::share('latestNotes', $notifications);
 
@@ -252,9 +255,12 @@ class DashboardController extends Controller
     public function atasan()
     {
         $user = Auth::user();
-        $notificationsQuery = $user->notificationsE()->latest();
-        $notifications = (clone $notificationsQuery)->take(5)->get();
-        $unreadCount = (clone $notificationsQuery)->where('status_baca', false)->count();
+        $notifications = Cache::remember("dashboard.atasan.{$user->id}.notifications", 60, function () use ($user) {
+            return $user->notificationsE()->latest()->take(5)->get();
+        });
+        $unreadCount = Cache::remember("dashboard.atasan.{$user->id}.unread", 60, function () use ($user) {
+            return $user->notificationsE()->where('status_baca', false)->count();
+        });
         \Illuminate\Support\Facades\View::share('unreadNotes', $unreadCount);
         \Illuminate\Support\Facades\View::share('latestNotes', $notifications);
 

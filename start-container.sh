@@ -19,6 +19,13 @@ elif [[ -n "$MYSQL_HOST" ]]; then
   export DB_PASSWORD="$MYSQL_PASSWORD"
 fi
 
+# OPcache: load custom config via scan dir
+mkdir -p /app/php.ini.d
+cp /app/opcache.ini /app/php.ini.d/opcache.ini
+export PHP_INI_SCAN_DIR="/app/php.ini.d:"
+# Also try to copy to system location as fallback
+cp /app/opcache.ini /etc/php.ini.d/opcache.ini 2>/dev/null || true
+
 # Laravel startup commands
 php artisan migrate --force 2>/dev/null || true
 php artisan storage:link 2>/dev/null || true

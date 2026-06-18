@@ -12,16 +12,13 @@ class SecurityHeaders
     {
         $response = $next($request);
 
-        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
-        $response->headers->set('X-Content-Type-Options', 'nosniff');
-        $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), interest-cohort=()');
 
-        // Cache static build assets immutably; private for everything else
+        // Cache static build assets immutably; don't override Cache-Control for cached responses
         $path = $request->getPathInfo();
         if (preg_match('#^/(build|favicon|images)/#', $path)) {
             $response->headers->set('Cache-Control', 'public, max-age=31536000, immutable');
-        } else {
+        } elseif (! $response->headers->has('Cache-Control')) {
             $response->headers->set('Cache-Control', 'no-cache, private');
         }
 
