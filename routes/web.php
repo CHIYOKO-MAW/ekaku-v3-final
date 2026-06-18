@@ -17,34 +17,6 @@ use Illuminate\Support\Facades\Route;
 use Spatie\ResponseCache\Middlewares\CacheResponse;
 use Spatie\ResponseCache\Middlewares\DoNotCacheResponse;
 
-Route::middleware([DoNotCacheResponse::class])->get('/debug-providers', function () {
-    $manifest = require base_path('bootstrap/cache/services.php');
-    $providers = $manifest['providers'] ?? [];
-    $eager = array_filter($providers, fn($k) => is_int($k), ARRAY_FILTER_USE_KEY);
-    $devPatterns = ['Telescope', 'Pail', 'Boost', 'Mcp\\Server', 'Breeze', 'Sail', 'Roster', 'Pest', 'Collision'];
-    $devFound = [];
-    foreach ($providers as $key => $value) {
-        $str = is_array($value) ? implode(',', $value) : (string)$value;
-        foreach ($devPatterns as $pattern) {
-            if (str_contains($str, $pattern)) {
-                $devFound[] = $str;
-                break;
-            }
-        }
-    }
-    $installed = json_decode(file_get_contents(base_path('vendor/composer/installed.json')), true);
-    $pkgNames = array_map(fn($p) => $p['name'] ?? '', $installed['packages'] ?? []);
-    $devPkgs = array_filter($pkgNames, fn($n) => str_contains($n, 'telescope') || str_contains($n, 'pail') || str_contains($n, 'breeze') || str_contains($n, 'sail') || str_contains($n, 'pest') || str_contains($n, 'collision') || str_contains($n, 'boost') || str_contains($n, 'mcp'));
-    return response()->json([
-        'total_providers' => count($providers),
-        'eager_count' => count($eager),
-        'dev_providers_in_services' => $devFound,
-        'dev_packages_in_installed_json' => array_values($devPkgs),
-        'total_packages' => count($pkgNames),
-        'file_size' => filesize(base_path('bootstrap/cache/services.php')),
-    ]);
-});
-
 Route::middleware(['auth', 'role:admin', DoNotCacheResponse::class])->get('/force-seed', function () {
     try {
         echo 'Starting seeding...<br>';
