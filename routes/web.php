@@ -82,7 +82,7 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/notifikasi/{notification}/read', [NotificationController::class, 'markRead'])->name('notifikasi.read');
 
     Route::middleware('role:user')->group(function () {
-        Route::get('/status-pekerjaan', [StatusPekerjaanController::class, 'index'])->name('status.index');
+        Route::get('/status-pekerjaan', [StatusPekerjaanController::class, 'index'])->middleware(CacheResponse::using(300))->name('status.index');
         Route::post('/status-pekerjaan', [StatusPekerjaanController::class, 'store'])->name('status.store');
     });
 
@@ -90,10 +90,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'admin'])
             ->middleware(CacheResponse::using(300))
             ->name('dashboard');
-        Route::get('/verifikasi', [VerifikasiController::class, 'index'])->name('verifikasi.index');
-        Route::get('/pengguna', [UserController::class, 'index'])->name('pengguna.index');
+        Route::get('/verifikasi', [VerifikasiController::class, 'index'])->middleware(CacheResponse::using(300))->name('verifikasi.index');
+        Route::get('/pengguna', [UserController::class, 'index'])->middleware(CacheResponse::using(300))->name('pengguna.index');
         Route::get('/pengguna/perhatian', [UserController::class, 'attention'])->name('pengguna.perhatian');
-        Route::get('/laporan', [DashboardController::class, 'laporanAdmin'])->name('laporan');
+        Route::get('/laporan', [DashboardController::class, 'laporanAdmin'])->middleware(CacheResponse::using(300))->name('laporan');
         Route::get('/wilayah/{districtCode}/villages', [DashboardController::class, 'villagesByDistrict'])->name('wilayah.villages');
         Route::view('/notifikasi', 'admin.notification')->name('notification');
         Route::get('/user-management', fn () => redirect()->route('admin.pengguna.index'))->name('user-management');
@@ -132,5 +132,5 @@ Route::middleware('throttle:30,1')->get('/verify/{nomor_ak1}', [KartuKuningContr
     ->middleware(CacheResponse::using(60));
 
 Route::get('/dashboard/user', [DashboardController::class, 'user'])
-    ->middleware(['auth', 'role:user'])
+    ->middleware(['auth', 'role:user', CacheResponse::using(300)])
     ->name('dashboard.user');

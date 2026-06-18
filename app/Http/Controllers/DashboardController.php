@@ -12,10 +12,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
+use App\Http\Traits\SharesNotifications;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DashboardController extends Controller
 {
+    use SharesNotifications;
     public function __construct()
     {
         $this->middleware('auth');
@@ -150,6 +152,7 @@ class DashboardController extends Controller
 
     public function laporanAdmin()
     {
+        $this->shareNotifications();
         $wilayahData = $this->getPandeglangWilayahData();
         $districts = $wilayahData['districts'];
         $selectedDistrictCode = (string) request('kecamatan_code', '');
@@ -390,14 +393,26 @@ class DashboardController extends Controller
         $selectedDistrictName = $districtNames[$selectedDistrictCode] ?? null;
         $selectedDistrictVillages = $this->villagesForDistrict($districts, $selectedDistrictCode);
 
+        // Pre-sort district names once (was sorting per row in findNameInAddress)
+        $sortedDistrictNames = collect(array_values($districtNames))
+            ->filter()
+            ->sortByDesc(fn ($name) => strlen((string) $name))
+            ->values()
+            ->all();
+
+        // Pre-sort village names if a district is selected
+        $sortedVillageNames = $selectedDistrictCode !== ''
+            ? collect($selectedDistrictVillages)->pluck('name')->filter()->sortByDesc(fn ($n) => strlen((string) $n))->values()->all()
+            : [];
+
         foreach ($rows as $row) {
             $address = (string) optional($row->biodata)->alamat;
             $districtName = $selectedDistrictName
-                ?: (optional($row->biodata)->kecamatan ?: $this->findNameInAddress($address, array_values($districtNames)));
+                ?: (optional($row->biodata)->kecamatan ?: $this->findNameInAddress($address, $sortedDistrictNames));
 
             $villageName = $selectedVillageName ?: (optional($row->biodata)->desa_kelurahan ?? '');
-            if ($villageName === '' && $selectedDistrictCode !== '') {
-                $villageName = $this->findNameInAddress($address, collect($selectedDistrictVillages)->pluck('name')->all());
+            if ($villageName === '' && $selectedDistrictCode !== '' && $sortedVillageNames !== []) {
+                $villageName = $this->findNameInAddress($address, $sortedVillageNames);
             }
 
             $areaMap[$row->id] = [
@@ -409,12 +424,11 @@ class DashboardController extends Controller
         return $areaMap;
     }
 
-    private function findNameInAddress(string $address, array $names): ?string
+    private function findNameInAddress(string $address, array $preSortedNames): ?string
     {
         $addressNormalized = Str::lower($address);
-        $sortedNames = collect($names)->filter()->sortByDesc(fn ($name) => strlen((string) $name));
 
-        foreach ($sortedNames as $name) {
+        foreach ($preSortedNames as $name) {
             $needle = Str::lower((string) $name);
             if ($needle !== '' && str_contains($addressNormalized, $needle)) {
                 return (string) $name;

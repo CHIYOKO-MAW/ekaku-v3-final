@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\BiodataStatusChanged;
+use App\Http\Traits\SharesNotifications;
 use App\Models\Biodata;
 use App\Models\KartuKuning;
 use App\Models\NotificationE;
@@ -10,6 +11,8 @@ use Illuminate\Http\Request;
 
 class VerifikasiController extends Controller
 {
+    use SharesNotifications;
+
     public function __construct()
     {
         $this->middleware(['auth', 'role:admin']);
@@ -17,6 +20,7 @@ class VerifikasiController extends Controller
 
     public function index()
     {
+        $this->shareNotifications();
         $datas = Biodata::with('user')->where('status_verifikasi', 'pending')->paginate(15);
 
         return view('admin.verifikasi', compact('datas'));

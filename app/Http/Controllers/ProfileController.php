@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Traits\SharesNotifications;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,11 +14,14 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+    use SharesNotifications;
+
     /**
      * Display the user's profile form.
      */
     public function edit(Request $request): View
     {
+        $this->shareNotifications();
         $authUser = $request->user()->load(['biodata', 'kartuKuning', 'statusPekerjaan', 'uploads']);
 
         return view('user.profile', [

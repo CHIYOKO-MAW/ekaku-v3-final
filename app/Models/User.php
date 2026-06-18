@@ -73,13 +73,22 @@ class User extends Authenticatable
 
     public function hasRequiredDocuments()
     {
-        $required = ['ktp', 'ijazah', 'foto'];
+        // Use already-loaded uploads relationship if available (avoids extra query)
+        if ($this->relationLoaded('uploads')) {
+            $uploaded = $this->uploads
+                ->pluck('jenis_dokumen')
+                ->unique()
+                ->toArray();
+        } else {
+            $required = ['ktp', 'ijazah', 'foto'];
+            $uploaded = $this->uploads()
+                ->whereIn('jenis_dokumen', $required)
+                ->pluck('jenis_dokumen')
+                ->unique()
+                ->toArray();
+        }
 
-        $uploaded = $this->uploads()
-            ->whereIn('jenis_dokumen', $required)
-            ->pluck('jenis_dokumen')
-            ->unique()
-            ->toArray();
+        $required = ['ktp', 'ijazah', 'foto'];
 
         return empty(array_diff($required, $uploaded));
     }

@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\SharesNotifications;
 use Illuminate\Http\Request;
 use App\Models\StatusPekerjaan;
 use Carbon\Carbon;
 
 class StatusPekerjaanController extends Controller
 {
+    use SharesNotifications;
+
     public function __construct()
     {
         $this->middleware(['auth','role:user']);
@@ -16,6 +19,7 @@ class StatusPekerjaanController extends Controller
     // tampil halaman status user (card di dashboard bisa include partial)
     public function index(Request $request)
     {
+        $this->shareNotifications();
         $user = $request->user();
         $status = $user->statusPekerjaan()->first();
         return view('status.index', compact('status'));

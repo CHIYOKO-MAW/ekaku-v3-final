@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\SharesNotifications;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -9,8 +10,11 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
+    use SharesNotifications;
+
     public function index()
     {
+        $this->shareNotifications();
         $users = User::query()
             ->where('role', 'user')
             ->with(['biodata', 'statusPekerjaan']);

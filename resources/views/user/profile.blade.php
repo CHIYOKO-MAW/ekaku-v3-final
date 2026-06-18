@@ -591,7 +591,7 @@
                             <p class="mt-1 text-xs text-yellow-700">Kartu aktif setelah biodata diverifikasi admin.</p>
                         </div>
                         @if ($biodata)
-                            @php $canSubmitSidebar = $biodata->isComplete() && $user->hasRequiredDocuments(); @endphp
+                            @php $canSubmitSidebar = $biodata->isComplete() && $docsComplete; @endphp
                             @if ($canSubmitSidebar)
                                 <form method="POST" action="{{ route('biodata.submit') }}" class="mt-4">
                                     @csrf
@@ -604,7 +604,7 @@
                                     <button type="button" class="btn-secondary opacity-50 cursor-not-allowed w-full" disabled>
                                         <i class="fas fa-paper-plane mr-2"></i>Ajukan Validasi Admin
                                     </button>
-                                    @if (! $user->hasRequiredDocuments())
+                                    @if (! $docsComplete)
                                         <p class="text-xs text-red-500">
                                             <i class="fas fa-exclamation-circle mr-1"></i>
                                             Upload dokumen dulu
