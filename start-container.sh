@@ -30,23 +30,7 @@ rm -f bootstrap/cache/services.php bootstrap/cache/packages.php
 php artisan package:discover --force 2>/dev/null || true
 
 # Final safety: strip any dev providers that slipped through
-php -r '
-$f = "bootstrap/cache/services.php";
-if (file_exists($f)) {
-    $m = require $f;
-    $dev = ["Boost","Mcp\\Server","Telescope\\","TelescopeMcp","Pail","Sentinel\\","Collision\\Adapters","Pest\\Laravel","Breeze","Sail","Roster"];
-    $clean = [];
-    foreach ($m["providers"] ?? [] as $k => $v) {
-        $skip = false;
-        $str = is_array($v) ? implode($v) : (string)$v;
-        foreach ($dev as $d) { if (strpos($str, $d) !== false) { $skip = true; break; } }
-        if (!$skip) $clean[$k] = $v;
-    }
-    $m["providers"] = $clean;
-    file_put_contents($f, "<?php\nreturn " . var_export($m, true) . ";\n");
-    echo "Stripped " . count($m["providers"]) . " providers\n";
-}
-' 2>/dev/null || true
+php clean_services.php 2>/dev/null || true
 
 # Warm caches
 php artisan config:cache 2>/dev/null || true
