@@ -23,8 +23,14 @@ fi
 php artisan migrate --force 2>/dev/null || true
 php artisan storage:link 2>/dev/null || true
 
+# Ensure production-only packages (remove dev deps if stale cache left them)
+composer install --no-dev --optimize-autoloader --no-interaction 2>/dev/null || true
+
 # Clear stale bootstrap cache (services.php may contain dev-only providers)
 rm -f bootstrap/cache/services.php bootstrap/cache/packages.php
+
+# Regenerate clean services.php without dev providers
+php artisan package:discover --force 2>/dev/null || true
 
 # Warm caches
 php artisan config:cache 2>/dev/null || true
