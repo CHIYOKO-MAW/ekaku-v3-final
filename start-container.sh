@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Ensure nginx directories exist (Nixpacks install phase may have been overridden)
+mkdir -p /var/log/nginx /var/cache/nginx
+
 # Set Laravel DB_* from Railway DATABASE_URL or MYSQL_* env vars
 if [[ -n "$DATABASE_URL" ]]; then
   export DB_CONNECTION=mysql
