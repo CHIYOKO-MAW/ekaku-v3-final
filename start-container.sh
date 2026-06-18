@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Ensure nginx directories exist (Nixpacks install phase may have been overridden)
+# Ensure nginx directories exist
 mkdir -p /var/log/nginx /var/cache/nginx
 
 # Set Laravel DB_* from Railway DATABASE_URL or MYSQL_* env vars
@@ -20,33 +20,23 @@ elif [[ -n "$MYSQL_HOST" ]]; then
 fi
 
 # Laravel startup commands
-php artisan migrate --force 2>/dev/null || true
-php artisan storage:link 2>/dev/null || true
+php artisan migrate --force 2>&1 || true
+php artisan storage:link 2>&1 || true
 
-# Clear stale bootstrap cache (services.php may contain dev-only providers)
+# Clear stale bootstrap cache
 rm -f bootstrap/cache/services.php bootstrap/cache/packages.php
 
-# Regenerate clean services.php (exclude dev providers via dont-discover)
+# Regenerate clean services.php
 php artisan package:discover --force 2>&1 || true
 
-# Strip dev providers that slipped through
+# Safety: strip any dev providers that slipped through
 php clean_services.php 2>&1 || true
 
-# Verify cleanup
-echo "=== services.php provider count ===" 
-php -r '$_ = require "bootstrap/cache/services.php"; echo count($_["providers"] ?? []) . " providers\n";' 2>&1 || true
-
-# Warm caches (DO NOT run package:discover again)
-php artisan config:cache 2>/dev/null || true
-php artisan route:cache 2>/dev/null || true
-php artisan view:cache 2>/dev/null || true
-php artisan event:cache 2>/dev/null || true
-
-echo "=== After cache warm, provider count ===" 
-php -r '$_ = require "bootstrap/cache/services.php"; echo count($_["providers"] ?? []) . " providers\n";' 2>&1 || true
+# Warm caches
+php artisan config:cache 2>&1 || true
+php artisan route:cache 2>&1 || true
+php artisan view:cache 2>&1 || true
+php artisan event:cache 2>&1 || true
 
 # Start Nixpacks nginx + php-fpm pipeline
-# prestart.mjs processes nginx.template.conf (substitutes ${PORT}, $if(IS_LARAVEL) etc.)
-# php-fpm uses Nixpacks built-in php-fpm.conf (127.0.0.1:9000)
-# nginx runs in foreground (daemon off) keeping the container alive
 node /assets/scripts/prestart.mjs /app/nginx.template.conf /nginx.conf && (php-fpm -y /assets/php-fpm.conf & nginx -c /nginx.conf)
