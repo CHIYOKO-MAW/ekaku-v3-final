@@ -23,6 +23,9 @@ fi
 php artisan migrate --force 2>/dev/null || true
 php artisan storage:link 2>/dev/null || true
 
+# Clear stale bootstrap cache (services.php may contain dev-only providers)
+rm -f bootstrap/cache/services.php bootstrap/cache/packages.php
+
 # Warm caches
 php artisan config:cache 2>/dev/null || true
 php artisan route:cache 2>/dev/null || true

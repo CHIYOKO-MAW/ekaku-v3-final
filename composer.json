@@ -81,7 +81,16 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": []
+            "dont-discover": [
+            "laravel/boost",
+            "laravel/pail",
+            "laravel/sentinel",
+            "laravel/telescope",
+            "lucianotonet/laravel-telescope-mcp",
+            "nunomaduro/collision",
+            "termwind/laravel",
+            "pestphp/pest-plugin-laravel"
+        ]
         }
     },
     "config": {

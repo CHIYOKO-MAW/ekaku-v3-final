@@ -23,6 +23,10 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 
+# Laravel bootstrap cache (stale services.php causes dev providers in production)
+bootstrap/cache/services.php
+bootstrap/cache/packages.php
+
 # Local dev artifacts
 boost.json
 session-ses-*/
