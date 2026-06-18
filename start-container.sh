@@ -43,6 +43,10 @@ done
 
 # Try nginx + php-fpm first (concurrent requests)
 if command -v nginx >/dev/null 2>&1 && [ -n "$PHP_FPM_BIN" ]; then
+  # Create www-data user for php-fpm (it refuses to run as root)
+  adduser -D -H -s /sbin/nologin www-data 2>/dev/null || \
+    useradd -r -s /sbin/nologin www-data 2>/dev/null || true
+
   # Process nginx template: substitute ${PORT}
   if [ -f /app/nginx.conf ]; then
     sed "s/\${PORT}/${PORT:-8000}/g" /app/nginx.conf > /etc/nginx/nginx.conf
@@ -51,14 +55,19 @@ if command -v nginx >/dev/null 2>&1 && [ -n "$PHP_FPM_BIN" ]; then
   # Create php-fpm run directory
   mkdir -p /var/run
 
-  # Start PHP-FPM in background
+  # Start PHP-FPM in background (as www-data)
   $PHP_FPM_BIN --daemonize --fpm-config /app/php-fpm.conf 2>&1 || true
 
   # Give php-fpm a moment to create the socket
-  sleep 1
+  sleep 2
 
-  # Start nginx in foreground (keeps container alive)
-  exec nginx -g 'daemon off;'
+  # Verify php-fpm socket exists
+  if [ -S /var/run/php-fpm.sock ]; then
+    # Start nginx in foreground (keeps container alive)
+    exec nginx -g 'daemon off;'
+  else
+    echo "Warning: php-fpm socket not found, falling back to php -S"
+  fi
 fi
 
 # Fallback: php -S (single-threaded, but works)
