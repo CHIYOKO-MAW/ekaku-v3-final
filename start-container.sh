@@ -74,21 +74,22 @@ php artisan route:cache 2>&1 || true
 php artisan view:cache 2>&1 || true
 php artisan event:cache 2>&1 || true
 
-# Start Nixpacks nginx + php-fpm pipeline
-node /assets/scripts/prestart.mjs /app/nginx.template.conf /nginx.conf && (php-fpm -y /assets/php-fpm.conf & nginx -c /nginx.conf &
+# Generate nginx config from template
+node /assets/scripts/prestart.mjs /app/nginx.template.conf /nginx.conf
+
+# Start php-fpm in background
+php-fpm -y /assets/php-fpm.conf &
 
 # Pre-warm caches in background — makes first user visit instant
 (
-  # Wait for nginx+php-fpm to be ready
   for i in 1 2 3 4 5 6 7 8 9 10; do
     sleep 1
     curl -sf http://localhost:${PORT}/ > /dev/null 2>&1 && break
   done
-  # Warm guest pages (also warms OPcache for web server)
   curl -sf http://localhost:${PORT}/ > /dev/null 2>&1
   curl -sf http://localhost:${PORT}/login > /dev/null 2>&1
   echo "[warmup] Guest pages cached."
-))
+) &
 
-# Keep the container alive by waiting for nginx/php-fpm to exit
-wait
+# Start nginx in foreground — keeps container alive
+nginx -c /nginx.conf
