@@ -38,10 +38,10 @@ class ProfileController extends Controller
         View::share('unreadNotes', $unreadCount);
         View::share('latestNotes', $notifications);
 
-        $authUser = $user->load(['biodata', 'kartuKuning', 'statusPekerjaan', 'uploads']);
+        $user->load(['kartuKuning', 'uploads']);
 
         return view('user.profile', [
-            'user' => $authUser,
+            'user' => $user,
             'biodata' => $biodata,
             'status' => $status,
             'uploads' => $uploads,
