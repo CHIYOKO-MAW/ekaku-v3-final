@@ -114,8 +114,12 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::middleware('role:atasan')->prefix('atasan')->name('atasan.')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'atasan'])->name('dashboard');
-        Route::get('/rekap-admin', [DashboardController::class, 'rekapAdmin'])->name('rekap-admin');
+        Route::get('/dashboard', [DashboardController::class, 'atasan'])
+            ->middleware(CacheResponse::using(300))
+            ->name('dashboard');
+        Route::get('/rekap-admin', [DashboardController::class, 'rekapAdmin'])
+            ->middleware(CacheResponse::using(300))
+            ->name('rekap-admin');
     });
 
     Route::prefix('user')->name('user.')->group(function () {

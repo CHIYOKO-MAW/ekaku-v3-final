@@ -3,32 +3,48 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Http\Traits\SharesNotifications;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\View;
+use Illuminate\View\View as ViewView;
 
 class ProfileController extends Controller
 {
-    use SharesNotifications;
-
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): View
+    public function edit(Request $request): ViewView
     {
-        $this->shareNotifications();
-        $authUser = $request->user()->load(['biodata', 'kartuKuning', 'statusPekerjaan', 'uploads']);
+        $user = $request->user();
+        $userId = $user->id;
+
+        $biodata = Cache::remember("profile.{$userId}.biodata", 60, fn () => $user->biodata);
+        $status = Cache::remember("profile.{$userId}.status", 60, fn () => $user->statusPekerjaan);
+        $kartuKuning = Cache::remember("profile.{$userId}.kartu", 60, fn () => $user->kartuKuning);
+        $uploads = Cache::remember("profile.{$userId}.uploads", 60, fn () => $user->uploads);
+
+        $notifications = Cache::remember("profile.{$userId}.notifications", 60, function () use ($user) {
+            return $user->notificationsE()->latest()->take(5)->get();
+        });
+        $unreadCount = Cache::remember("profile.{$userId}.unread", 60, function () use ($user) {
+            return $user->notificationsE()->where('status_baca', false)->count();
+        });
+
+        View::share('unreadNotes', $unreadCount);
+        View::share('latestNotes', $notifications);
+
+        $authUser = $user->load(['biodata', 'kartuKuning', 'statusPekerjaan', 'uploads']);
 
         return view('user.profile', [
             'user' => $authUser,
-            'biodata' => $authUser->biodata,
-            'status' => $authUser->statusPekerjaan,
-            'uploads' => $authUser->uploads,
+            'biodata' => $biodata,
+            'status' => $status,
+            'uploads' => $uploads,
         ]);
     }
 
@@ -57,6 +73,14 @@ class ProfileController extends Controller
         }
 
         $user->save();
+
+        $userId = $user->id;
+        Cache::forget("profile.{$userId}.biodata");
+        Cache::forget("profile.{$userId}.status");
+        Cache::forget("profile.{$userId}.kartu");
+        Cache::forget("profile.{$userId}.uploads");
+        Cache::forget("profile.{$userId}.notifications");
+        Cache::forget("profile.{$userId}.unread");
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }

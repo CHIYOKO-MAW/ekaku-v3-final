@@ -24,6 +24,8 @@ class NotificationController extends Controller
             Cache::forget($cacheKey);
             Cache::forget("dashboard.user.{$userId}.notifications");
             Cache::forget("dashboard.user.{$userId}.unread");
+            Cache::forget("profile.{$userId}.notifications");
+            Cache::forget("profile.{$userId}.unread");
         }
 
         $notes = $user->notificationsE()->latest()->paginate(10);
@@ -46,6 +48,8 @@ class NotificationController extends Controller
         Cache::forget('notification.unread.'.$userId);
         Cache::forget("dashboard.user.{$userId}.notifications");
         Cache::forget("dashboard.user.{$userId}.unread");
+        Cache::forget("profile.{$userId}.notifications");
+        Cache::forget("profile.{$userId}.unread");
 
         return back()->with('success', 'Notifikasi ditandai sudah dibaca.');
     }
