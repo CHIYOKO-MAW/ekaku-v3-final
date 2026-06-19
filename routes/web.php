@@ -46,10 +46,9 @@ if (file_exists(__DIR__.'/auth.php')) {
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->middleware(CacheResponse::using(60))->name('profile.edit');
-    Route::get('/profile/photo/{user}', [ProfileController::class, 'photo'])->name('profile.photo');
-
     Route::middleware(DoNotCacheResponse::class)->group(function () {
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::get('/profile/photo/{user}', [ProfileController::class, 'photo'])->name('profile.photo');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
