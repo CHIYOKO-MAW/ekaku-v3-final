@@ -47,7 +47,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::middleware(DoNotCacheResponse::class)->group(function () {
-        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::get('/profile/photo/{user}', [ProfileController::class, 'photo'])->name('profile.photo');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -68,6 +67,10 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notifikasi.index');
     });
+
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->middleware(CacheResponse::using(60))
+        ->name('profile.edit');
 
     Route::post('/biodata', [BiodataController::class, 'store'])->name('biodata.store');
     Route::put('/biodata', [BiodataController::class, 'update'])->name('biodata.update');

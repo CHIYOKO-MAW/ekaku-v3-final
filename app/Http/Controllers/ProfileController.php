@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Illuminate\View\View as ViewView;
+use Spatie\ResponseCache\Facades\ResponseCache;
 
 class ProfileController extends Controller
 {
@@ -81,6 +82,7 @@ class ProfileController extends Controller
         Cache::forget("profile.{$userId}.uploads");
         Cache::forget("profile.{$userId}.notifications");
         Cache::forget("profile.{$userId}.unread");
+        ResponseCache::forget(route('profile.edit'));
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }

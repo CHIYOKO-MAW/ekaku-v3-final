@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Intervention\Image\Laravel\Facades\Image;
+use Spatie\ResponseCache\Facades\ResponseCache;
 
 class UploadController extends Controller
 {
@@ -104,8 +106,15 @@ class UploadController extends Controller
         }
 
         if ($request->header('X-Requested-With') === 'XMLHttpRequest') {
+            $userId = $user->id;
+            Cache::forget("profile.{$userId}.uploads");
+            ResponseCache::forget(route('profile.edit'));
             return response()->json(['message' => 'File berhasil diupload.', 'redirect' => route('profile.edit') . '#berkas']);
         }
+
+        $userId = $user->id;
+        Cache::forget("profile.{$userId}.uploads");
+        ResponseCache::forget(route('profile.edit'));
 
         session()->flash('success', 'File berhasil diupload.');
         session()->flash('active_tab', 'berkas');
@@ -160,6 +169,10 @@ class UploadController extends Controller
         }
 
         $upload->delete();
+
+        $userId = $user->id;
+        Cache::forget("profile.{$userId}.uploads");
+        ResponseCache::forget(route('profile.edit'));
 
         session()->flash('success', 'File berhasil dihapus.');
         session()->flash('active_tab', 'berkas');

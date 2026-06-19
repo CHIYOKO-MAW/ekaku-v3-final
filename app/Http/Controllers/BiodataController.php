@@ -8,12 +8,23 @@ use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Spatie\ResponseCache\Facades\ResponseCache;
 
 class BiodataController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth');
+    }
+
+    private function clearProfileCache(): void
+    {
+        $userId = auth()->id();
+        Cache::forget("profile.{$userId}.biodata");
+        Cache::forget("profile.{$userId}.status");
+        Cache::forget("profile.{$userId}.kartu");
+        Cache::forget("profile.{$userId}.uploads");
+        ResponseCache::forget(route('profile.edit'));
     }
 
     // list (admin/atasan see all, user see own)
@@ -74,6 +85,7 @@ class BiodataController extends Controller
 
         $userId = $user->id;
         Cache::forget("dashboard.user.{$userId}.biodata");
+        $this->clearProfileCache();
 
         return redirect()->to(route('profile.edit').'#biodata')
             ->with('success', 'Biodata berhasil disimpan.');
@@ -126,6 +138,7 @@ class BiodataController extends Controller
 
         $userId = $user->id;
         Cache::forget("dashboard.user.{$userId}.biodata");
+        $this->clearProfileCache();
 
         return redirect()->to(route('profile.edit').'#biodata')
             ->with('success', 'Biodata berhasil diperbarui.');
@@ -167,6 +180,7 @@ class BiodataController extends Controller
 
         $userId = $user->id;
         Cache::forget("dashboard.user.{$userId}.biodata");
+        $this->clearProfileCache();
 
         return redirect()->to(route('profile.edit').'#biodata')
             ->with('success', 'Pengajuan verifikasi berhasil dikirim. Menunggu validasi admin.');
