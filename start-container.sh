@@ -54,8 +54,8 @@ if [ -f vendor/composer/installed.json ]; then
   ' 2>&1
 fi
 
-# Regenerate autoloader without dev classes
-composer dump-autoload --optimize --no-dev 2>&1 || true
+# Regenerate autoloader
+composer dump-autoload --optimize 2>&1 || true
 
 # Clear ALL bootstrap cache so package:discover rebuilds clean
 rm -f bootstrap/cache/services.php bootstrap/cache/packages.php bootstrap/cache/config.php bootstrap/cache/routes.php bootstrap/cache/events.php
