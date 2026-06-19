@@ -89,3 +89,6 @@ node /assets/scripts/prestart.mjs /app/nginx.template.conf /nginx.conf && (php-f
   curl -sf http://localhost:${PORT}/login > /dev/null 2>&1
   echo "[warmup] Guest pages cached."
 ))
+
+# Keep the container alive by waiting for nginx/php-fpm to exit
+wait
