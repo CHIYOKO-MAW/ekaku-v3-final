@@ -565,7 +565,6 @@
 
     {{-- SIDEBAR --}}
     <div class="space-y-6">
-            @cache("profile-sidebar-{$user->id}", now()->addMinutes(5))
             <div class="overflow-hidden rounded-xl bg-white card-shadow">
                 <div class="bg-gradient-to-r from-[#005aa7] to-blue-600 px-4 py-3">
                     <h3 class="text-sm font-semibold text-white"><i class="fas fa-chart-line mr-2"></i>Progress Biodata</h3>
@@ -680,7 +679,6 @@
                     </div>
                 </div>
             </div>
-            @endcache
     </div>
 </div>
 @endsection
