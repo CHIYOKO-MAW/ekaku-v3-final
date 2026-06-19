@@ -3,7 +3,7 @@
         <a href="{{ route('welcome') }}" class="flex items-center gap-2">
             <picture>
                 <source srcset="{{ asset('images/logo-ekaku.webp') }}" type="image/webp">
-                <img src="{{ asset('images/logo-ekaku.png') }}" alt="e-Kaku" class="h-8 w-auto">
+                <img src="{{ asset('images/logo-ekaku.png') }}" alt="e-Kaku" class="h-8 w-auto" loading="eager" width="128" height="32">
             </picture>
         </a>
 

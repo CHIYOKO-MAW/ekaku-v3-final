@@ -36,7 +36,7 @@
                 <div class="mb-6 flex justify-center lg:justify-start">
                     <picture>
                         <source srcset="{{ asset('images/logo-ekaku.webp') }}" type="image/webp">
-                        <img src="{{ asset('images/logo-ekaku.png') }}" alt="e-Kaku" class="h-14 object-contain brightness-0 invert" width="56" height="56">
+                        <img src="{{ asset('images/logo-ekaku.png') }}" alt="e-Kaku" class="h-14 object-contain brightness-0 invert" width="56" height="56" loading="eager" fetchpriority="high">
                     </picture>
                 </div>
                 <h1 class="text-3xl font-bold leading-tight md:text-4xl">e-Kaku V3</h1>
@@ -45,7 +45,7 @@
                 <div class="mt-8 hidden lg:flex justify-center lg:justify-start">
                     <picture>
                         <source srcset="{{ asset('images/lambang-pandeglang.webp') }}" type="image/webp">
-                        <img src="{{ asset('images/lambang-pandeglang.png') }}" alt="Lambang Pandeglang" class="h-28 w-28 animate-float opacity-30" width="112" height="112">
+                        <img src="{{ asset('images/lambang-pandeglang.png') }}" alt="Lambang Pandeglang" class="h-28 w-28 animate-float opacity-30" width="112" height="112" loading="eager">
                     </picture>
                 </div>
             </div>
@@ -56,7 +56,7 @@
                 <div class="text-center lg:hidden">
                     <picture>
                         <source srcset="{{ asset('images/logo-ekaku.webp') }}" type="image/webp">
-                        <img src="{{ asset('images/logo-ekaku.png') }}" alt="e-Kaku" class="mx-auto mb-6 h-10 object-contain" width="40" height="40">
+                        <img src="{{ asset('images/logo-ekaku.png') }}" alt="e-Kaku" class="mx-auto mb-6 h-10 object-contain" width="40" height="40" loading="eager">
                     </picture>
                 </div>
                 <div class="rounded-2xl border border-gray-100 bg-white shadow-xl shadow-gray-200/50">

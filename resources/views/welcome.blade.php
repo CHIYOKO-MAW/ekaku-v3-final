@@ -58,7 +58,7 @@
             <div class="flex justify-center lg:justify-end">
                 <picture>
                     <source srcset="{{ asset('images/lambang-pandeglang.webp') }}" type="image/webp">
-                    <img src="{{ asset('images/lambang-pandeglang.png') }}" alt="Lambang Pandeglang" class="h-48 w-48 animate-float drop-shadow-2xl md:h-56 md:w-56 lg:h-64 lg:w-64">
+                    <img src="{{ asset('images/lambang-pandeglang.png') }}" alt="Lambang Pandeglang" class="h-48 w-48 animate-float drop-shadow-2xl md:h-56 md:w-56 lg:h-64 lg:w-64" loading="eager" fetchpriority="high" width="256" height="256">
                 </picture>
             </div>
         </div>
