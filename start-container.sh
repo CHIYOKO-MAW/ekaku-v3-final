@@ -24,9 +24,10 @@ fi
 # Cost: ~0.5s one PHP command. Benefit: production-only providers in services.php.
 
 # Remove known dev package directories (silently ignore if absent)
-for d in vendor/laravel/telescope vendor/laravel/pail vendor/laravel/breeze \
-         vendor/laravel/sail vendor/laravel/roster vendor/laravel/boost \
-         vendor/laravel/mcp vendor/lucianotonet vendor/pestphp \
+for d in vendor/laravel/pail vendor/laravel/breeze \
+         vendor/laravel/sail vendor/laravel/roster \
+         vendor/laravel/mcp \
+         vendor/pestphp \
          vendor/nunomaduro/collision; do
   rm -rf "$d" 2>/dev/null
 done
@@ -38,9 +39,9 @@ if [ -f vendor/composer/installed.json ]; then
     $j = json_decode(file_get_contents($f), true);
     if (!isset($j["packages"])) { echo "no packages key\n"; exit(0); }
     $before = count($j["packages"]);
-    $dev = ["laravel/telescope","laravel/pail","laravel/breeze","laravel/sail",
-            "laravel/roster","laravel/boost","laravel/mcp",
-            "lucianotonet/laravel-telescope-mcp","lucianotonet/telescope-mcp",
+    $dev = ["laravel/pail","laravel/breeze","laravel/sail",
+            "laravel/roster",
+            "laravel/mcp",
             "pestphp/pest","pestphp/pest-plugin-laravel","pestphp/pest-plugin-arch",
             "nunomaduro/collision","nunomaduro/termwind","laravel/sentinel"];
     $j["packages"] = array_values(array_filter($j["packages"], function($p) use ($dev) {
