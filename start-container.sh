@@ -24,9 +24,10 @@ fi
 # Cost: ~0.5s one PHP command. Benefit: production-only providers in services.php.
 
 # Remove known dev package directories (silently ignore if absent)
+# NOTE: Do NOT delete vendor/laravel/mcp — config/ai.php or cached configs may reference it.
+# It's already in dont-discover so its provider is never registered.
 for d in vendor/laravel/pail vendor/laravel/breeze \
          vendor/laravel/sail vendor/laravel/roster \
-         vendor/laravel/mcp \
          vendor/pestphp \
          vendor/nunomaduro/collision; do
   rm -rf "$d" 2>/dev/null
@@ -41,7 +42,6 @@ if [ -f vendor/composer/installed.json ]; then
     $before = count($j["packages"]);
     $dev = ["laravel/pail","laravel/breeze","laravel/sail",
             "laravel/roster",
-            "laravel/mcp",
             "pestphp/pest","pestphp/pest-plugin-laravel","pestphp/pest-plugin-arch",
             "nunomaduro/collision","nunomaduro/termwind"];
     $j["packages"] = array_values(array_filter($j["packages"], function($p) use ($dev) {
@@ -54,11 +54,12 @@ if [ -f vendor/composer/installed.json ]; then
   ' 2>&1
 fi
 
+# Clear ALL bootstrap cache BEFORE dump-autoload
+# (post-autoload-dump triggers package:discover which loads cached config)
+rm -f bootstrap/cache/services.php bootstrap/cache/packages.php bootstrap/cache/config.php bootstrap/cache/routes.php bootstrap/cache/events.php
+
 # Regenerate autoloader
 composer dump-autoload --optimize 2>&1 || true
-
-# Clear ALL bootstrap cache so package:discover rebuilds clean
-rm -f bootstrap/cache/services.php bootstrap/cache/packages.php bootstrap/cache/config.php bootstrap/cache/routes.php bootstrap/cache/events.php
 
 # Laravel startup commands
 php artisan migrate --force 2>&1 || true
@@ -67,7 +68,7 @@ php artisan storage:link 2>&1 || true
 # Regenerate services.php with only production providers
 php artisan package:discover --force 2>&1 || true
 
-# Warm caches (config:cache reads services.php, must be clean)
+# Warm caches
 php artisan config:cache 2>&1 || true
 php artisan route:cache 2>&1 || true
 php artisan view:cache 2>&1 || true
