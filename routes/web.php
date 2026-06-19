@@ -14,7 +14,6 @@ use App\Models\KartuKuning;
 use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
-use Spatie\ResponseCache\Middlewares\CacheResponse;
 use Spatie\ResponseCache\Middlewares\DoNotCacheResponse;
 
 Route::middleware(['auth', 'role:admin', DoNotCacheResponse::class])->get('/force-seed', function () {
@@ -36,7 +35,7 @@ Route::get('/', function () {
     ];
 
     return view('welcome', compact('stats'));
-})->middleware(CacheResponse::using(3600))->name('welcome');
+})->name('welcome');
 Route::get('/landing', fn () => redirect()->route('welcome'))->name('landing');
 
 if (file_exists(__DIR__.'/auth.php')) {
@@ -69,7 +68,6 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])
-        ->middleware(CacheResponse::using(60))
         ->name('profile.edit');
 
     Route::post('/biodata', [BiodataController::class, 'store'])->name('biodata.store');
@@ -86,18 +84,17 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/notifikasi/{notification}/read', [NotificationController::class, 'markRead'])->name('notifikasi.read');
 
     Route::middleware('role:user')->group(function () {
-        Route::get('/status-pekerjaan', [StatusPekerjaanController::class, 'index'])->middleware(CacheResponse::using(300))->name('status.index');
+        Route::get('/status-pekerjaan', [StatusPekerjaanController::class, 'index'])->name('status.index');
         Route::post('/status-pekerjaan', [StatusPekerjaanController::class, 'store'])->name('status.store');
     });
 
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'admin'])
-            ->middleware(CacheResponse::using(300))
             ->name('dashboard');
-        Route::get('/verifikasi', [VerifikasiController::class, 'index'])->middleware(CacheResponse::using(300))->name('verifikasi.index');
-        Route::get('/pengguna', [UserController::class, 'index'])->middleware(CacheResponse::using(300))->name('pengguna.index');
+        Route::get('/verifikasi', [VerifikasiController::class, 'index'])->name('verifikasi.index');
+        Route::get('/pengguna', [UserController::class, 'index'])->name('pengguna.index');
         Route::get('/pengguna/perhatian', [UserController::class, 'attention'])->name('pengguna.perhatian');
-        Route::get('/laporan', [DashboardController::class, 'laporanAdmin'])->middleware(CacheResponse::using(300))->name('laporan');
+        Route::get('/laporan', [DashboardController::class, 'laporanAdmin'])->name('laporan');
         Route::get('/wilayah/{districtCode}/villages', [DashboardController::class, 'villagesByDistrict'])->name('wilayah.villages');
         Route::view('/notifikasi', 'admin.notification')->name('notification');
         Route::get('/user-management', fn () => redirect()->route('admin.pengguna.index'))->name('user-management');
@@ -118,10 +115,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware('role:atasan')->prefix('atasan')->name('atasan.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'atasan'])
-            ->middleware(CacheResponse::using(300))
             ->name('dashboard');
         Route::get('/rekap-admin', [DashboardController::class, 'rekapAdmin'])
-            ->middleware(CacheResponse::using(300))
             ->name('rekap-admin');
     });
 
@@ -136,9 +131,8 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', DoNotCacheResponse::class])->get('/kartu-scan/{id}', [KartuKuningController::class, 'scanData'])->name('kartu.scan.data');
 
 // Halaman verifikasi publik — dibuka saat QR discan (tidak perlu login)
-Route::middleware('throttle:30,1')->get('/verify/{nomor_ak1}', [KartuKuningController::class, 'verify'])->name('kartu.verify')
-    ->middleware(CacheResponse::using(60));
+Route::middleware('throttle:30,1')->get('/verify/{nomor_ak1}', [KartuKuningController::class, 'verify'])->name('kartu.verify');
 
 Route::get('/dashboard/user', [DashboardController::class, 'user'])
-    ->middleware(['auth', 'role:user', CacheResponse::using(300)])
+    ->middleware(['auth', 'role:user'])
     ->name('dashboard.user');

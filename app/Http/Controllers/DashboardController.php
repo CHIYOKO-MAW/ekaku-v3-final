@@ -447,7 +447,6 @@ class DashboardController extends Controller
             ];
         }
 
-        // Pre-sort district names ONCE (was re-sorted per user causing O(N*M) allocation)
         $sortedDistricts = collect($districts)
             ->pluck('name')
             ->filter()
@@ -455,18 +454,28 @@ class DashboardController extends Controller
             ->values()
             ->all();
 
-        // Use select()+join() instead of full Eloquent model hydration (saves memory + CPU)
         $rows = User::where('role', 'user')
             ->join('biodata', 'users.id', '=', 'biodata.user_id')
             ->leftJoin('status_pekerjaan', 'users.id', '=', 'status_pekerjaan.user_id')
-            ->select('biodata.alamat', 'biodata.status_verifikasi', 'status_pekerjaan.status_pekerjaan')
+            ->select(
+                'biodata.alamat',
+                'biodata.status_verifikasi',
+                'status_pekerjaan.status_pekerjaan'
+            )
             ->get();
 
         $bucket = [];
 
         foreach ($rows as $row) {
-            $address = (string) $row->alamat;
-            $district = $this->findNameInAddress($address, $sortedDistricts) ?: 'Tidak Terpetakan';
+            $address = strtolower((string) $row->alamat);
+            $district = 'Tidak Terpetakan';
+            foreach ($sortedDistricts as $name) {
+                if ($name !== '' && str_contains($address, strtolower($name))) {
+                    $district = $name;
+                    break;
+                }
+            }
+
             if (! isset($bucket[$district])) {
                 $bucket[$district] = [
                     'kecamatan' => $district,

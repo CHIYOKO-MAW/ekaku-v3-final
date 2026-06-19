@@ -23,6 +23,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // Railway uses dynamic public IPs — trust all proxies for HTTPS detection
         $middleware->trustProxies(at: '*');
 
+        // CacheResponse as GLOBAL middleware: on cache hits, it returns immediately
+        // BEFORE StartSession, SecurityHeaders, etc. — saving ~1700ms per page load.
+        // DoNotCacheResponse can still override per-route to prevent caching.
+        $middleware->append(\Spatie\ResponseCache\Middlewares\CacheResponse::class);
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
 
     })

@@ -3,14 +3,14 @@
 return [
     'enabled' => env('RESPONSE_CACHE_ENABLED', true),
 
-    'cache_profile' => Spatie\ResponseCache\CacheProfiles\CacheAllSuccessfulGetRequests::class,
+    'cache_profile' => \App\Http\CacheProfiles\SessionAwareCacheProfile::class,
 
     'cache_bypass_header' => [
         'name' => env('CACHE_BYPASS_HEADER_NAME', null),
         'value' => env('CACHE_BYPASS_HEADER_VALUE', null),
     ],
 
-    'cache_lifetime_in_seconds' => (int) env('RESPONSE_CACHE_LIFETIME', 60 * 60 * 24 * 7),
+    'cache_lifetime_in_seconds' => (int) env('RESPONSE_CACHE_LIFETIME', 300),
 
     'add_cache_time_header' => true,
 
