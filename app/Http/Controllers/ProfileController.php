@@ -22,7 +22,12 @@ class ProfileController extends Controller
     public function edit(Request $request): View
     {
         $this->shareNotifications();
-        $authUser = $request->user()->load(['biodata', 'kartuKuning', 'statusPekerjaan', 'uploads']);
+        $authUser = $request->user()->load([
+            'biodata',
+            'kartuKuning',
+            'statusPekerjaan',
+            'uploads' => fn ($q) => $q->select('id', 'user_id', 'jenis_dokumen', 'file_path'),
+        ]);
 
         return view('user.profile', [
             'user' => $authUser,
