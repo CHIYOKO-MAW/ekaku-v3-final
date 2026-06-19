@@ -284,7 +284,7 @@
         <div class="profile-section">
             <div class="avatar">
                 @if($photoBase64)
-                    <img src="{{ $photoBase64 }}" alt="{{ $user->name }}">
+                    <img src="{{ $photoBase64 }}" alt="{{ $user->name }}" loading="eager">
                 @else
                     <i class="fas fa-user"></i>
                 @endif

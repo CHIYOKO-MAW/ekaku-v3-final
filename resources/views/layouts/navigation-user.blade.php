@@ -64,7 +64,7 @@
                 <div class="ml-3 relative" x-data="{ open: false }">
                     <button @click="open = !open" class="rounded-full bg-disnaker-500 p-0.5 text-white ring-disnaker-500 transition focus:outline-none focus:ring-2 focus:ring-offset-2">
                         @if ($currentUser->profile_photo_url)
-                            <img src="{{ $currentUser->profile_photo_url }}" alt="Avatar" class="h-8 w-8 rounded-full object-cover">
+                            <img src="{{ $currentUser->profile_photo_url }}" alt="Avatar" class="h-8 w-8 rounded-full object-cover" loading="eager" width="32" height="32">
                         @else
                             <span class="flex h-8 w-8 items-center justify-center rounded-full bg-disnaker-500 text-sm font-semibold">
                                 {{ strtoupper(substr($currentUser->name, 0, 1)) }}

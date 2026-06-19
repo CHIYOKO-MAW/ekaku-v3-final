@@ -42,7 +42,7 @@
                 <td width="34" valign="middle">
                     <picture>
                         <source srcset="{{ asset('images/lambang-pandeglang.webp') }}" type="image/webp">
-                        <img src="{{ asset('images/lambang-pandeglang.png') }}" width="28" height="28" alt="">
+                        <img src="{{ asset('images/lambang-pandeglang.png') }}" width="28" height="28" alt="" loading="eager">
                     </picture>
                 </td>
                 <td valign="middle">
@@ -69,7 +69,7 @@
                 <td width="75" valign="top" style="padding-right:10px">
                     @if ($user->profile_photo_path)
                         <div style="width:65px;height:87px;overflow:hidden;border:1.5px solid #1e3a5f;border-radius:2px">
-                            <img src="{{ route('profile.photo', $user) }}" style="width:100%;height:100%;object-fit:cover" alt="">
+                            <img src="{{ route('profile.photo', $user) }}" style="width:100%;height:100%;object-fit:cover" alt="" loading="eager" width="65" height="87">
                         </div>
                     @else
                         <table width="65" height="87" cellpadding="0" cellspacing="0" style="border:1.5px dashed #cbd5e1;background:#fefce8;border-radius:2px">

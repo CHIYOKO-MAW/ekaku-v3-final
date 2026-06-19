@@ -28,7 +28,7 @@
           <div class="flex items-center gap-3">
             <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-100">
               @if (in_array($ext, ['jpg', 'jpeg', 'png']))
-                <img src="{{ route('upload.preview', $upload->id) }}" alt="preview" class="h-full w-full object-cover">
+                <img src="{{ route('upload.preview', $upload->id) }}" alt="preview" class="h-full w-full object-cover" loading="eager">
               @else
                 <i class="fas fa-file-pdf text-red-500"></i>
               @endif

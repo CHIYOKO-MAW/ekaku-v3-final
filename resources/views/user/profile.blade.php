@@ -128,7 +128,7 @@
                                 <div class="relative flex-shrink-0">
                                     @if ($user->profile_photo_path)
                                         <img src="{{ route('profile.photo', $user) }}" alt="{{ $user->name }}"
-                                             loading="lazy"
+                                             loading="eager" width="80" height="80"
                                              class="h-20 w-20 rounded-full border-2 border-gray-200 object-cover shadow-sm">
                                     @else
                                         <div class="flex h-20 w-20 items-center justify-center rounded-full bg-disnaker-100 border-2 border-gray-200">
