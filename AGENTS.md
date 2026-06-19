@@ -1,5 +1,11 @@
 # e-Kaku V3 — AGENTS.md
 
+## MANDATORY: Baca plan.md
+
+**SEBELUM memulai task apa pun**, AI WAJIB membaca `plan.md` di root project.
+File ini berisi kondisi pemakaian skills dan MCP tools untuk setiap situasi.
+Ikuti panduan di plan.md — jangan tebak, gunakan tools yang tepat.
+
 ## TL;DR
 
 AK-1 Kartu Kuning (job seeker card) management for Disnaker Pandeglang. Laravel 12, PHP 8.3, Blade + Alpine.js v3, Tailwind v3, Pest v4. SQLite default for dev/test. Three roles: `user`, `admin`, `atasan`. Main flow: User registers → submits biodata → admin verifies → system generates Kartu Kuning with QR code.
@@ -155,6 +161,7 @@ Biodata container uses `x-show="activeTab !== 'akun'"` so both biodata AND berka
 
 ## Important Files
 
+- `plan.md` — **WAJIB DIBACA** — kondisi pemakaian skills & MCP tools untuk setiap situasi
 - `routes/web.php:44` — auth routes group; `routes/auth.php` — Breeze auth
 - `resources/views/user/profile.blade.php` — single-page tab layout (Alpine.js)
 - `app/Http/Controllers/VerifikasiController.php:32` — verify/reject logic + KartuKuning creation
