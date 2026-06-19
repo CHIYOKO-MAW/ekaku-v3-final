@@ -83,15 +83,12 @@
     "extra": {
         "laravel": {
             "dont-discover": [
-            "laravel/boost",
             "laravel/mcp",
             "laravel/breeze",
             "laravel/pail",
             "laravel/sail",
             "laravel/sentinel",
-            "laravel/telescope",
             "laravel/roster",
-            "lucianotonet/laravel-telescope-mcp",
             "nunomaduro/collision",
             "pestphp/pest",
             "pestphp/pest-plugin-laravel",
