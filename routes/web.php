@@ -12,20 +12,8 @@ use App\Http\Controllers\VerifikasiController;
 use App\Models\Biodata;
 use App\Models\KartuKuning;
 use App\Models\User;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Spatie\ResponseCache\Middlewares\DoNotCacheResponse;
-
-Route::middleware(['auth', 'role:admin', DoNotCacheResponse::class])->get('/force-seed', function () {
-    try {
-        echo 'Starting seeding...<br>';
-        Artisan::call('db:seed', ['--force' => true]);
-        echo 'Seeding completed!<br>';
-        echo '<pre>'.Artisan::output().'</pre>';
-    } catch (\Exception $e) {
-        echo 'Error: '.$e->getMessage();
-    }
-});
 
 Route::get('/', function () {
     $stats = [
