@@ -63,26 +63,6 @@ composer dump-autoload --optimize 2>&1 || true
 
 # Laravel startup commands
 php artisan migrate --force 2>&1 || true
-# db:seed needs --force in production but Laravel 12 doesn't support it.
-# Seed directly via PHP, bypassing artisan's confirmToProceed.
-php -r "
-define('LARAVEL_START', microtime(true));
-require 'vendor/autoload.php';
-\$app = require 'bootstrap/app.php';
-\$app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
-use App\Models\User;
-use App\Models\Biodata;
-use Illuminate\Support\Facades\Hash;
-
-if (User::where('email','admin@ekaku.test')->exists()) { echo 'Already seeded.\n'; exit(0); }
-
-User::create(['name'=>'Demo User','email'=>'user@ekaku.test','role'=>'user','email_verified_at'=>now(),'password'=>Hash::make('password')]);
-User::create(['name'=>'Demo Admin','email'=>'admin@ekaku.test','role'=>'admin','email_verified_at'=>now(),'password'=>Hash::make('password')]);
-User::create(['name'=>'Demo Atasan','email'=>'atasan@ekaku.test','role'=>'atasan','email_verified_at'=>now(),'password'=>Hash::make('password')]);
-\$u = User::where('email','user@ekaku.test')->first();
-Biodata::create(['user_id'=>\$u->id,'nik'=>'3601000000000001','tempat_lahir'=>'Pandeglang','tanggal_lahir'=>'2000-01-01','alamat'=>'Jl. Pandeglang','pendidikan'=>'SMA/SMK','keahlian'=>'Administrasi Perkantoran','status_verifikasi'=>'pending']);
-echo 'Seeded 3 demo accounts.\n';
-" 2>&1 || true
 php artisan storage:link 2>&1 || true
 
 # Regenerate services.php with only production providers
