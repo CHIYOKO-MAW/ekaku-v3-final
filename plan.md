@@ -258,3 +258,200 @@
 - **Laravel Telescope** adalah tool debugging production — gunakan untuk query, exception, request
 - **Lighthouse** adalah tool performa — gunakan untuk Core Web Vitals
 - **Websearch** adalah fallback saat context7 tidak punya jawaban
+
+---
+
+## 11. TOOL & MCP INVENTORY
+
+> **WAJIB:** Baca section ini sebelum pakai tool apapun. Jangan tebak fungsi tool — gunakan tabel referensi di bawah.
+
+### 11.1 MCP Servers
+
+| Server | Lokasi Config | Fungsi | Kapan Pakai |
+|--------|---------------|--------|-------------|
+| **`context7`** | global | Dokumentasi library/framework real-time | Sebelum pakai API/library apapun |
+| **`playwright`** | global | Browser automation (navigate, click, screenshot, evaluate) | E2E testing, reproduce bug di browser, verifikasi UI |
+| **`serena`** | global | Semantic code analysis, jump to definition | Cari implementasi fungsi, trace call hierarchy |
+| **`laravel-boost`** | project + global | Laravel artisan commands via MCP | Jalankan artisan command tanpa bash |
+| **`laravel-telescope`** | project | Debug query, exception, request di production | Investigasi slow query, N+1, exception |
+| **`lighthouse`** | project | Core Web Vitals audit (FCP, LCP, TBT, CLS) | Performance audit sebelum/sesudah optimasi |
+| **`filesystem`** | project | File read/write/search operations | Operasi file di luar workspace |
+| **`markitdown`** | project | Convert content ke markdown | Konversi dokumen ke format baca |
+| **`mendeley`** | project | Research paper management | Cari/manage paper penelitian |
+| **`mcp-mermaid`** | project | Generate Mermaid diagrams | Buat diagram flow/architecture |
+| **`drawio`** | project | Generate Draw.io diagrams | Buat diagram visual |
+| **`github`** | global | Git operations, PR, issues, search | Push code, buat PR, search repos |
+| **`chrome-devtools`** | global | Inspect element, network, console | Debug frontend, network request analysis |
+| **`next-devtools`** | global | Next.js dev server MCP | Jika project pakai Next.js |
+| **`vercel`** | global | Vercel deployment | Deploy ke Vercel |
+| **`ts-hover`** | global | TypeScript info on hover | Saat refactor TypeScript |
+| **`zread`** | global | Read GitHub repo source code | Baca source code open source |
+| **`nightwatch`** | global + system | Laravel production monitoring | Cari error/issue di production |
+| **`railway`** | global + system | Railway deployment, logs, status | Deploy, cek logs, manage service |
+
+### 11.2 Skills (Superpowers Plugin)
+
+| Skill | Fungsi | Kapan Pakai |
+|-------|--------|-------------|
+| **`brainstorming`** | Eksplorasi intent, requirements, brainstorm solusi | Sebelum bikin fitur baru |
+| **`systematic-debugging`** | 4-phase debugging: root cause → pattern → hypothesis → fix | Saat ada bug/error/issue |
+| **`test-driven-development`** | TDD: failing test → implement → pass | Implement fitur/fix bug |
+| **`laravel-refactor`** | Code quality, reduce complexity, optimize | Saat refactor/cleanup code |
+| **`laravel-architect`** | Design decision, scalability, database design | Saat arsitektur concern |
+| **`laravel-debugger`** | Advanced Laravel debugging | Debug issue complex |
+| **`requesting-code-review`** | Request review dari AI | Sebelum merge/PR |
+| **`receiving-code-review`** | Terima & implement feedback | Dapat review feedback |
+| **`verification-before-completion`** | Verifikasi sebelum claim done | Sebelum commit/PR |
+| **`writing-plans`** | Buat implementation plan | Sebelum implement multi-step |
+| **`executing-plans`** | Jalankan plan dengan checkpoints | Saat eksekusi plan |
+| **`subagent-driven-development`** | Parallel task execution | Task independent bisa paralel |
+| **`dispatching-parallel-agents`** | Dispatch agents untuk task paralel | Multiple task independent |
+| **`using-git-worktrees`** | Isolated workspace via git | Butuh workspace terpisah |
+| **`finishing-a-development-branch`** | Guide merge/PR/cleanup | Selesai implementasi |
+| **`visual-explainer`** | Generate visual HTML pages | Butuh diagram/visualisasi |
+
+### 11.3 Built-in Tools
+
+| Tool | Fungsi | Kapan Pakai |
+|------|--------|-------------|
+| **`bash`** | Shell commands | Jalankan artisan, composer, npm, git |
+| **`read`** | Read file contents | Baca source code, config, logs |
+| **`write`** | Write/create files | Buat file baru |
+| **`edit`** | Edit existing files | Ubah code yang sudah ada |
+| **`glob`** | Pattern matching files | Cari file berdasarkan pattern |
+| **`grep`** | Content search di files | Cari kode berdasarkan regex |
+| **`task`** | Dispatch subagent | Delegasi task ke agent lain |
+| **`todowrite`** | Task tracking | Track progress multi-step |
+| **`websearch`** | Web search | Cari info di web (fallback context7) |
+| **`webfetch`** | Fetch URL content | Ambil konten dari URL |
+| **`question`** | Ask user clarification | Tanya user saat ragu |
+
+### 11.4 Prioritas Penggunaan
+
+```
+1. Skill (jika situasi cocok) → WAJIB pakai
+2. Context7 (sebelum pakai library/tool) → WAJIB cek dulu
+3. Built-in Tools (untuk operasi dasar)
+4. MCP Servers (untuk operasi spesifik)
+```
+
+---
+
+## 12. LIBRARIES & PACKAGES
+
+### Packages yang Dipakai di Project Ini
+
+| Package | Fungsi | Dokumentasi via Context7 |
+|---------|--------|--------------------------|
+| **`laravel/breeze`** | Auth scaffolding (login, register) | `/laravel/breeze` |
+| **`laravel/sanctum`** | API token authentication | `/laravel/framework` |
+| **`spatie/laravel-responsecache`** | HTTP response caching | `/spatie/laravel-responsecache` |
+| **`livewire/blaze`** | Blade pre-compilation | `/livewire/blaze` |
+| **`barryvdh/laravel-dompdf`** | PDF generation | `/barryvdh/laravel-dompdf` |
+| **`intervention/image`** | Image manipulation | `/intervention/image` |
+| **`pestphp/pest`** | Testing framework | `/pestphp/pest` |
+| **`laravel/framework`** | Core Laravel | `/laravel/framework` |
+| **`laravel/pint`** | Code style fixer | `/laravel/pint` |
+
+### Aturan Pakai Library
+
+1. **Jangan asumsi library tersedia** — cek `composer.json` dulu
+2. **Jangan tebak API** — pakai `context7_resolve-library-id` → `context7_query-docs`
+3. **Jangan copy-paste dari web** — verifikasi via context7 dulu
+
+---
+
+## 13. CONTEXT7 FIRST RULE
+
+> **ATURAN WAJIB:** Sebelum pakai tool/library/framework apapun, **WAJIB cek context7 dulu.**
+
+### Alur yang BENAR
+
+```
+1. User minta pakai Library X
+2. AI panggil context7_resolve-library-id(libraryName: "Library X")
+3. AI panggil context7_query-docs(libraryId, "cara pakai feature Y")
+4. Baca dokumentasi hasil query
+5. Implementasi dengan API yang sudah diverifikasi
+6. Tidak ada tebakan — semua berbasis dokumentasi resmi
+```
+
+### Alur yang SALAH
+
+```
+1. User minta pakai Library X
+2. AI langsung tulis code tanpa cek dokumentasi
+3. Code salah karena API berubah / method tidak ada
+4. Debug → buang waktu
+```
+
+### Kapan WAJIB Pakai Context7
+
+| Situasi | Contoh Query |
+|---------|--------------|
+| Pakai library baru | "Cara resize image pakai Intervention Image" |
+| Pakai method baru | "Laravel Cache remember method signature" |
+| Konfigurasi package | "Cara setup spatie responsecache di Laravel 12" |
+| Error "function not found" | "Barryvdh DomPDF method to generate PDF" |
+| Ragu API tertentu | "Alpine.js x-show vs x-if kapan pakai" |
+| Pakai MCP tool baru | "Playwright MCP browser_navigate parameters" |
+
+### Contoh Penggunaan
+
+```
+# BENAR: Cek context7 dulu
+context7_resolve-library-id(libraryName: "Intervention Image")
+→ libraryId: "/intervention/image"
+
+context7_query-docs(libraryId: "/intervention/image", query: "cara resize image")
+→ Mendapatkan API docs lengkap dengan code examples
+
+# SALAH: Tebak fungsi
+$ image->resize(100, 100);  // Method ini mungkin tidak ada!
+```
+
+---
+
+## 14. TOOL USAGE LOGGING
+
+> **ATURAN WAJIB:** Setelah selesai task, AI **WAJIB** tampilkan ringkasan tools di chat DAN catat di AGENTS.md.
+
+### 14.1 Tampilkan di Chat (Wajib)
+
+Setelah selesai task, AI **wajib** tampilkan ringkasan ini di chat:
+
+```
+🔧 Tools Used:
+- Skills: nama skill yang dipakai (atau —)
+- MCP: nama MCP server yang dipakai (atau —)
+- Built-in: tools yang dipakai (atau —)
+- Catatan: ringkasan hasil
+```
+
+**Contoh:**
+```
+🔧 Tools Used:
+- Skills: systematic-debugging
+- MCP: —
+- Built-in: read, grep, glob
+- Catatan: Ditemukan 2 bug login redirect admin/atasan
+```
+
+### 14.2 Catat di AGENTS.md (Arsip)
+
+Selain tampilkan di chat, AI juga wajib catat di AGENTS.md section "Tool Usage Log" sebagai arsip:
+
+```markdown
+| Tanggal | Task | Skills | MCP Servers | Built-in Tools | Catatan |
+|---------|------|--------|-------------|----------------|---------|
+| YYYY-MM-DD | Deskripsi task | Skill yang dipakai | MCP yang dipakai | Tools yang dipakai | Hasil/catatan |
+```
+
+### Kapan Log Wajib
+
+- Setelah selesai fix bug
+- Setelah selesai implement fitur
+- Setelah selesai refactor
+- Setelah selesai deploy
+- Setelah selesai debug production issue
+- Setelah konsultasi dokumentasi via context7

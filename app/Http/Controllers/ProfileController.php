@@ -22,6 +22,13 @@ class ProfileController extends Controller
     public function edit(Request $request): ViewView
     {
         $user = $request->user();
+
+        if (in_array($user->role, ['admin', 'atasan'], true)) {
+            return view('profile.simple', [
+                'user' => $user,
+            ]);
+        }
+
         $userId = $user->id;
 
         $biodata = Cache::remember("profile.{$userId}.biodata", 60, fn () => $user->biodata);

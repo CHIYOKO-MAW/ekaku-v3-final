@@ -6,6 +6,12 @@
 File ini berisi kondisi pemakaian skills dan MCP tools untuk setiap situasi.
 Ikuti panduan di plan.md — jangan tebak, gunakan tools yang tepat.
 
+### WAJIB Baca Section Ini di plan.md:
+1. **Section 11: Tool & MCP Inventory** — daftar lengkap semua tools, MCP, skills
+2. **Section 12: Libraries & Packages** — packages yang dipakai di project ini
+3. **Section 13: Context7 First Rule** — sebelum pakai tool/library apapun, WAJIB cek context7 dulu
+4. **Section 14: Tool Usage Logging** — format logging tools yang digunakan
+
 ## TL;DR
 
 AK-1 Kartu Kuning (job seeker card) management for Disnaker Pandeglang. Laravel 12, PHP 8.3, Blade + Alpine.js v3, Tailwind v3, Pest v4. SQLite default for dev/test. Three roles: `user`, `admin`, `atasan`. Main flow: User registers → submits biodata → admin verifies → system generates Kartu Kuning with QR code.
@@ -151,14 +157,6 @@ Other artisan commands: `CleanupOrphanUploads` in `app/Console/Commands/`.
 ### SecurityHeaders
 Vite build assets (`/build/*`, `/favicon`, `/images/`) served with `Cache-Control: public, max-age=31536000, immutable`. All other routes get `no-cache, private`.
 
-## Testing
-
-Sidebar (`<div class="space-y-6">`) must be a **grid sibling** of `lg:col-span-2` inside `lg:grid-cols-3` — NOT nested. If sidebar moves below content, the column div wasn't closed.
-
-Tab switching uses `x-init` with `setTimeout(() => { activeTab = ... }, 50)` reading `window.location.hash`. Inline ternary in `x-data` does NOT work.
-
-Biodata container uses `x-show="activeTab !== 'akun'"` so both biodata AND berkas tabs show it; the inner content hides via `x-show="activeTab === 'biodata'"`.
-
 ## Important Files
 
 - `plan.md` — **WAJIB DIBACA** — kondisi pemakaian skills & MCP tools untuk setiap situasi
@@ -186,19 +184,75 @@ Or step-by-step: `composer install` → `php.bat artisan key:generate` → `php.
 
 Pre-seeded accounts (password: `password`): `user@ekaku.test`, `admin@ekaku.test`, `atasan@ekaku.test`. Set `SEED_DEMO_DATA=true` in `.env` to auto-seed on migrate.
 
-## MCP Tools
-
-- `laravel-boost` (`php.bat artisan boost:mcp`) — tinker, routes, config, schema, browser logs
-- `laravel-telescope` (`telescope-mcp:server`, requires `APP_ENV=local`) — debug queries, requests, exceptions
-- `lighthouse` — performance & accessibility audits
-- `filesystem` — full filesystem read/write to project directory
-
-## LSP False Positives
-
-Parser errors in `.blade.php` from CSS/SCSS inside `<style>` blocks are pre-existing and harmless.
-
 ## Deployment (Railway)
 
 `nixpacks.toml` (Nixpacks, not Docker). `Procfile`: web (start-container.sh), worker (queue:work), cron (schedule:work). Session/cache/queue all `database` driver. Railway Volume `storage` (500MB) mounted at `/app/storage/app/public`. See `DEPLOYMENT.md` for details.
 
 Production `php -S` flags: `upload_max_filesize=10M, post_max_size=12M, max_execution_time=120, max_input_time=120, memory_limit=256M, zlib.output_compression=On, opcache.enable=1, opcache.memory_consumption=128, opcache.max_accelerated_files=10000, opcache.validate_timestamps=0, save_comments=0`.
+
+## Available Skills
+
+> **Catatan:** Semua skills tersedia via superpowers plugin. Lihat `plan.md` Section 11 untuk deskripsi lengkap.
+
+| Skill | Kapan Pakai |
+|-------|-------------|
+| `brainstorming` | Sebelum bikin fitur baru |
+| `systematic-debugging` | Saat ada bug/error/issue |
+| `test-driven-development` | Implement fitur/fix bug |
+| `laravel-refactor` | Refactor/cleanup code |
+| `laravel-architect` | Arsitektur/design decision |
+| `laravel-debugger` | Debug issue complex |
+| `requesting-code-review` | Sebelum merge/PR |
+| `receiving-code-review` | Dapat review feedback |
+| `verification-before-completion` | Sebelum commit/PR |
+| `writing-plans` | Buat implementation plan |
+| `executing-plans` | Jalankan plan dengan checkpoints |
+| `subagent-driven-development` | Parallel task execution |
+| `dispatching-parallel-agents` | Multiple task independent |
+| `using-git-worktrees` | Butuh workspace terpisah |
+| `finishing-a-development-branch` | Selesai implementasi |
+| `visual-explainer` | Butuh diagram/visualisasi |
+
+## Context7 First Rule
+
+> **ATURAN WAJIB:** Sebelum pakai tool/library/framework apapun, **WAJIB cek context7 dulu.**
+
+```
+Contoh alur yang BENAR:
+1. User minta pakai Intervention Image
+2. AI panggil context7_resolve-library-id(libraryName: "Intervention Image")
+3. AI panggil context7_query-docs(libraryId: "/intervention/image", query: "cara resize")
+4. Baru implementasi dengan API yang sudah diverifikasi
+
+Contoh alur yang SALAH:
+1. User minta pakai Intervention Image
+2. AI langsung tulis code tanpa cek dokumentasi
+3. Code salah karena API berubah
+```
+
+Lihat `plan.md` Section 13 untuk penjelasan lengkap.
+
+## Tool Usage Log
+
+> **ATURAN WAJIB:** Setelah selesai task, AI **WAJIB** tampilkan ringkasan di chat DULU, baru catat di section ini sebagai arsip.
+
+### Format di Chat (Wajib)
+
+```
+🔧 Tools Used:
+- Skills: nama skill (atau —)
+- MCP: nama MCP server (atau —)
+- Built-in: tools yang dipakai (atau —)
+- Catatan: ringkasan hasil
+```
+
+### Arsip
+
+| Tanggal | Task | Skills | MCP Servers | Built-in Tools | Catatan |
+|---------|------|--------|-------------|----------------|---------|
+| 2026-06-29 | Update plan.md & AGENTS.md tool inventory | writing-plans | — | read, edit | Menambah 4 section baru di plan.md, 3 section di AGENTS.md |
+| 2026-06-29 | Investigasi bug login redirect admin/atasan | systematic-debugging | — | read, grep, glob | Ditemukan 2 bug: RedirectIfAuthenticated (RouteServiceProvider tidak ada) + profile.simple view tidak ada |
+| 2026-06-29 | Update Tool Usage Log format | writing-plans | — | read, filesystem_edit_file | Format log: tampilkan di chat dulu, baru catat di AGENTS.md |
+| 2026-06-29 | Hapus dead code RedirectIfAuthenticated.php | — | — | bash, grep, pest | File dihapus, 97 tests passed, no regression |
+| 2026-06-29 | Fix CacheProfile: disable redirect caching | — | — | read, edit, pest | Override hasCacheableResponseCode, 97 tests passed, no regression |
+| 2026-06-29 | Test UI workflow login admin/atasan | — | playwright | playwright_browser_* | Login flow, redirect, dashboard, profile semua works |

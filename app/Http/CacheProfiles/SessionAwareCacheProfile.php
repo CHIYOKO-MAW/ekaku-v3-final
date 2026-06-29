@@ -4,6 +4,7 @@ namespace App\Http\CacheProfiles;
 
 use Illuminate\Http\Request;
 use Spatie\ResponseCache\CacheProfiles\CacheAllSuccessfulGetRequests;
+use Symfony\Component\HttpFoundation\Response;
 
 class SessionAwareCacheProfile extends CacheAllSuccessfulGetRequests
 {
@@ -23,5 +24,18 @@ class SessionAwareCacheProfile extends CacheAllSuccessfulGetRequests
         $sessionCookie = $request->cookies->get((string) config('session.cookie', 'laravel_session'));
 
         return $sessionCookie ?: '';
+    }
+
+    /**
+     * Only cache successful 2xx responses, NOT redirects (3xx).
+     *
+     * Redirects should not be cached because:
+     * 1. CacheResponse runs as global middleware before session/auth
+     * 2. Cached redirects bypass downstream middleware (auth, role checks)
+     * 3. Redirect destinations may change based on user role
+     */
+    public function hasCacheableResponseCode(Response $response): bool
+    {
+        return $response->isSuccessful();
     }
 }

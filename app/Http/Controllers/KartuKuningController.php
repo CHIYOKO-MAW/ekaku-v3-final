@@ -28,17 +28,17 @@ class KartuKuningController extends Controller
 
     public function preview(int $id)
     {
+        $currentUser = Auth::user();
+
+        if (! $currentUser) {
+            abort(403);
+        }
+
+        if (! in_array($currentUser->role, ['admin', 'atasan'], true) && $currentUser->id !== $id) {
+            abort(403);
+        }
+
         try {
-            $currentUser = Auth::user();
-
-            if (! $currentUser) {
-                abort(403);
-            }
-
-            if (! in_array($currentUser->role, ['admin', 'atasan'], true) && $currentUser->id !== $id) {
-                abort(403);
-            }
-
             $user = User::with(['biodata', 'kartuKuning'])->findOrFail($id);
 
             if (
@@ -79,17 +79,17 @@ class KartuKuningController extends Controller
     {
         ini_set('memory_limit', '512M');
 
+        $currentUser = Auth::user();
+
+        if (! $currentUser) {
+            abort(403);
+        }
+
+        if (! in_array($currentUser->role, ['admin', 'atasan'], true) && $currentUser->id !== $id) {
+            abort(403);
+        }
+
         try {
-            $currentUser = Auth::user();
-
-            if (! $currentUser) {
-                abort(403);
-            }
-
-            if (! in_array($currentUser->role, ['admin', 'atasan'], true) && $currentUser->id !== $id) {
-                abort(403);
-            }
-
             $user = User::with(['biodata', 'kartuKuning'])->findOrFail($id);
 
             if (
