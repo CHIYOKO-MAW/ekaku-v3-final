@@ -63,7 +63,7 @@ composer dump-autoload --optimize 2>&1 || true
 
 # Laravel startup commands
 php artisan migrate --force 2>&1 || true
-php artisan db:seed --force 2>&1 || true
+php artisan db:seed 2>&1 || true
 php artisan storage:link 2>&1 || true
 
 # Regenerate services.php with only production providers

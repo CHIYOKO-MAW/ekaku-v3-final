@@ -1,0 +1,122 @@
+<mxfile host="Electron">
+  <diagram id="dashboard-monitoring-atasan" name="Dashboard Monitoring Atasan">
+    <mxGraphModel dx="1422" dy="762" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="0" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="lane-atasan" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Atasan" vertex="1">
+          <mxGeometry height="460" width="215" x="210" y="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="start-atasan" parent="lane-atasan" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.start_2;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="40" width="45" x="85" y="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a1" parent="lane-atasan" style="rounded=1;whiteSpace=wrap;html=1;" value="Masuk Halaman Dashboard Monitoring" vertex="1">
+          <mxGeometry height="30" width="150" x="32.5" y="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a2" parent="lane-atasan" style="rounded=1;whiteSpace=wrap;html=1;" value="Melihat Statistik Verifikasi" vertex="1">
+          <mxGeometry height="30" width="140" x="37.5" y="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a3" parent="lane-atasan" style="rounded=1;whiteSpace=wrap;html=1;" value="Pilih Data untuk Detail" vertex="1">
+          <mxGeometry height="30" width="130" x="42.5" y="270" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a4" parent="lane-atasan" style="rounded=1;whiteSpace=wrap;html=1;" value="Klik Export Laporan" vertex="1">
+          <mxGeometry height="30" width="120" x="47.5" y="340" as="geometry" />
+        </mxCell>
+
+        <mxCell id="lane-sistem" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Sistem e-kaku-v3" vertex="1">
+          <mxGeometry height="460" width="255" x="425" y="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="s1" parent="lane-sistem" style="rounded=1;whiteSpace=wrap;html=1;" value="Memuat Halaman Dashboard" vertex="1">
+          <mxGeometry height="30" width="130" x="62.5" y="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="s2" parent="lane-sistem" style="rounded=1;whiteSpace=wrap;html=1;" value="Menampilkan Data Statistik" vertex="1">
+          <mxGeometry height="30" width="130" x="62.5" y="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="s3" parent="lane-sistem" style="rounded=1;whiteSpace=wrap;html=1;" value="Menampilkan Detail Data" vertex="1">
+          <mxGeometry height="30" width="120" x="67.5" y="270" as="geometry" />
+        </mxCell>
+
+        <mxCell id="s4" parent="lane-sistem" style="rounded=1;whiteSpace=wrap;html=1;" value="Generate File Laporan" vertex="1">
+          <mxGeometry height="30" width="120" x="67.5" y="340" as="geometry" />
+        </mxCell>
+
+        <mxCell id="end-sistem" parent="lane-sistem" style="ellipse;html=1;shape=endState;" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="112.5" y="400" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" edge="1" parent="lane-atasan" source="start-atasan" target="a1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e2" edge="1" parent="lane-atasan" source="a1" target="a2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e3" edge="1" parent="lane-atasan" source="a2" target="a3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e4" edge="1" parent="lane-atasan" source="a3" target="a4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e5" edge="1" parent="1" source="a1" target="s1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e6" edge="1" parent="1" source="s1" target="a2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="538" y="180" />
+            </Array>
+            <mxPoint x="380" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e7" edge="1" parent="1" source="a2" target="s2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e8" edge="1" parent="1" source="s2" target="a3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="538" y="250" />
+            </Array>
+            <mxPoint x="385" y="380" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e9" edge="1" parent="1" source="a3" target="s3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e10" edge="1" parent="1" source="s3" target="a4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="538" y="320" />
+            </Array>
+            <mxPoint x="390" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e11" edge="1" parent="1" source="a4" target="s4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e12" edge="1" parent="lane-sistem" source="s4" target="end-sistem" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
