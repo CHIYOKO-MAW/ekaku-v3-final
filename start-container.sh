@@ -43,7 +43,7 @@ if [ -f vendor/composer/installed.json ]; then
     $dev = ["laravel/pail","laravel/breeze","laravel/sail",
             "laravel/roster",
             "pestphp/pest","pestphp/pest-plugin-laravel","pestphp/pest-plugin-arch",
-            "nunomaduro/collision","nunomaduro/termwind"];
+            "nunomaduro/collision"];
     $j["packages"] = array_values(array_filter($j["packages"], function($p) use ($dev) {
         return !in_array($p["name"] ?? "", $dev);
     }));
