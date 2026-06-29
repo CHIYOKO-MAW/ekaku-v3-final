@@ -16,6 +16,7 @@
         "intervention/image-laravel": "^4.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
+        "nunomaduro/termwind": "^2.0",
         "simplesoftwareio/simple-qrcode": "*",
         "spatie/laravel-responsecache": "*"
     },
