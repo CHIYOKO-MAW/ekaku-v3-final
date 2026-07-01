@@ -483,9 +483,9 @@ class DashboardController extends Controller
 
         $biodataList = $query->latest()->paginate(15)->withQueryString();
 
-        $total = (clone $query)->withoutPagination()->count();
-        $verified = (clone $query)->where('status_verifikasi', 'verified')->withoutPagination()->count();
-        $rejected = (clone $query)->where('status_verifikasi', 'rejected')->withoutPagination()->count();
+        $total = (clone $query)->count();
+        $verified = (clone $query)->where('status_verifikasi', 'verified')->count();
+        $rejected = (clone $query)->where('status_verifikasi', 'rejected')->count();
         $approvalRate = $total > 0 ? round(($verified / $total) * 100, 1) : 0;
 
         $monthlyData = Cache::remember("rekap.admin.{$admin->id}.monthly", 300, function () use ($admin) {

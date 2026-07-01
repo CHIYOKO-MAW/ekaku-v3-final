@@ -44,7 +44,7 @@ const initEkakuCharts = async () => {
         return;
     }
 
-    const { default: Chart, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend } = chartModule;
+    const { Chart, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend } = chartModule;
 
     Chart.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
