@@ -16,7 +16,7 @@
 
             <div class="hidden items-center gap-6 sm:flex">
                 <a href="{{ route('atasan.dashboard') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('atasan.dashboard') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">Dashboard</a>
-                <a href="{{ route('atasan.rekap-admin') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('atasan.rekap-admin') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">Rekap Admin</a>
+                <a href="{{ route('atasan.rekap-admin') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('atasan.rekap-admin*') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">Rekap Admin</a>
             </div>
 
             <div class="hidden items-center sm:flex">
@@ -87,7 +87,7 @@
     <div x-cloak x-show="mobileOpen" class="sm:hidden border-t border-gray-200 bg-white">
         <div class="space-y-1 px-2 py-3">
             <a href="{{ route('atasan.dashboard') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('atasan.dashboard') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Dashboard</a>
-            <a href="{{ route('atasan.rekap-admin') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('atasan.rekap-admin') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Rekap Admin</a>
+            <a href="{{ route('atasan.rekap-admin') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('atasan.rekap-admin*') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Rekap Admin</a>
             <a href="{{ route('notifikasi.index', ['mark_read' => 1]) }}" class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Notifikasi</a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

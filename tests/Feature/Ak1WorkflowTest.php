@@ -80,12 +80,14 @@ class Ak1WorkflowTest extends TestCase
         $response->assertSessionHas('success');
 
         // 5. Log in as admin (actingAs will override the current user)
-        $admin = User::create([
-            'email' => 'admin@ekaku.test',
-            'role' => 'admin',
-            'name' => 'Admin User',
-            'password' => bcrypt('password'), // password is required but not used in actingAs
-        ]);
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@ekaku.test'],
+            [
+                'role' => 'admin',
+                'name' => 'Admin User',
+                'password' => bcrypt('password'),
+            ]
+        );
         $this->assertNotNull($admin);
         $this->actingAs($admin);
 

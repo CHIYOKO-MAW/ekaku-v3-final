@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\SharesNotifications;
 use App\Models\Biodata;
 use App\Models\StatusPekerjaan;
 use App\Models\User;
@@ -12,12 +13,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
-use App\Http\Traits\SharesNotifications;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DashboardController extends Controller
 {
     use SharesNotifications;
+
     public function __construct()
     {
         $this->middleware('auth');
@@ -261,6 +262,8 @@ class DashboardController extends Controller
 
     public function atasan()
     {
+        $districts = $this->getPandeglangWilayahData()['districts'];
+
         $user = Auth::user();
         $notifications = Cache::remember("dashboard.atasan.{$user->id}.notifications", 60, function () use ($user) {
             return $user->notificationsE()->latest()->take(5)->get();
@@ -272,43 +275,332 @@ class DashboardController extends Controller
         \Illuminate\Support\Facades\View::share('latestNotes', $notifications);
 
         $stats = Cache::remember('dashboard.atasan.stats', 300, function () {
+            $verificationCounts = Biodata::selectRaw('status_verifikasi, count(*) as total')
+                ->groupBy('status_verifikasi')
+                ->pluck('total', 'status_verifikasi');
+
             return [
                 'totalAdmin' => User::where('role', 'admin')->count(),
                 'totalUser' => User::where('role', 'user')->count(),
-                'pending' => Biodata::where('status_verifikasi', 'pending')->count(),
-                'verified' => Biodata::where('status_verifikasi', 'verified')->count(),
-                'rejected' => Biodata::where('status_verifikasi', 'rejected')->count(),
+                'pending' => $verificationCounts->get('pending', 0),
+                'verified' => $verificationCounts->get('verified', 0),
+                'rejected' => $verificationCounts->get('rejected', 0),
                 'statusDistribution' => StatusPekerjaan::selectRaw('status_pekerjaan, count(*) as total')
                     ->groupBy('status_pekerjaan')
                     ->pluck('total', 'status_pekerjaan'),
             ];
         });
 
-        return view('atasan.dashboard', $stats);
+        $verificationData = [
+            'labels' => ['Pending', 'Verified', 'Rejected'],
+            'data' => [$stats['pending'], $stats['verified'], $stats['rejected']],
+            'colors' => ['#ffc107', '#28a745', '#dc3545'],
+        ];
+
+        $statusDistribution = $stats['statusDistribution'];
+        $jobStatusLabels = [];
+        $jobStatusData = [];
+        $jobStatusColors = ['#ffc107', '#28a745', '#17a2b8', '#fd7e14', '#6f42c1'];
+
+        $statusMapping = [
+            'belum_bekerja' => 'Belum Bekerja',
+            'sudah_bekerja' => 'Sudah Bekerja',
+            'pelatihan' => 'Sedang Pelatihan',
+            'pensiun' => 'Pensiun',
+            'cuti' => 'Cuti',
+        ];
+
+        foreach ($statusMapping as $key => $label) {
+            if ($statusDistribution->has($key)) {
+                $jobStatusLabels[] = $label;
+                $jobStatusData[] = $statusDistribution->get($key);
+            }
+        }
+
+        $recentActivities = Cache::remember('dashboard.atasan.recentActivities', 300, function () {
+            return User::where('role', 'user')
+                ->with(['biodata', 'statusPekerjaan'])
+                ->whereHas('biodata')
+                ->latest()
+                ->take(8)
+                ->get();
+        });
+
+        $weeklyRegistrations = Cache::remember('dashboard.atasan.weeklyRegistrations', 300, function () {
+            $days = collect();
+            for ($i = 6; $i >= 0; $i--) {
+                $date = now()->subDays($i);
+                $days->push([
+                    'label' => $date->isoFormat('DD MMM'),
+                    'count' => User::where('role', 'user')
+                        ->whereDate('created_at', $date->toDateString())
+                        ->count(),
+                ]);
+            }
+
+            return $days;
+        });
+
+        $adminPerformance = Cache::remember('dashboard.atasan.adminPerformance', 300, function () {
+            $admins = User::where('role', 'admin')->get();
+
+            return $admins->map(function ($admin) {
+                $total = Biodata::where('verifikator_id', $admin->id)->count();
+                $verified = Biodata::where('verifikator_id', $admin->id)->where('status_verifikasi', 'verified')->count();
+                $rejected = Biodata::where('verifikator_id', $admin->id)->where('status_verifikasi', 'rejected')->count();
+                $approvalRate = $total > 0 ? round(($verified / $total) * 100, 1) : 0;
+
+                return [
+                    'id' => $admin->id,
+                    'name' => $admin->name,
+                    'email' => $admin->email,
+                    'total' => $total,
+                    'verified' => $verified,
+                    'rejected' => $rejected,
+                    'approval_rate' => $approvalRate,
+                ];
+            })->sortByDesc('total')->take(5)->values();
+        });
+
+        $regionalSummary = Cache::remember('dashboard.atasan.regionalSummary', 3600, function () use ($districts) {
+            return $this->buildRegionalSummary($districts);
+        });
+        $topAttentionDistricts = $regionalSummary['topAttentionDistricts'];
+        $topWorkingDistricts = $regionalSummary['topWorkingDistricts'];
+
+        return view('atasan.dashboard', array_merge(
+            $stats,
+            compact(
+                'verificationData',
+                'jobStatusLabels',
+                'jobStatusData',
+                'jobStatusColors',
+                'recentActivities',
+                'weeklyRegistrations',
+                'adminPerformance',
+                'topAttentionDistricts',
+                'topWorkingDistricts',
+            )
+        ));
     }
 
-    public function rekapAdmin()
+    public function rekapAdmin(Request $request)
     {
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+
         $admins = User::where('role', 'admin')->latest()->get();
 
-        $verifikasiPerAdmin = Biodata::selectRaw('verifikator_id, count(*) as total')
-            ->whereNotNull('verifikator_id')
+        $baseQuery = Biodata::whereNotNull('verifikator_id');
+        if ($startDate) {
+            $baseQuery->whereDate('created_at', '>=', $startDate);
+        }
+        if ($endDate) {
+            $baseQuery->whereDate('created_at', '<=', $endDate);
+        }
+
+        $verifikasiPerAdmin = (clone $baseQuery)
+            ->selectRaw('verifikator_id, count(*) as total')
             ->groupBy('verifikator_id')
             ->pluck('total', 'verifikator_id');
 
-        $verifiedPerAdmin = Biodata::selectRaw('verifikator_id, count(*) as total')
+        $verifiedPerAdmin = (clone $baseQuery)
             ->where('status_verifikasi', 'verified')
-            ->whereNotNull('verifikator_id')
+            ->selectRaw('verifikator_id, count(*) as total')
             ->groupBy('verifikator_id')
             ->pluck('total', 'verifikator_id');
 
-        $rejectedPerAdmin = Biodata::selectRaw('verifikator_id, count(*) as total')
+        $rejectedPerAdmin = (clone $baseQuery)
             ->where('status_verifikasi', 'rejected')
-            ->whereNotNull('verifikator_id')
+            ->selectRaw('verifikator_id, count(*) as total')
             ->groupBy('verifikator_id')
             ->pluck('total', 'verifikator_id');
 
-        return view('atasan.rekap-admin', compact('admins', 'verifikasiPerAdmin', 'verifiedPerAdmin', 'rejectedPerAdmin'));
+        $adminData = $admins->map(function ($admin) use ($verifikasiPerAdmin, $verifiedPerAdmin, $rejectedPerAdmin) {
+            $total = $verifikasiPerAdmin->get($admin->id, 0);
+            $verified = $verifiedPerAdmin->get($admin->id, 0);
+            $rejected = $rejectedPerAdmin->get($admin->id, 0);
+            $approvalRate = $total > 0 ? round(($verified / $total) * 100, 1) : 0;
+
+            return [
+                'id' => $admin->id,
+                'name' => $admin->name,
+                'email' => $admin->email,
+                'total' => $total,
+                'verified' => $verified,
+                'rejected' => $rejected,
+                'approval_rate' => $approvalRate,
+            ];
+        })->sortByDesc('total')->values();
+
+        $totalVerifikasi = $adminData->sum('total');
+        $totalVerified = $adminData->sum('verified');
+        $totalRejected = $adminData->sum('rejected');
+        $approvalRate = $totalVerifikasi > 0 ? round(($totalVerified / $totalVerifikasi) * 100, 1) : 0;
+        $avgPerAdmin = $admins->count() > 0 ? round($totalVerifikasi / $admins->count(), 1) : 0;
+
+        $chartData = [
+            'labels' => $adminData->pluck('name')->toArray(),
+            'verified' => $adminData->pluck('verified')->toArray(),
+            'rejected' => $adminData->pluck('rejected')->toArray(),
+        ];
+
+        return view('atasan.rekap-admin', compact(
+            'admins',
+            'adminData',
+            'verifikasiPerAdmin',
+            'verifiedPerAdmin',
+            'rejectedPerAdmin',
+            'totalVerifikasi',
+            'totalVerified',
+            'totalRejected',
+            'approvalRate',
+            'avgPerAdmin',
+            'chartData',
+            'startDate',
+            'endDate',
+        ));
+    }
+
+    public function rekapAdminDetail(User $admin)
+    {
+        if ($admin->role !== 'admin') {
+            abort(404);
+        }
+
+        $startDate = request('start_date');
+        $endDate = request('end_date');
+
+        $query = Biodata::where('verifikator_id', $admin->id)
+            ->with('user');
+
+        if ($startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+        }
+        if ($endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
+        }
+
+        $biodataList = $query->latest()->paginate(15)->withQueryString();
+
+        $total = (clone $query)->withoutPagination()->count();
+        $verified = (clone $query)->where('status_verifikasi', 'verified')->withoutPagination()->count();
+        $rejected = (clone $query)->where('status_verifikasi', 'rejected')->withoutPagination()->count();
+        $approvalRate = $total > 0 ? round(($verified / $total) * 100, 1) : 0;
+
+        $monthlyData = Cache::remember("rekap.admin.{$admin->id}.monthly", 300, function () use ($admin) {
+            $months = collect();
+            for ($i = 5; $i >= 0; $i--) {
+                $date = now()->subMonths($i);
+                $months->push([
+                    'label' => $date->isoFormat('MMM YYYY'),
+                    'verified' => Biodata::where('verifikator_id', $admin->id)
+                        ->where('status_verifikasi', 'verified')
+                        ->whereMonth('created_at', $date->month)
+                        ->whereYear('created_at', $date->year)
+                        ->count(),
+                    'rejected' => Biodata::where('verifikator_id', $admin->id)
+                        ->where('status_verifikasi', 'rejected')
+                        ->whereMonth('created_at', $date->month)
+                        ->whereYear('created_at', $date->year)
+                        ->count(),
+                ]);
+            }
+
+            return $months;
+        });
+
+        return view('atasan.rekap-admin-detail', compact(
+            'admin',
+            'biodataList',
+            'total',
+            'verified',
+            'rejected',
+            'approvalRate',
+            'monthlyData',
+            'startDate',
+            'endDate',
+        ));
+    }
+
+    public function exportRekapCsv(Request $request): StreamedResponse
+    {
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+
+        $admins = User::where('role', 'admin')->latest()->get();
+
+        $filename = 'rekap-admin-'.now()->format('Ymd-His').'.csv';
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ];
+
+        return response()->stream(function () use ($admins, $startDate, $endDate): void {
+            $handle = fopen('php://output', 'wb');
+            fwrite($handle, chr(0xEF).chr(0xBB).chr(0xBF));
+            fputcsv($handle, ['Nama Admin', 'Email', 'Total Verifikasi', 'Verified', 'Rejected', 'Approval Rate (%)']);
+
+            foreach ($admins as $admin) {
+                $query = Biodata::where('verifikator_id', $admin->id);
+                if ($startDate) {
+                    $query->whereDate('created_at', '>=', $startDate);
+                }
+                if ($endDate) {
+                    $query->whereDate('created_at', '<=', $endDate);
+                }
+
+                $total = (clone $query)->count();
+                $verified = (clone $query)->where('status_verifikasi', 'verified')->count();
+                $rejected = (clone $query)->where('status_verifikasi', 'rejected')->count();
+                $rate = $total > 0 ? round(($verified / $total) * 100, 1) : 0;
+
+                fputcsv($handle, [$admin->name, $admin->email, $total, $verified, $rejected, $rate]);
+            }
+
+            fclose($handle);
+        }, 200, $headers);
+    }
+
+    public function exportRekapPdf(Request $request)
+    {
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+
+        $admins = User::where('role', 'admin')->latest()->get();
+
+        $adminData = $admins->map(function ($admin) use ($startDate, $endDate) {
+            $query = Biodata::where('verifikator_id', $admin->id);
+            if ($startDate) {
+                $query->whereDate('created_at', '>=', $startDate);
+            }
+            if ($endDate) {
+                $query->whereDate('created_at', '<=', $endDate);
+            }
+
+            $total = (clone $query)->count();
+            $verified = (clone $query)->where('status_verifikasi', 'verified')->count();
+            $rejected = (clone $query)->where('status_verifikasi', 'rejected')->count();
+            $rate = $total > 0 ? round(($verified / $total) * 100, 1) : 0;
+
+            return [
+                'name' => $admin->name,
+                'email' => $admin->email,
+                'total' => $total,
+                'verified' => $verified,
+                'rejected' => $rejected,
+                'approval_rate' => $rate,
+            ];
+        });
+
+        $pdf = Pdf::loadView('atasan.rekap-admin-pdf', [
+            'adminData' => $adminData,
+            'generatedAt' => now(),
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->download('rekap-admin-'.now()->format('Ymd-His').'.pdf');
     }
 
     private function buildLaporanQuery(Request $request, array $districts)

@@ -106,6 +106,12 @@ Route::middleware(['auth'])->group(function () {
             ->name('dashboard');
         Route::get('/rekap-admin', [DashboardController::class, 'rekapAdmin'])
             ->name('rekap-admin');
+        Route::get('/rekap-admin/{admin}', [DashboardController::class, 'rekapAdminDetail'])
+            ->name('rekap-admin.detail');
+        Route::get('/rekap-admin/export/csv', [DashboardController::class, 'exportRekapCsv'])
+            ->name('rekap-admin.export.csv');
+        Route::get('/rekap-admin/export/pdf', [DashboardController::class, 'exportRekapPdf'])
+            ->name('rekap-admin.export.pdf');
     });
 
     Route::prefix('user')->name('user.')->group(function () {
