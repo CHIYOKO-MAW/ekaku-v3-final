@@ -68,7 +68,12 @@ php artisan storage:link 2>&1 || true
 # Regenerate services.php with only production providers
 php artisan package:discover 2>&1 || true
 
-# Warm caches
+# Clear old caches, then warm fresh ones
+php artisan config:clear 2>&1 || true
+php artisan route:clear 2>&1 || true
+php artisan view:clear 2>&1 || true
+php artisan event:clear 2>&1 || true
+
 php artisan config:cache 2>&1 || true
 php artisan route:cache 2>&1 || true
 php artisan view:cache 2>&1 || true
