@@ -441,8 +441,8 @@ class DashboardController extends Controller
 
         $chartData = [
             'labels' => $adminData->pluck('name')->toArray(),
-            'verified' => $adminData->pluck('verified')->toArray(),
-            'rejected' => $adminData->pluck('rejected')->toArray(),
+            'values' => $adminData->map(fn($a) => $a['verified'] + $a['rejected'])->toArray(),
+            'colors' => ['#2563eb'],
         ];
 
         return view('atasan.rekap-admin', compact(
