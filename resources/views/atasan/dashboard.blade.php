@@ -251,7 +251,7 @@
                 <div class="mb-4 flex items-center justify-between">
                     <h2 class="text-lg font-semibold text-gray-900">Aktivitas Terbaru</h2>
                 </div>
-                <div class="overflow-x-auto">
+                <div class="table-scroll-wrapper">
                     <table class="min-w-full divide-y divide-gray-200 text-sm">
                         <thead class="bg-gray-50">
                             <tr>
@@ -285,7 +285,7 @@
             <div class="rounded-xl bg-white p-6 card-shadow">
                 <h2 class="text-lg font-semibold text-gray-900">Wilayah Prioritas Intervensi</h2>
                 <p class="mt-1 text-xs text-gray-500">Skor prioritas berdasarkan jumlah belum bekerja + pending verifikasi.</p>
-                <div class="mt-4 overflow-x-auto">
+                <div class="mt-4 table-scroll-wrapper">
                     <table class="min-w-full divide-y divide-gray-200 text-sm">
                         <thead class="bg-gray-50">
                             <tr>

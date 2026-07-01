@@ -19,7 +19,7 @@
             <div class="card-preview-wrapper">
 
 <style>
-.card-preview-wrapper{width:640px}
+.card-preview-wrapper{max-width:640px;width:100%}
 .card-preview{width:100%;margin:0 auto;border:1.5px solid #cbd5e1;border-radius:5px;overflow:hidden;background:#fff}
 .card-preview .hdr{background:#1e3a5f;color:#fff;padding:7px 10px}
 .card-preview .ftr{background:#1e3a5f;color:rgba(255,255,255,0.6);padding:3px 10px;font-size:6px}

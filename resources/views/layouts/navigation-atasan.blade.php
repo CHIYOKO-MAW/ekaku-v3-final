@@ -95,4 +95,17 @@
             </form>
         </div>
     </div>
+
+    {{-- Mobile Bottom Navigation --}}
+    <div class="bottom-nav sm:hidden">
+        <a href="{{ route('atasan.dashboard') }}" class="bottom-nav-item {{ request()->routeIs('atasan.dashboard') ? 'active' : '' }}">
+            <i class="fas fa-chart-pie"></i>
+        </a>
+        <a href="{{ route('atasan.rekap-admin') }}" class="bottom-nav-item {{ request()->routeIs('atasan.rekap-admin*') ? 'active' : '' }}">
+            <i class="fas fa-table"></i>
+        </a>
+        <a href="{{ route('profile.edit') }}" class="bottom-nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+            <i class="fas fa-user"></i>
+        </a>
+    </div>
 </nav>

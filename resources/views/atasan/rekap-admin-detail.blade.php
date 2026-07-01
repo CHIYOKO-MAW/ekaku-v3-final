@@ -140,7 +140,7 @@
         {{-- DETAIL TABLE --}}
         <div class="rounded-xl bg-white p-6 card-shadow">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Riwayat Verifikasi</h2>
-            <div class="overflow-x-auto">
+            <div class="table-scroll-wrapper">
                 <table class="min-w-full divide-y divide-gray-200 text-sm">
                     <thead class="bg-gray-50">
                         <tr>

@@ -78,7 +78,7 @@
     </div>
 
     <div class="overflow-hidden rounded-xl bg-white card-shadow">
-        <div class="overflow-x-auto">
+        <div class="table-scroll-wrapper">
             <table class="min-w-full divide-y divide-gray-200 text-sm">
                 <thead class="bg-gray-50">
                     <tr>

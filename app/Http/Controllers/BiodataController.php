@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\BiodataRequest;
 use App\Models\Biodata;
+use App\Models\NotificationE;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
@@ -177,6 +178,15 @@ class BiodataController extends Controller
             'tanggal_verifikasi' => null,
             'verifikator_id' => null,
         ]);
+
+        // Notify all admins
+        User::where('role', 'admin')->each(fn ($admin) => NotificationE::create([
+            'user_id' => $admin->id,
+            'judul' => 'Pengajuan Verifikasi Baru',
+            'pesan' => $user->name.' telah mengajukan verifikasi biodata. Silakan review.',
+            'status_baca' => false,
+            'tipe' => 'status_update',
+        ]));
 
         $userId = $user->id;
         Cache::forget("dashboard.user.{$userId}.biodata");

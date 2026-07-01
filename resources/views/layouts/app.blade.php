@@ -34,29 +34,22 @@
 
         <main class="min-h-screen">
             @if (session('success'))
-                <div x-data="{ show: true }" x-show="show" class="mx-auto mt-4 max-w-7xl rounded-md border border-green-300 bg-green-50 px-4 py-3 text-green-800" role="alert">
-                    <button @click="show = false" class="float-right text-green-600 hover:text-green-800">&times;</button>
-                    <strong class="font-semibold">Sukses:</strong> {{ session('success') }}
-                </div>
+                <div id="flash-success" data-message="{{ session('success') }}" x-data></div>
             @endif
-
             @if (session('error'))
-                <div x-data="{ show: true }" x-show="show" class="mx-auto mt-4 max-w-7xl rounded-md border border-red-300 bg-red-50 px-4 py-3 text-red-800" role="alert">
-                    <button @click="show = false" class="float-right text-red-600 hover:text-red-800">&times;</button>
-                    <strong class="font-semibold">Error:</strong> {{ session('error') }}
-                </div>
+                <div id="flash-error" data-message="{{ session('error') }}" x-data></div>
             @endif
-
             @if (session('info'))
-                <div x-data="{ show: true }" x-show="show" class="mx-auto mt-4 max-w-7xl rounded-md border border-blue-300 bg-blue-50 px-4 py-3 text-blue-800" role="alert">
-                    <button @click="show = false" class="float-right text-blue-600 hover:text-blue-800">&times;</button>
-                    <strong class="font-semibold">Info:</strong> {{ session('info') }}
-                </div>
+                <div id="flash-info" data-message="{{ session('info') }}" x-data></div>
+            @endif
+            @if (session('warning'))
+                <div id="flash-warning" data-message="{{ session('warning') }}" x-data></div>
             @endif
 
             {{ $slot ?? '' }}
             @yield('content')
         </main>
+        <div class="bottom-nav-spacer sm:hidden"></div>
 
         <footer class="border-t border-gray-200 bg-white py-6">
             <div class="mx-auto max-w-7xl px-4 text-center text-sm text-gray-600 sm:px-6 lg:px-8">

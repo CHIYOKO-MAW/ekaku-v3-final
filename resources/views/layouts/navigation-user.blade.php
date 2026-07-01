@@ -116,4 +116,26 @@
             </form>
         </div>
     </div>
+
+    {{-- Mobile Bottom Navigation --}}
+    <div class="bottom-nav sm:hidden">
+        <a href="{{ route('dashboard.user') }}" class="bottom-nav-item {{ request()->routeIs('dashboard') || request()->routeIs('dashboard.user') ? 'active' : '' }}">
+            <i class="fas fa-chart-pie"></i>
+        </a>
+        <a href="{{ route('profile.edit') }}" class="bottom-nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+            <i class="fas fa-user"></i>
+        </a>
+        <a href="{{ route('status.index') }}" class="bottom-nav-item {{ request()->routeIs('status.*') ? 'active' : '' }}">
+            <i class="fas fa-arrows-rotate"></i>
+        </a>
+        <a href="{{ route('kartu.show') }}" class="bottom-nav-item {{ request()->routeIs('kartu.*') ? 'active' : '' }}">
+            <i class="fas fa-id-card"></i>
+        </a>
+        <a href="{{ route('notifikasi.index') }}" class="bottom-nav-item {{ request()->routeIs('notifikasi.*') ? 'active' : '' }}">
+            <i class="fas fa-bell"></i>
+            @if ($unreadNotes > 0)
+                <span class="absolute -top-0.5 right-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-red-500 px-0.5 text-[10px] text-white">{{ $unreadNotes > 9 ? '9+' : $unreadNotes }}</span>
+            @endif
+        </a>
+    </div>
 </nav>

@@ -9,8 +9,8 @@
     <p class="mt-1 text-sm text-gray-600">Validasi biodata pengguna sebelum akses cetak kartu kuning.</p>
   </div>
 
-  <div class="overflow-hidden rounded-xl bg-white card-shadow">
-    <div class="overflow-x-auto">
+    <div class="overflow-hidden rounded-xl bg-white card-shadow">
+    <div class="table-scroll-wrapper">
       <table class="min-w-full divide-y divide-gray-200 text-sm">
         <thead class="bg-gray-50">
           <tr>

@@ -110,7 +110,52 @@ const initEkakuCharts = async () => {
     });
 };
 
+// Toast Notification System
+window.showToast = (message, type = 'success', duration = 4000) => {
+    let container = document.getElementById('ekaku-toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'ekaku-toast-container';
+        container.className = 'ekaku-toast';
+        document.body.appendChild(container);
+    }
+    const icons = {
+        success: 'fa-check-circle',
+        error: 'fa-circle-exclamation',
+        warning: 'fa-triangle-exclamation',
+        info: 'fa-circle-info',
+    };
+    const toast = document.createElement('div');
+    toast.className = `ekaku-toast-item ekaku-toast-${type}`;
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(1rem)';
+    toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    toast.innerHTML = `
+        <i class="fas ${icons[type] || icons.info}" style="color:${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : type === 'warning' ? '#f59e0b' : '#3b82f6'}"></i>
+        <span class="flex-1 text-sm font-medium text-gray-800">${message}</span>
+        <button onclick="this.closest('.ekaku-toast-item').remove()" class="ml-2 text-gray-400 hover:text-gray-600">&times;</button>
+    `;
+    container.appendChild(toast);
+    requestAnimationFrame(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateX(0)';
+    });
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(1rem)';
+        setTimeout(() => toast.remove(), 300);
+    }, duration);
+};
+
+// Auto-show flash session messages as toasts
 document.addEventListener('DOMContentLoaded', () => {
+    const flashTypes = ['success', 'error', 'warning', 'info'];
+    flashTypes.forEach(type => {
+        const el = document.getElementById(`flash-${type}`);
+        if (el && el.dataset.message) {
+            window.showToast(el.dataset.message, type);
+        }
+    });
     initEkakuCharts().catch((err) => console.error('Chart init failed:', err));
 });
 
