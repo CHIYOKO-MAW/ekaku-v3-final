@@ -63,6 +63,10 @@ composer dump-autoload --optimize 2>&1 || true
 
 # Laravel startup commands
 php artisan migrate --force 2>&1 || true
+
+# Seed 300+ demo users if not already present (idempotent)
+php artisan db:seed --class=DemoDataSeeder --force 2>&1 || true
+
 php artisan storage:link 2>&1 || true
 
 # Regenerate services.php with only production providers
