@@ -147,7 +147,7 @@
                 @if(count($chartData['labels']) > 0)
                 <div class="relative" style="height: 300px;">
                     <canvas id="adminPerformanceChart"
-                        data-ekaku-chart='@json($chartData)'
+                        data-ekaku-chart='@json(['labels' => $chartData['labels'], 'values' => array_map(fn($v, $r) => $v + $r, $chartData['verified'], $chartData['rejected']), 'colors' => ['#2563eb']])'
                         data-chart-type="bar">
                     </canvas>
                 </div>
