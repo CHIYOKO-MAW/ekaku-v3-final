@@ -73,6 +73,9 @@ php artisan config:clear 2>&1 || true
 php artisan route:clear 2>&1 || true
 php artisan view:clear 2>&1 || true
 php artisan event:clear 2>&1 || true
+php artisan responsecache:clear 2>&1 || true
+# Clear file-based response cache (spatie/laravel-responsecache uses 'file' driver)
+rm -rf storage/framework/cache/data/* 2>/dev/null || true
 
 php artisan config:cache 2>&1 || true
 php artisan route:cache 2>&1 || true
