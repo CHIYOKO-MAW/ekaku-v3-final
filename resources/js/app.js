@@ -44,9 +44,9 @@ const initEkakuCharts = async () => {
         return;
     }
 
-    const { Chart, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend } = chartModule;
+    const { Chart, ArcElement, BarElement, BarController, DoughnutController, CategoryScale, LinearScale, Tooltip, Legend } = chartModule;
 
-    Chart.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+    Chart.register(ArcElement, BarElement, BarController, DoughnutController, CategoryScale, LinearScale, Tooltip, Legend);
 
     chartNodes.forEach((canvas) => {
         const config = parseChartConfig(canvas.getAttribute('data-ekaku-chart'));
