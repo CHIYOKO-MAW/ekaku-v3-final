@@ -70,6 +70,7 @@ const initEkakuCharts = async () => {
                 labels: config.labels,
                 datasets: [
                     {
+                        label: config.label || '',
                         data: config.values,
                         backgroundColor: colors,
                         borderColor: '#ffffff',
@@ -84,6 +85,7 @@ const initEkakuCharts = async () => {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
+                        display: chartType !== 'bar',
                         position: 'bottom',
                         labels: {
                             boxWidth: 12,
