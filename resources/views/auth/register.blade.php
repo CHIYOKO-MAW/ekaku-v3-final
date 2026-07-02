@@ -52,7 +52,7 @@
         </div>
 
         <div class="flex items-center justify-between pt-2">
-            <a class="text-sm text-gray-600 hover:text-gray-900" href="{{ route('login') }}" @bladeflow>Sudah punya akun?</a>
+            <a class="text-sm text-gray-600 hover:text-gray-900" href="{{ route('login') }}">Sudah punya akun?</a>
             <x-primary-button>
                 Daftar
             </x-primary-button>

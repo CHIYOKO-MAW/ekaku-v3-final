@@ -17,7 +17,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans text-gray-900">
-    <div class="login-gate-wrapper" data-bladeflow-content>
+    <div class="login-gate-wrapper">
         <div class="login-brand-section auth-split-left relative flex w-full items-center justify-center overflow-hidden px-6 py-12 lg:w-1/2">
             <div class="absolute inset-0 opacity-10">
                 <svg class="h-full w-full" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
@@ -61,106 +61,5 @@
             </div>
         </div>
     </div>
-    <script>
-    (function() {
-        var ANIM_MS = 600;
-        var form = document.querySelector('form[action]');
-        if (!form) return;
-        var btn = form.querySelector('button[type="submit"]');
-        var originalHtml = btn ? btn.innerHTML : '';
-
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
-            }
-
-            document.body.classList.add('login-gate-open');
-
-            var formData = new FormData(form);
-            var dashboardHTML = null;
-            var loginFailed = false;
-            var lastDashboardUrl = '/dashboard/user';
-            var animDone = false;
-            var fetchDone = false;
-            var submitTime = Date.now();
-
-            function doSwap() {
-                if (!dashboardHTML || loginFailed) return;
-                document.open();
-                document.write(dashboardHTML);
-                document.close();
-                var match = dashboardHTML.match(/<title[^>]*>([^<]+)<\/title>/i);
-                var title = match ? match[1] : 'Dashboard';
-                document.title = title;
-                history.pushState({}, '', lastDashboardUrl || '/dashboard/user');
-            }
-
-            function checkReady() {
-                var elapsed = Date.now() - submitTime;
-                if (elapsed < ANIM_MS) {
-                    setTimeout(function() { doSwap(); }, ANIM_MS - elapsed);
-                } else {
-                    doSwap();
-                }
-            }
-
-            fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                credentials: 'same-origin'
-            }).then(function(res) {
-                if (res.redirected) {
-                    lastDashboardUrl = new URL(res.url).pathname;
-                    return res.text();
-                }
-                return res.text().then(function(html) {
-                    if (html.includes('error') || html.includes('password') || html.includes('validation')) {
-                        loginFailed = true;
-                        showError(html);
-                    } else {
-                        return html;
-                    }
-                });
-            }).then(function(html) {
-                if (html && !loginFailed) {
-                    dashboardHTML = html;
-                    fetchDone = true;
-                    checkReady();
-                }
-            }).catch(function() {
-                loginFailed = true;
-                document.body.classList.remove('login-gate-open');
-                if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
-            });
-
-            setTimeout(function() {
-                animDone = true;
-                if (fetchDone) checkReady();
-            }, ANIM_MS);
-
-            function showError(html) {
-                document.body.classList.remove('login-gate-open');
-                if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
-                var tmp = document.createElement('div');
-                tmp.innerHTML = html;
-                var errEl = tmp.querySelector('.text-sm.text-red-600');
-                if (errEl) {
-                    var slot = form.closest('.px-6, .sm\\:px-8');
-                    if (slot) {
-                        var existing = slot.querySelector('.mb-4.rounded-lg.bg-red-50');
-                        if (existing) existing.remove();
-                        var alert = document.createElement('div');
-                        alert.className = 'mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-600';
-                        alert.textContent = errEl.textContent.trim();
-                        slot.insertBefore(alert, form);
-                    }
-                }
-            }
-        });
-    })();
-    </script>
-    @bladeflowEngine
 </body>
 </html>

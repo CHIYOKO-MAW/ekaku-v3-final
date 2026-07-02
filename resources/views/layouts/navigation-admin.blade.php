@@ -15,11 +15,11 @@
             </a>
 
             <div class="hidden items-center gap-6 sm:flex">
-                <a @bladeflow href="{{ route('admin.dashboard') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('admin.dashboard') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">Dashboard</a>
-                <a @bladeflow href="{{ route('admin.pengguna.index') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('admin.pengguna.*') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">Pengguna</a>
-                <a @bladeflow href="{{ route('admin.laporan') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('admin.laporan*') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">Laporan</a>
-                <a @bladeflow href="{{ route('admin.verifikasi.index') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('admin.verifikasi.*') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">Verifikasi</a>
-                <a @bladeflow href="{{ route('admin.notification') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('admin.notification') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">Notifikasi Manual</a>
+                <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('admin.dashboard') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">Dashboard</a>
+                <a href="{{ route('admin.pengguna.index') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('admin.pengguna.*') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">Pengguna</a>
+                <a href="{{ route('admin.laporan') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('admin.laporan*') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">Laporan</a>
+                <a href="{{ route('admin.verifikasi.index') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('admin.verifikasi.*') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">Verifikasi</a>
+                <a href="{{ route('admin.notification') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('admin.notification') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">Notifikasi Manual</a>
             </div>
 
             <div class="hidden items-center sm:flex">
@@ -89,11 +89,11 @@
 
     <div x-cloak x-show="mobileOpen" class="hidden border-t border-gray-200 bg-white">
         <div class="space-y-1 px-2 py-3">
-            <a @bladeflow href="{{ route('admin.dashboard') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('admin.dashboard') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Dashboard</a>
-            <a @bladeflow href="{{ route('admin.pengguna.index') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('admin.pengguna.*') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Pengguna</a>
-            <a @bladeflow href="{{ route('admin.laporan') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('admin.laporan*') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Laporan</a>
-            <a @bladeflow href="{{ route('admin.verifikasi.index') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('admin.verifikasi.*') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Verifikasi</a>
-            <a @bladeflow href="{{ route('admin.notification') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('admin.notification') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Notifikasi Manual</a>
+            <a href="{{ route('admin.dashboard') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('admin.dashboard') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Dashboard</a>
+            <a href="{{ route('admin.pengguna.index') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('admin.pengguna.*') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Pengguna</a>
+            <a href="{{ route('admin.laporan') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('admin.laporan*') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Laporan</a>
+            <a href="{{ route('admin.verifikasi.index') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('admin.verifikasi.*') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Verifikasi</a>
+            <a href="{{ route('admin.notification') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('admin.notification') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Notifikasi Manual</a>
             <a href="{{ route('notifikasi.index', ['mark_read' => 1]) }}" class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Notifikasi</a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
@@ -104,19 +104,19 @@
 
     {{-- Mobile Bottom Navigation --}}
     <div class="bottom-nav sm:hidden">
-        <a @bladeflow href="{{ route('admin.dashboard') }}" class="bottom-nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+        <a href="{{ route('admin.dashboard') }}" class="bottom-nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
             <i class="fas fa-chart-pie"></i>
         </a>
-        <a @bladeflow href="{{ route('admin.pengguna.index') }}" class="bottom-nav-item {{ request()->routeIs('admin.pengguna.*') ? 'active' : '' }}">
+        <a href="{{ route('admin.pengguna.index') }}" class="bottom-nav-item {{ request()->routeIs('admin.pengguna.*') ? 'active' : '' }}">
             <i class="fas fa-users"></i>
         </a>
-        <a @bladeflow href="{{ route('admin.laporan') }}" class="bottom-nav-item {{ request()->routeIs('admin.laporan*') ? 'active' : '' }}">
+        <a href="{{ route('admin.laporan') }}" class="bottom-nav-item {{ request()->routeIs('admin.laporan*') ? 'active' : '' }}">
             <i class="fas fa-file-alt"></i>
         </a>
-        <a @bladeflow href="{{ route('admin.verifikasi.index') }}" class="bottom-nav-item {{ request()->routeIs('admin.verifikasi.*') ? 'active' : '' }}">
+        <a href="{{ route('admin.verifikasi.index') }}" class="bottom-nav-item {{ request()->routeIs('admin.verifikasi.*') ? 'active' : '' }}">
             <i class="fas fa-check-double"></i>
         </a>
-        <a @bladeflow href="{{ route('admin.notification') }}" class="bottom-nav-item {{ request()->routeIs('admin.notification') ? 'active' : '' }}">
+        <a href="{{ route('admin.notification') }}" class="bottom-nav-item {{ request()->routeIs('admin.notification') ? 'active' : '' }}">
             <i class="fas fa-paper-plane"></i>
         </a>
     </div>

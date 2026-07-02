@@ -26,7 +26,7 @@
         </div>
 
         <div class="text-center">
-            <a class="text-sm text-disnaker-600 hover:text-disnaker-700" href="{{ route('login') }}" @bladeflow>
+            <a class="text-sm text-disnaker-600 hover:text-disnaker-700" href="{{ route('login') }}">
                 <i class="fas fa-arrow-left mr-1"></i> Kembali ke halaman masuk
             </a>
         </div>

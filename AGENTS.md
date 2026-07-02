@@ -257,3 +257,4 @@ Lihat `plan.md` Section 13 untuk penjelasan lengkap.
 | 2026-06-29 | Fix CacheProfile: disable redirect caching | — | — | read, edit, pest | Override hasCacheableResponseCode, 97 tests passed, no regression |
 | 2026-06-29 | Test UI workflow login admin/atasan | — | playwright | playwright_browser_* | Login flow, redirect, dashboard, profile semua works |
 | 2026-07-02 | Fix Chart.js, FA icons, withoutPagination, APP_DEBUG | — | railway, playwright | read, edit, grep, bash | Chart.js: named export + DoughnutController/BarController. FA: full 156KB woff2. Bar legend hidden. APP_DEBUG=false. All verified on prod. |
+| 2026-07-02 | Fix gate animation + smooth login transition | — | playwright | read, edit, bash | Removed Alpine.js `:class` binding conflict, added sessionStorage flag + page-load overlay with 500ms fade-out. Zero blank screen between gate animation and dashboard. |
