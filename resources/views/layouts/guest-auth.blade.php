@@ -79,9 +79,21 @@
             var startTime = Date.now();
 
             var formData = new FormData(form);
-            var fetchDone = false;
             var fetchUrl = null;
             var fetchError = false;
+            var navigated = false;
+
+            function doNavigate() {
+                if (navigated || fetchError || !fetchUrl) return;
+                navigated = true;
+                if (window.bladeflowNavigate) {
+                    window.bladeflowNavigate(fetchUrl);
+                } else {
+                    window.location.href = fetchUrl;
+                }
+            }
+
+            setTimeout(function() { doNavigate(); }, ANIM_MS);
 
             fetch(form.action, {
                 method: 'POST',
@@ -89,9 +101,9 @@
                 headers: { 'X-Requested-With': 'XMLHttpRequest' },
                 credentials: 'same-origin'
             }).then(function(res) {
-                fetchDone = true;
                 if (res.redirected || res.url) {
                     fetchUrl = new URL(res.url).pathname;
+                    setTimeout(function() { doNavigate(); }, ANIM_MS);
                 } else {
                     return res.text().then(function(html) {
                         if (html.includes('error') || html.includes('password')) {
@@ -112,27 +124,15 @@
                             }
                         } else {
                             fetchUrl = new URL(form.action).pathname;
+                            setTimeout(function() { doNavigate(); }, ANIM_MS);
                         }
                     });
                 }
-                navigateIfReady();
             }).catch(function() {
                 fetchError = true;
                 document.body.classList.remove('login-gate-open');
                 if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
             });
-
-            function navigateIfReady() {
-                if (fetchError || !fetchUrl) return;
-                var remaining = gateAnimationDone ? 0 : Math.max(0, ANIM_MS - (Date.now() - startTime));
-                setTimeout(function() {
-                    if (window.bladeflowNavigate) {
-                        window.bladeflowNavigate(fetchUrl);
-                    } else {
-                        window.location.href = fetchUrl;
-                    }
-                }, remaining);
-            }
         });
     });
     </script>
