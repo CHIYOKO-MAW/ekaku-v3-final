@@ -86,11 +86,7 @@
             function doNavigate() {
                 if (navigated || fetchError || !fetchUrl) return;
                 navigated = true;
-                if (window.bladeflowNavigate) {
-                    window.bladeflowNavigate(fetchUrl);
-                } else {
-                    window.location.href = fetchUrl;
-                }
+                window.location.href = fetchUrl;
             }
 
             setTimeout(function() { doNavigate(); }, ANIM_MS);
