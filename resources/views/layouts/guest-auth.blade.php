@@ -67,7 +67,7 @@
         if (!form) return;
         var btn = form.querySelector('button[type="submit"]');
         var originalHtml = btn ? btn.innerHTML : '';
-        var ANIM_MS = 600;
+        var ANIM_MS = 350;
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
