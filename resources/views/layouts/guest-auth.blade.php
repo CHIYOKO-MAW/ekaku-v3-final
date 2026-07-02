@@ -16,7 +16,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans text-gray-900" x-data="{ gateOpen: false }" :class="gateOpen ? 'login-gate-open' : ''">
+<body class="font-sans text-gray-900">
     <div class="login-gate-wrapper" data-bladeflow-content>
         <div class="login-brand-section auth-split-left relative flex w-full items-center justify-center overflow-hidden px-6 py-12 lg:w-1/2">
             <div class="absolute inset-0 opacity-10">
@@ -86,6 +86,7 @@
             function doNavigate() {
                 if (navigated || fetchError || !fetchUrl) return;
                 navigated = true;
+                sessionStorage.setItem('ekaku_just_logged_in', '1');
                 window.location.href = fetchUrl;
             }
 
