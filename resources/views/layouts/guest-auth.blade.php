@@ -82,6 +82,29 @@
             var dashboardHTML = null;
             var loginFailed = false;
             var lastDashboardUrl = '/dashboard/user';
+            var animDone = false;
+            var fetchDone = false;
+            var submitTime = Date.now();
+
+            function doSwap() {
+                if (!dashboardHTML || loginFailed) return;
+                document.open();
+                document.write(dashboardHTML);
+                document.close();
+                var match = dashboardHTML.match(/<title[^>]*>([^<]+)<\/title>/i);
+                var title = match ? match[1] : 'Dashboard';
+                document.title = title;
+                history.pushState({}, '', lastDashboardUrl || '/dashboard/user');
+            }
+
+            function checkReady() {
+                var elapsed = Date.now() - submitTime;
+                if (elapsed < ANIM_MS) {
+                    setTimeout(function() { doSwap(); }, ANIM_MS - elapsed);
+                } else {
+                    doSwap();
+                }
+            }
 
             fetch(form.action, {
                 method: 'POST',
@@ -103,12 +126,19 @@
             }).then(function(html) {
                 if (html && !loginFailed) {
                     dashboardHTML = html;
+                    fetchDone = true;
+                    checkReady();
                 }
             }).catch(function() {
                 loginFailed = true;
                 document.body.classList.remove('login-gate-open');
                 if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
             });
+
+            setTimeout(function() {
+                animDone = true;
+                if (fetchDone) checkReady();
+            }, ANIM_MS);
 
             function showError(html) {
                 document.body.classList.remove('login-gate-open');
@@ -128,19 +158,6 @@
                     }
                 }
             }
-
-            setTimeout(function() {
-                if (loginFailed) return;
-                if (dashboardHTML) {
-                    document.open();
-                    document.write(dashboardHTML);
-                    document.close();
-                    var match = dashboardHTML.match(/<title[^>]*>([^<]+)<\/title>/i);
-                    var title = match ? match[1] : 'Dashboard';
-                    document.title = title;
-                    history.pushState({}, '', lastDashboardUrl || '/dashboard/user');
-                }
-            }, ANIM_MS);
         });
     })();
     </script>
