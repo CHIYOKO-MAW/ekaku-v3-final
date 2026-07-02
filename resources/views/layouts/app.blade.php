@@ -19,7 +19,6 @@
     @stack('styles')
 </head>
 <body class="bg-gray-50 font-sans text-gray-900">
-    <div id="page-load-overlay"></div>
     <div id="app">
         @if (View::hasSection('navigation'))
             @yield('navigation')
@@ -65,21 +64,6 @@
             </div>
         </footer>
     </div>
-
-    <script>
-    (function() {
-        var overlay = document.getElementById('page-load-overlay');
-        if (!overlay || !sessionStorage.getItem('ekaku_just_logged_in')) {
-            if (overlay) overlay.remove();
-            return;
-        }
-        sessionStorage.removeItem('ekaku_just_logged_in');
-        window.addEventListener('load', function() {
-            overlay.classList.add('fade-out');
-            setTimeout(function() { overlay.remove(); }, 500);
-        });
-    })();
-    </script>
 
     @stack('scripts')
 

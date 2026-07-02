@@ -62,35 +62,25 @@
         </div>
     </div>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    (function() {
+        var ANIM_MS = 600;
         var form = document.querySelector('form[action]');
         if (!form) return;
         var btn = form.querySelector('button[type="submit"]');
         var originalHtml = btn ? btn.innerHTML : '';
-        var ANIM_MS = 350;
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Masuk...';
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
             }
+
             document.body.classList.add('login-gate-open');
-            var startTime = Date.now();
 
             var formData = new FormData(form);
-            var fetchUrl = null;
-            var fetchError = false;
-            var navigated = false;
-
-            function doNavigate() {
-                if (navigated || fetchError || !fetchUrl) return;
-                navigated = true;
-                sessionStorage.setItem('ekaku_just_logged_in', '1');
-                window.location.href = fetchUrl;
-            }
-
-            setTimeout(function() { doNavigate(); }, ANIM_MS);
+            var dashboardHTML = null;
+            var loginFailed = false;
 
             fetch(form.action, {
                 method: 'POST',
@@ -99,39 +89,58 @@
                 credentials: 'same-origin'
             }).then(function(res) {
                 if (res.redirected || res.url) {
-                    fetchUrl = new URL(res.url).pathname;
-                    setTimeout(function() { doNavigate(); }, ANIM_MS);
-                } else {
-                    return res.text().then(function(html) {
-                        if (html.includes('error') || html.includes('password')) {
-                            fetchError = true;
-                            document.body.classList.remove('login-gate-open');
-                            if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
-                            var tmp = document.createElement('div');
-                            tmp.innerHTML = html;
-                            var errEl = tmp.querySelector('.text-sm.text-red-600');
-                            if (errEl) {
-                                var slot = form.closest('.px-6, .sm\\:px-8');
-                                if (slot) {
-                                    var alert = document.createElement('div');
-                                    alert.className = 'mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-600';
-                                    alert.textContent = errEl.textContent.trim();
-                                    slot.insertBefore(alert, form);
-                                }
-                            }
-                        } else {
-                            fetchUrl = new URL(form.action).pathname;
-                            setTimeout(function() { doNavigate(); }, ANIM_MS);
-                        }
-                    });
+                    var dashboardUrl = new URL(res.url).pathname;
+                    return fetch(dashboardUrl, { credentials: 'same-origin' });
+                }
+                return res.text().then(function(html) {
+                    if (html.includes('error') || html.includes('password')) {
+                        loginFailed = true;
+                        showError(html);
+                    }
+                });
+            }).then(function(res) {
+                if (loginFailed || !res) return;
+                return res.text();
+            }).then(function(html) {
+                if (html && !loginFailed) {
+                    dashboardHTML = html;
                 }
             }).catch(function() {
-                fetchError = true;
+                loginFailed = true;
                 document.body.classList.remove('login-gate-open');
                 if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
             });
+
+            function showError(html) {
+                document.body.classList.remove('login-gate-open');
+                if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
+                var tmp = document.createElement('div');
+                tmp.innerHTML = html;
+                var errEl = tmp.querySelector('.text-sm.text-red-600');
+                if (errEl) {
+                    var slot = form.closest('.px-6, .sm\\:px-8');
+                    if (slot) {
+                        var existing = slot.querySelector('.mb-4.rounded-lg.bg-red-50');
+                        if (existing) existing.remove();
+                        var alert = document.createElement('div');
+                        alert.className = 'mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-600';
+                        alert.textContent = errEl.textContent.trim();
+                        slot.insertBefore(alert, form);
+                    }
+                }
+            }
+
+            setTimeout(function() {
+                if (loginFailed) return;
+                if (dashboardHTML) {
+                    document.open();
+                    document.write(dashboardHTML);
+                    document.close();
+                    history.pushState({}, '', '/dashboard/user');
+                }
+            }, ANIM_MS);
         });
-    });
+    })();
     </script>
     @bladeflowEngine
 </body>
