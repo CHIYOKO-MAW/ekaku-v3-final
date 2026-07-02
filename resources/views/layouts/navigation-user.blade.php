@@ -15,16 +15,16 @@
             </a>
 
             <div class="hidden items-center gap-6 sm:flex">
-                <a href="{{ route('dashboard.user') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('dashboard') || request()->routeIs('dashboard.user') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">
+                <a @bladeflow href="{{ route('dashboard.user') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('dashboard') || request()->routeIs('dashboard.user') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">
                     <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
                 </a>
-                <a href="{{ route('profile.edit') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('profile.*') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">
+                <a @bladeflow href="{{ route('profile.edit') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('profile.*') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">
                     <i class="fas fa-user mr-2"></i> Profil
                 </a>
-                <a href="{{ route('status.index') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('status.*') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">
+                <a @bladeflow href="{{ route('status.index') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('status.*') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">
                     <i class="fas fa-sync-alt mr-2"></i> Update Status
                 </a>
-                <a href="{{ route('kartu.show') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('kartu.*') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">
+                <a @bladeflow href="{{ route('kartu.show') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('kartu.*') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">
                     <i class="fas fa-id-card mr-2"></i> Kartu Digital
                 </a>
             </div>
@@ -104,11 +104,11 @@
 
     <div x-cloak x-show="mobileOpen" class="hidden border-t border-gray-200 bg-white">
         <div class="space-y-1 px-2 py-3">
-            <a href="{{ route('dashboard.user') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('dashboard') || request()->routeIs('dashboard.user') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Dashboard</a>
-            <a href="{{ route('profile.edit') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('profile.*') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Profil</a>
-            <a href="{{ route('profile.edit') }}#biodata" class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Isi Biodata</a>
-            <a href="{{ route('status.index') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('status.*') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Update Status</a>
-            <a href="{{ route('kartu.show') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('kartu.*') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Kartu Digital</a>
+            <a @bladeflow href="{{ route('dashboard.user') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('dashboard') || request()->routeIs('dashboard.user') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Dashboard</a>
+            <a @bladeflow href="{{ route('profile.edit') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('profile.*') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Profil</a>
+            <a @bladeflow href="{{ route('profile.edit') }}#biodata" class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Isi Biodata</a>
+            <a @bladeflow href="{{ route('status.index') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('status.*') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Update Status</a>
+            <a @bladeflow href="{{ route('kartu.show') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('kartu.*') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Kartu Digital</a>
             <a href="{{ route('notifikasi.index') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('notifikasi.*') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Notifikasi</a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
@@ -119,16 +119,16 @@
 
     {{-- Mobile Bottom Navigation --}}
     <div class="bottom-nav sm:hidden">
-        <a href="{{ route('dashboard.user') }}" class="bottom-nav-item {{ request()->routeIs('dashboard') || request()->routeIs('dashboard.user') ? 'active' : '' }}">
+        <a @bladeflow href="{{ route('dashboard.user') }}" class="bottom-nav-item {{ request()->routeIs('dashboard') || request()->routeIs('dashboard.user') ? 'active' : '' }}">
             <i class="fas fa-chart-pie"></i>
         </a>
-        <a href="{{ route('profile.edit') }}" class="bottom-nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+        <a @bladeflow href="{{ route('profile.edit') }}" class="bottom-nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
             <i class="fas fa-user"></i>
         </a>
-        <a href="{{ route('status.index') }}" class="bottom-nav-item {{ request()->routeIs('status.*') ? 'active' : '' }}">
+        <a @bladeflow href="{{ route('status.index') }}" class="bottom-nav-item {{ request()->routeIs('status.*') ? 'active' : '' }}">
             <i class="fas fa-arrows-rotate"></i>
         </a>
-        <a href="{{ route('kartu.show') }}" class="bottom-nav-item {{ request()->routeIs('kartu.*') ? 'active' : '' }}">
+        <a @bladeflow href="{{ route('kartu.show') }}" class="bottom-nav-item {{ request()->routeIs('kartu.*') ? 'active' : '' }}">
             <i class="fas fa-id-card"></i>
         </a>
         <a href="{{ route('notifikasi.index') }}" class="bottom-nav-item {{ request()->routeIs('notifikasi.*') ? 'active' : '' }}">

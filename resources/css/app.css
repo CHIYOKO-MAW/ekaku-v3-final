@@ -266,6 +266,12 @@
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
+/* Login Button Loading Spinner */
+.login-btn-loading {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
 /* Login Gate Animation */
 .login-gate-wrapper {
   display: flex;

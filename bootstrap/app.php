@@ -28,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // DoNotCacheResponse can still override per-route to prevent caching.
         $middleware->append(\Spatie\ResponseCache\Middlewares\CacheResponse::class);
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+        $middleware->append(\App\Http\Middleware\BladeFlowMiddleware::class);
 
     })
     ->withExceptions(function (Exceptions $exceptions): void {

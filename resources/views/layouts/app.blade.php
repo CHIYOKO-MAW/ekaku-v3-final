@@ -32,7 +32,7 @@
             @include('layouts.navigation-guest')
         @endif
 
-        <main class="min-h-screen">
+        <main @bladeflowContent class="min-h-screen">
             @if (session('success'))
                 <div id="flash-success" data-message="{{ session('success') }}" x-data></div>
             @endif
@@ -81,5 +81,6 @@
         });
     </script>
 
+    @bladeflowEngine
 </body>
 </html>

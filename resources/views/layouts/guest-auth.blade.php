@@ -65,10 +65,52 @@
     document.addEventListener('DOMContentLoaded', function() {
         var form = document.querySelector('form[action]');
         if (!form) return;
+        var btn = form.querySelector('button[type="submit"]');
+        var originalHtml = btn ? btn.innerHTML : '';
+
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Masuk...';
+            }
             document.body.classList.add('login-gate-open');
-            setTimeout(function() { form.submit(); }, 650);
+
+            var formData = new FormData(form);
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                credentials: 'same-origin'
+            }).then(function(res) {
+                if (res.redirected || res.url) {
+                    window.location.href = res.url;
+                } else {
+                    return res.text().then(function(html) {
+                        if (html.includes('error') || html.includes('password')) {
+                            document.body.classList.remove('login-gate-open');
+                            if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
+                            var tmp = document.createElement('div');
+                            tmp.innerHTML = html;
+                            var errEl = tmp.querySelector('.text-sm.text-red-600');
+                            if (errEl) {
+                                var slot = form.closest('.px-6, .sm\\:px-8');
+                                if (slot) {
+                                    var alert = document.createElement('div');
+                                    alert.className = 'mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-600';
+                                    alert.textContent = errEl.textContent.trim();
+                                    slot.insertBefore(alert, form);
+                                }
+                            }
+                        } else {
+                            window.location.href = form.action;
+                        }
+                    });
+                }
+            }).catch(function() {
+                document.body.classList.remove('login-gate-open');
+                if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
+            });
         });
     });
     </script>

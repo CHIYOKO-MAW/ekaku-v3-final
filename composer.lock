@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6ee4e4edf0d35440b2248f1340472d74",
+    "content-hash": "66501868f66d0f69aca064cb7fae2499",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -6762,6 +6762,57 @@
                 }
             ],
             "time": "2025-10-27T20:36:44+00:00"
+        },
+        {
+            "name": "thbappy7706/bladeflow",
+            "version": "v1.02",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thbappy7706/bladeflow.git",
+                "reference": "364d559593651f2765076d59be7043e5e34eca2e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thbappy7706/bladeflow/zipball/364d559593651f2765076d59be7043e5e34eca2e",
+                "reference": "364d559593651f2765076d59be7043e5e34eca2e",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
+                "php": "^8.1"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Thbappy7706\\BladeFlow\\BladeFlowServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/bladeflow-helpers.php"
+                ],
+                "psr-4": {
+                    "Thbappy7706\\BladeFlow\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tanvir Hossen Bappy",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Zero-reload SPA engine for Laravel Blade — no jQuery, no Livewire, no Inertia.",
+            "support": {
+                "issues": "https://github.com/thbappy7706/bladeflow/issues",
+                "source": "https://github.com/thbappy7706/bladeflow/tree/v1.02"
+            },
+            "time": "2026-06-09T08:43:44+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
