@@ -16,7 +16,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans text-gray-900" x-data="{ gateOpen: false }" x-init="setTimeout(() => gateOpen = true, 400)" :class="gateOpen ? 'login-gate-open' : ''">
+<body class="font-sans text-gray-900" x-data="{ gateOpen: false }" :class="gateOpen ? 'login-gate-open' : ''">
     <div class="login-gate-wrapper">
         <div class="login-brand-section auth-split-left relative flex w-full items-center justify-center overflow-hidden px-6 py-12 lg:w-1/2">
             <div class="absolute inset-0 opacity-10">
@@ -61,5 +61,16 @@
             </div>
         </div>
     </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.querySelector('form[action]');
+        if (!form) return;
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.body.classList.add('login-gate-open');
+            setTimeout(function() { form.submit(); }, 650);
+        });
+    });
+    </script>
 </body>
 </html>
