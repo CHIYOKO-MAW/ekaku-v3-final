@@ -148,7 +148,7 @@ window.showToast = (message, type = 'success', duration = 4000) => {
 };
 
 // Auto-show flash session messages as toasts
-document.addEventListener('DOMContentLoaded', () => {
+const onReady = () => {
     const flashTypes = ['success', 'error', 'warning', 'info'];
     flashTypes.forEach(type => {
         const el = document.getElementById(`flash-${type}`);
@@ -157,7 +157,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     initEkakuCharts().catch((err) => console.error('Chart init failed:', err));
-});
+};
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', onReady);
+} else {
+    onReady();
+}
 
 document.addEventListener('submit', (e) => {
     const targetButtons = e.submitter
