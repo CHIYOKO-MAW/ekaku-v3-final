@@ -234,17 +234,21 @@
       <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
           <div class="rounded-xl bg-white p-6 card-shadow">
               <h2 class="text-lg font-semibold text-gray-900 mb-4">Status Verifikasi</h2>
-              <canvas id="verificationChart" height="80"
-                  data-ekaku-chart='@json(['labels' => $verificationData['labels'], 'values' => $verificationData['data'], 'colors' => $verificationData['colors']])'
-                  data-chart-type="doughnut">
-              </canvas>
+              <div class="relative h-[250px] lg:h-[300px]">
+                  <canvas id="verificationChart"
+                      data-ekaku-chart='@json(['labels' => $verificationData['labels'], 'values' => $verificationData['data'], 'colors' => $verificationData['colors']])'
+                      data-chart-type="doughnut">
+                  </canvas>
+              </div>
           </div>
           <div class="rounded-xl bg-white p-6 card-shadow">
               <h2 class="text-lg font-semibold text-gray-900 mb-4">Distribusi Status Pekerjaan</h2>
-              <canvas id="jobStatusChart" height="80"
-                  data-ekaku-chart='@json(['labels' => $jobStatusLabels, 'values' => $jobStatusData, 'colors' => $jobStatusColors])'
-                  data-chart-type="bar">
-              </canvas>
+              <div class="relative h-[250px] lg:h-[300px]">
+                  <canvas id="jobStatusChart"
+                      data-ekaku-chart='@json(['labels' => $jobStatusLabels, 'values' => $jobStatusData, 'colors' => $jobStatusColors])'
+                      data-chart-type="bar">
+                  </canvas>
+              </div>
           </div>
       </div>
     </div> {{-- end x-show loaded --}}

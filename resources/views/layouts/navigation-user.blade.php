@@ -96,13 +96,13 @@
                 </div>
             </div>
 
-            <button @click="mobileOpen = !mobileOpen" aria-label="Menu" class="rounded-md p-2 text-gray-500 hover:bg-gray-100 sm:hidden">
+            <button @click="mobileOpen = !mobileOpen" aria-label="Menu" class="rounded-md p-2 text-gray-500 hover:bg-gray-100 hidden">
                 <i class="fas" :class="mobileOpen ? 'fa-times' : 'fa-bars'"></i>
             </button>
         </div>
     </div>
 
-    <div x-cloak x-show="mobileOpen" class="sm:hidden border-t border-gray-200 bg-white">
+    <div x-cloak x-show="mobileOpen" class="hidden border-t border-gray-200 bg-white">
         <div class="space-y-1 px-2 py-3">
             <a href="{{ route('dashboard.user') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('dashboard') || request()->routeIs('dashboard.user') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Dashboard</a>
             <a href="{{ route('profile.edit') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('profile.*') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Profil</a>

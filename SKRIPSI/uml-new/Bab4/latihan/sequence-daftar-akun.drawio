@@ -1,0 +1,199 @@
+<mxfile host="Electron">
+  <diagram id="seq-daftar-akun" name="Sequence Diagram Daftar Akun">
+    <mxGraphModel dx="1200" dy="800" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="actor" value="Pencari Kerja" style="shape=actor;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;size=30;" vertex="1" parent="1">
+          <mxGeometry x="80" y="30" width="40" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p1" value="Halaman Register" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;verticalAlign=middle;align=center;" vertex="1" parent="1">
+          <mxGeometry x="250" y="40" width="140" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2" value="Sistem" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;verticalAlign=middle;align=center;" vertex="1" parent="1">
+          <mxGeometry x="500" y="40" width="100" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p3" value="Database" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;verticalAlign=middle;align=center;" vertex="1" parent="1">
+          <mxGeometry x="720" y="40" width="100" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="l1" value="" style="html=1;dashed=1;dashPattern=5 5;strokeColor=#000000;strokeWidth=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="100" y="100" as="sourcePoint" />
+            <mxPoint x="100" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="l2" value="" style="html=1;dashed=1;dashPattern=5 5;strokeColor=#000000;strokeWidth=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="320" y="80" as="sourcePoint" />
+            <mxPoint x="320" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="l3" value="" style="html=1;dashed=1;dashPattern=5 5;strokeColor=#000000;strokeWidth=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="550" y="80" as="sourcePoint" />
+            <mxPoint x="550" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="l4" value="" style="html=1;dashed=1;dashPattern=5 5;strokeColor=#000000;strokeWidth=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="770" y="80" as="sourcePoint" />
+            <mxPoint x="770" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="a1" value="" style="html=1;strokeColor=#000000;fillColor=#FFFFFF;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="316" y="120" width="8" height="540" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a2" value="" style="html=1;strokeColor=#000000;fillColor=#FFFFFF;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="546" y="150" width="8" height="350" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a3" value="" style="html=1;strokeColor=#000000;fillColor=#FFFFFF;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="766" y="200" width="8" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m1" value="1. Mengunjungi Halaman Register" style="html=1;strokeColor=#000000;strokeWidth=1;fontSize=11;fontColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="120" as="sourcePoint" />
+            <mxPoint x="316" y="120" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m2" value="2. Request Halaman Register" style="html=1;strokeColor=#000000;strokeWidth=1;fontSize=11;fontColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="324" y="150" as="sourcePoint" />
+            <mxPoint x="546" y="150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m3" value="3. Query Data Form" style="html=1;strokeColor=#000000;strokeWidth=1;fontSize=11;fontColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="554" y="180" as="sourcePoint" />
+            <mxPoint x="766" y="180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m4" value="4. Data Form" style="html=1;strokeColor=#000000;strokeWidth=1;fontSize=11;fontColor=#000000;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="766" y="210" as="sourcePoint" />
+            <mxPoint x="554" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m5" value="5. Tampilkan Form Register" style="html=1;strokeColor=#000000;strokeWidth=1;fontSize=11;fontColor=#000000;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="546" y="240" as="sourcePoint" />
+            <mxPoint x="324" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m6" value="6. Tampilkan Form Register" style="html=1;strokeColor=#000000;strokeWidth=1;fontSize=11;fontColor=#000000;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="316" y="270" as="sourcePoint" />
+            <mxPoint x="120" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m7" value="7. Input Data (Nama, Email, Password, Konfirmasi Password)" style="html=1;strokeColor=#000000;strokeWidth=1;fontSize=11;fontColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="310" as="sourcePoint" />
+            <mxPoint x="316" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m8" value="8. Kirim Data Register" style="html=1;strokeColor=#000000;strokeWidth=1;fontSize=11;fontColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="324" y="340" as="sourcePoint" />
+            <mxPoint x="546" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m9" value="9. Simpan Data User" style="html=1;strokeColor=#000000;strokeWidth=1;fontSize=11;fontColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="554" y="370" as="sourcePoint" />
+            <mxPoint x="766" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="alt" value="" style="html=1;shape=umlFrame;whiteSpace=wrap;html=1;strokeColor=#000000;fillColor=none;fontSize=11;fontColor=#000000;collapsible=0;labelPosition=left;verticalAlign=top;align=left;spacingLeft=30;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="300" y="400" width="500" height="250" as="geometry" />
+        </mxCell>
+
+        <mxCell id="alt-label" value="alt" style="html=1;fontSize=11;fontStyle=1;fontColor=#000000;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="305" y="405" width="30" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="alt-valid" value="[Valid]" style="html=1;fontSize=11;fontColor=#000000;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="305" y="425" width="50" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m10" value="10. Data Tersimpan" style="html=1;strokeColor=#000000;strokeWidth=1;fontSize=11;fontColor=#000000;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="766" y="460" as="sourcePoint" />
+            <mxPoint x="554" y="460" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m11" value="11. Redirect ke Dashboard" style="html=1;strokeColor=#000000;strokeWidth=1;fontSize=11;fontColor=#000000;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="546" y="490" as="sourcePoint" />
+            <mxPoint x="324" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m12" value="12. Tampilkan Dashboard" style="html=1;strokeColor=#000000;strokeWidth=1;fontSize=11;fontColor=#000000;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="316" y="520" as="sourcePoint" />
+            <mxPoint x="120" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="alt-divider" value="" style="html=1;strokeColor=#000000;strokeWidth=1;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="300" y="550" as="sourcePoint" />
+            <mxPoint x="800" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="alt-invalid" value="[Invalid]" style="html=1;fontSize=11;fontColor=#000000;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="305" y="555" width="50" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m13" value="13. Data Tidak Valid" style="html=1;strokeColor=#000000;strokeWidth=1;fontSize=11;fontColor=#000000;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="766" y="590" as="sourcePoint" />
+            <mxPoint x="554" y="590" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m14" value="14. Tampilkan Error Message" style="html=1;strokeColor=#000000;strokeWidth=1;fontSize=11;fontColor=#000000;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="546" y="620" as="sourcePoint" />
+            <mxPoint x="324" y="620" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m15" value="15. Tampilkan Error Message" style="html=1;strokeColor=#000000;strokeWidth=1;fontSize=11;fontColor=#000000;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="316" y="650" as="sourcePoint" />
+            <mxPoint x="120" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="end" value="" style="html=1;shape=mxgraph.flowchart终止符;strokeColor=#000000;fillColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="80" y="700" width="40" height="30" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
