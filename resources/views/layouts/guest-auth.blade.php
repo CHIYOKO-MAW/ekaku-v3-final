@@ -81,26 +81,25 @@
             var formData = new FormData(form);
             var dashboardHTML = null;
             var loginFailed = false;
+            var lastDashboardUrl = '/dashboard/user';
 
             fetch(form.action, {
                 method: 'POST',
                 body: formData,
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
                 credentials: 'same-origin'
             }).then(function(res) {
-                if (res.redirected || res.url) {
-                    var dashboardUrl = new URL(res.url).pathname;
-                    return fetch(dashboardUrl, { credentials: 'same-origin' });
+                if (res.redirected) {
+                    lastDashboardUrl = new URL(res.url).pathname;
+                    return res.text();
                 }
                 return res.text().then(function(html) {
-                    if (html.includes('error') || html.includes('password')) {
+                    if (html.includes('error') || html.includes('password') || html.includes('validation')) {
                         loginFailed = true;
                         showError(html);
+                    } else {
+                        return html;
                     }
                 });
-            }).then(function(res) {
-                if (loginFailed || !res) return;
-                return res.text();
             }).then(function(html) {
                 if (html && !loginFailed) {
                     dashboardHTML = html;
@@ -136,7 +135,10 @@
                     document.open();
                     document.write(dashboardHTML);
                     document.close();
-                    history.pushState({}, '', '/dashboard/user');
+                    var match = dashboardHTML.match(/<title[^>]*>([^<]+)<\/title>/i);
+                    var title = match ? match[1] : 'Dashboard';
+                    document.title = title;
+                    history.pushState({}, '', lastDashboardUrl || '/dashboard/user');
                 }
             }, ANIM_MS);
         });
