@@ -17,7 +17,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans text-gray-900" x-data="{ gateOpen: false }" :class="gateOpen ? 'login-gate-open' : ''">
-    <div class="login-gate-wrapper">
+    <div class="login-gate-wrapper" data-bladeflow-content>
         <div class="login-brand-section auth-split-left relative flex w-full items-center justify-center overflow-hidden px-6 py-12 lg:w-1/2">
             <div class="absolute inset-0 opacity-10">
                 <svg class="h-full w-full" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
@@ -67,6 +67,7 @@
         if (!form) return;
         var btn = form.querySelector('button[type="submit"]');
         var originalHtml = btn ? btn.innerHTML : '';
+        var ANIM_MS = 600;
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -75,19 +76,26 @@
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Masuk...';
             }
             document.body.classList.add('login-gate-open');
+            var startTime = Date.now();
 
             var formData = new FormData(form);
+            var fetchDone = false;
+            var fetchUrl = null;
+            var fetchError = false;
+
             fetch(form.action, {
                 method: 'POST',
                 body: formData,
                 headers: { 'X-Requested-With': 'XMLHttpRequest' },
                 credentials: 'same-origin'
             }).then(function(res) {
+                fetchDone = true;
                 if (res.redirected || res.url) {
-                    window.location.href = res.url;
+                    fetchUrl = new URL(res.url).pathname;
                 } else {
                     return res.text().then(function(html) {
                         if (html.includes('error') || html.includes('password')) {
+                            fetchError = true;
                             document.body.classList.remove('login-gate-open');
                             if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
                             var tmp = document.createElement('div');
@@ -103,16 +111,31 @@
                                 }
                             }
                         } else {
-                            window.location.href = form.action;
+                            fetchUrl = new URL(form.action).pathname;
                         }
                     });
                 }
+                navigateIfReady();
             }).catch(function() {
+                fetchError = true;
                 document.body.classList.remove('login-gate-open');
                 if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
             });
+
+            function navigateIfReady() {
+                if (fetchError || !fetchUrl) return;
+                var remaining = gateAnimationDone ? 0 : Math.max(0, ANIM_MS - (Date.now() - startTime));
+                setTimeout(function() {
+                    if (window.bladeflowNavigate) {
+                        window.bladeflowNavigate(fetchUrl);
+                    } else {
+                        window.location.href = fetchUrl;
+                    }
+                }, remaining);
+            }
         });
     });
     </script>
+    @bladeflowEngine
 </body>
 </html>

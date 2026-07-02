@@ -39,14 +39,14 @@
             </label>
 
             @if (Route::has('password.request'))
-                <a class="text-sm text-disnaker-600 hover:text-disnaker-700" href="{{ route('password.request') }}">
+                <a class="text-sm text-disnaker-600 hover:text-disnaker-700" href="{{ route('password.request') }}" @bladeflow>
                     Lupa password?
                 </a>
             @endif
         </div>
 
         <div class="flex items-center justify-between pt-2">
-            <a class="text-sm text-gray-600 hover:text-gray-900" href="{{ route('register') }}">Belum punya akun?</a>
+            <a class="text-sm text-gray-600 hover:text-gray-900" href="{{ route('register') }}" @bladeflow>Belum punya akun?</a>
             <x-primary-button>
                 Masuk
             </x-primary-button>

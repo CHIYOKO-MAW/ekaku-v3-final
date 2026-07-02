@@ -266,11 +266,22 @@
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
-/* Login Button Loading Spinner */
-.login-btn-loading {
+/* Gate fade-out overlay — smooth transition ke halaman berikutnya */
+.login-gate-open::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: white;
+  opacity: 0;
+  animation: gate-fade-out 0.6s ease forwards;
+  z-index: 9999;
   pointer-events: none;
-  opacity: 0.8;
 }
+@keyframes gate-fade-out {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
 
 /* Login Gate Animation */
 .login-gate-wrapper {
