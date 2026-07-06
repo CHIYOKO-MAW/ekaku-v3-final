@@ -304,7 +304,7 @@
                                 <td class="px-3 py-2 text-gray-700">{{ $district['total'] }}</td>
                             </tr>
                             @empty
-                            <tr><td colspan="4" class="px-3 py-12 text-center text-gray-500"><i class="fas fa-map-marked-alt mr-2"></i>Belum ada ringkasan wilayah.</td></tr>
+                            <tr><td colspan="4" class="px-3 py-12 text-center text-gray-500"><i class="fas fa-info-circle mr-2"></i>Belum ada ringkasan wilayah.</td></tr>
                             @endforelse
                         </tbody>
                     </table>

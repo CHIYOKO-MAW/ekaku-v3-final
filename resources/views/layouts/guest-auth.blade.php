@@ -18,7 +18,7 @@
 </head>
 <body class="font-sans text-gray-900">
     <div class="login-gate-wrapper">
-        <div class="login-brand-section relative w-full items-center justify-center overflow-hidden px-6 py-12 lg:w-1/2">
+        <div class="login-brand-section auth-split-left relative flex w-full items-center justify-center overflow-hidden px-6 py-12 lg:w-1/2">
             <div class="absolute inset-0 opacity-10">
                 <svg class="h-full w-full" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
                     <defs>

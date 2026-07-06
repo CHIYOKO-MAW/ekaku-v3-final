@@ -166,15 +166,15 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-3 py-2 text-left font-semibold text-gray-600 cursor-pointer select-none" @click="sort = 'name'; dir = dir === 'asc' ? 'desc' : 'asc'">
-                                    Nama <i class="fas ml-1" :class="sort === 'name' ? (dir === 'asc' ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort'"></i>
+                                    Nama <i class="fas ml-1" :class="sort === 'name' ? (dir === 'asc' ? 'fa-chevron-up' : 'fa-chevron-down') : 'fa-chevron-down'"></i>
                                 </th>
                                 <th class="px-3 py-2 text-left font-semibold text-gray-600 cursor-pointer select-none" @click="sort = 'total'; dir = dir === 'asc' ? 'desc' : 'asc'">
-                                    Total <i class="fas ml-1" :class="sort === 'total' ? (dir === 'asc' ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort'"></i>
+                                    Total <i class="fas ml-1" :class="sort === 'total' ? (dir === 'asc' ? 'fa-chevron-up' : 'fa-chevron-down') : 'fa-chevron-down'"></i>
                                 </th>
                                 <th class="px-3 py-2 text-left font-semibold text-gray-600">Verified</th>
                                 <th class="px-3 py-2 text-left font-semibold text-gray-600">Rejected</th>
                                 <th class="px-3 py-2 text-left font-semibold text-gray-600 cursor-pointer select-none" @click="sort = 'rate'; dir = dir === 'asc' ? 'desc' : 'asc'">
-                                    Rate <i class="fas ml-1" :class="sort === 'rate' ? (dir === 'asc' ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort'"></i>
+                                    Rate <i class="fas ml-1" :class="sort === 'rate' ? (dir === 'asc' ? 'fa-chevron-up' : 'fa-chevron-down') : 'fa-chevron-down'"></i>
                                 </th>
                                 <th class="px-3 py-2 text-left font-semibold text-gray-600">Aksi</th>
                             </tr>

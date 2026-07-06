@@ -114,7 +114,7 @@
             <i class="fas fa-file-alt"></i>
         </a>
         <a href="{{ route('admin.verifikasi.index') }}" class="bottom-nav-item {{ request()->routeIs('admin.verifikasi.*') ? 'active' : '' }}">
-            <i class="fas fa-check-double"></i>
+            <i class="fas fa-check-circle"></i>
         </a>
         <a href="{{ route('admin.notification') }}" class="bottom-nav-item {{ request()->routeIs('admin.notification') ? 'active' : '' }}">
             <i class="fas fa-paper-plane"></i>

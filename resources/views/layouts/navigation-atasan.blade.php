@@ -102,7 +102,7 @@
             <i class="fas fa-chart-pie"></i>
         </a>
         <a href="{{ route('atasan.rekap-admin') }}" class="bottom-nav-item {{ request()->routeIs('atasan.rekap-admin*') ? 'active' : '' }}">
-            <i class="fas fa-table"></i>
+            <i class="fas fa-list"></i>
         </a>
         <a href="{{ route('profile.edit') }}" class="bottom-nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
             <i class="fas fa-user"></i>
