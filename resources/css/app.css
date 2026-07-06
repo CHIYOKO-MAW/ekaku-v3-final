@@ -269,5 +269,23 @@
 /* Login split layout */
 .login-gate-wrapper {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
+}
+.login-brand-section {
+  display: none;
+}
+.login-mobile-brand {
+  display: block;
+}
+@media (min-width: 1024px) {
+  .login-gate-wrapper {
+    flex-direction: row;
+  }
+  .login-brand-section {
+    display: flex;
+  }
+  .login-mobile-brand {
+    display: none;
+  }
 }

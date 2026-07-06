@@ -18,7 +18,7 @@
 </head>
 <body class="font-sans text-gray-900">
     <div class="login-gate-wrapper">
-        <div class="login-brand-section auth-split-left relative flex w-full items-center justify-center overflow-hidden px-6 py-12 lg:w-1/2">
+        <div class="login-brand-section relative w-full items-center justify-center overflow-hidden px-6 py-12 lg:w-1/2">
             <div class="absolute inset-0 opacity-10">
                 <svg class="h-full w-full" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
                     <defs>
@@ -47,11 +47,16 @@
 
         <div class="login-form-section auth-split-right flex w-full items-center justify-center px-4 py-10 lg:w-1/2 lg:px-8">
             <div class="w-full max-w-md">
-                <div class="text-center lg:hidden">
+                <div class="login-mobile-brand text-center">
+                    <a href="{{ route('welcome') }}" class="mb-6 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition">
+                        <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+                    </a>
                     <picture>
                         <source srcset="{{ asset('images/lambang-pandeglang.webp') }}" type="image/webp">
-                        <img src="{{ asset('images/lambang-pandeglang.png') }}" alt="Lambang Pandeglang" class="mx-auto mb-6 h-16 w-16 object-contain" width="64" height="64" loading="eager">
+                        <img src="{{ asset('images/lambang-pandeglang.png') }}" alt="Lambang Pandeglang" class="mx-auto mb-4 h-16 w-16 object-contain" width="64" height="64" loading="eager">
                     </picture>
+                    <h2 class="mb-1 text-xl font-bold text-gray-900">e-Kaku V3</h2>
+                    <p class="mb-6 text-sm text-gray-500">Kartu Kuning Digital</p>
                 </div>
                 <div class="rounded-2xl border border-gray-100 bg-white shadow-xl shadow-gray-200/50">
                     <div class="px-6 py-8 sm:px-8 sm:py-10">

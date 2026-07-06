@@ -126,7 +126,7 @@
             <i class="fas fa-user"></i>
         </a>
         <a href="{{ route('status.index') }}" class="bottom-nav-item {{ request()->routeIs('status.*') ? 'active' : '' }}">
-            <i class="fas fa-arrows-rotate"></i>
+            <i class="fas fa-sync-alt"></i>
         </a>
         <a href="{{ route('kartu.show') }}" class="bottom-nav-item {{ request()->routeIs('kartu.*') ? 'active' : '' }}">
             <i class="fas fa-id-card"></i>
