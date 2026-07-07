@@ -14,12 +14,32 @@
                 </picture>
             </a>
 
-            <form method="POST" action="{{ route('logout') }}" class="ml-auto sm:hidden">
-                @csrf
-                <button type="submit" class="rounded-md p-2 text-gray-400 hover:text-red-500 hover:bg-gray-100 transition-colors" title="Keluar">
+            <div class="ml-auto sm:hidden" x-data="{ show: false }">
+                <button type="button" x-on:click="show = true" class="rounded-md p-2 text-gray-400 hover:text-red-500 hover:bg-gray-100 transition-colors" title="Keluar">
                     <i class="fas fa-sign-out-alt text-lg"></i>
                 </button>
-            </form>
+                <div x-show="show" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+                    <div class="fixed inset-0 bg-black/50 transition-opacity" x-transition x-on:click="show = false"></div>
+                    <div class="relative w-full max-w-sm rounded-xl bg-white p-6 shadow-2xl" x-transition x-on:click.stop>
+                        <div class="flex items-start gap-4">
+                            <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gray-100">
+                                <i class="fas fa-sign-out-alt text-red-500"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-gray-900">Keluar?</h3>
+                                <p class="mt-2 text-sm text-gray-600">Anda akan keluar dari akun e-Kaku.</p>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex justify-end gap-3">
+                            <button type="button" x-on:click="show = false" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Batal</button>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700">Ya, Keluar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="hidden items-center gap-6 sm:flex">
                 <a href="{{ route('atasan.dashboard') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('atasan.dashboard') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">Dashboard</a>

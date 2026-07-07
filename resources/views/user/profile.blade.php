@@ -379,12 +379,34 @@
 
                 @if ($biodata && $biodata->status_verifikasi !== 'verified')
                     @if ($canSubmit)
-                        <form method="POST" action="{{ route('biodata.submit') }}" class="mt-3">
-                            @csrf
-                            <button type="submit" class="btn-secondary">
+                        <div class="mt-3" x-data="{ show: false }">
+                            <button type="button" x-on:click="show = true" class="btn-secondary">
                                 <i class="fas fa-paper-plane mr-2"></i>Ajukan Validasi Admin
                             </button>
-                        </form>
+
+                            {{-- Confirm Dialog --}}
+                            <div x-show="show" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+                                <div class="fixed inset-0 bg-black/50 transition-opacity" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" x-on:click="show = false"></div>
+                                <div class="relative w-full max-w-sm rounded-xl bg-white p-6 shadow-2xl" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" x-on:click.stop>
+                                    <div class="flex items-start gap-4">
+                                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gray-100">
+                                            <i class="fas fa-paper-plane text-disnaker-500"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h3 class="text-lg font-semibold text-gray-900">Ajukan Verifikasi?</h3>
+                                            <p class="mt-2 text-sm text-gray-600">Biodata Anda akan dikirim ke admin untuk diverifikasi. Setelah disetujui, Anda bisa mencetak kartu kuning.</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-6 flex justify-end gap-3">
+                                        <button type="button" x-on:click="show = false" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Batal</button>
+                                        <form method="POST" action="{{ route('biodata.submit') }}">
+                                            @csrf
+                                            <button type="submit" class="rounded-lg bg-disnaker-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-disnaker-700">Ya, Kirim</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     @else
                         <div class="mt-3 space-y-2">
                             <button type="button" class="btn-secondary cursor-not-allowed opacity-50" disabled>
