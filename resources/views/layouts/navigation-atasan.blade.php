@@ -4,7 +4,7 @@
     $latestNotes = $latestNotes ?? $currentUser->notificationsE()->latest()->take(5)->get();
 @endphp
 
-<nav class="sticky top-0 z-50 border-b border-gray-200 bg-white" x-data="{ mobileOpen: false }">
+<nav class="sticky top-0 z-50 border-b border-gray-200 bg-white">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between">
             <a href="{{ route('atasan.dashboard') }}" class="flex items-center gap-2">
@@ -13,6 +13,13 @@
                     <img src="{{ asset('images/logo-ekaku.png') }}" alt="e-Kaku" class="h-8 w-auto" loading="eager" width="128" height="32">
                 </picture>
             </a>
+
+            <form method="POST" action="{{ route('logout') }}" class="ml-auto sm:hidden">
+                @csrf
+                <button type="submit" class="rounded-md p-2 text-gray-400 hover:text-red-500 hover:bg-gray-100 transition-colors" title="Keluar">
+                    <i class="fas fa-sign-out-alt text-lg"></i>
+                </button>
+            </form>
 
             <div class="hidden items-center gap-6 sm:flex">
                 <a href="{{ route('atasan.dashboard') }}" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium {{ request()->routeIs('atasan.dashboard') ? 'border-disnaker-500 text-disnaker-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">Dashboard</a>
@@ -77,22 +84,6 @@
                     </div>
                 </div>
             </div>
-
-            <button @click="mobileOpen = !mobileOpen" aria-label="Menu" class="rounded-md p-2 text-gray-500 hover:bg-gray-100 hidden">
-                <i class="fas" :class="mobileOpen ? 'fa-times' : 'fa-bars'"></i>
-            </button>
-        </div>
-    </div>
-
-    <div x-cloak x-show="mobileOpen" class="hidden border-t border-gray-200 bg-white">
-        <div class="space-y-1 px-2 py-3">
-            <a href="{{ route('atasan.dashboard') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('atasan.dashboard') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Dashboard</a>
-            <a href="{{ route('atasan.rekap-admin') }}" class="block rounded-md px-3 py-2 text-sm {{ request()->routeIs('atasan.rekap-admin*') ? 'bg-disnaker-50 text-disnaker-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">Rekap Admin</a>
-            <a href="{{ route('notifikasi.index', ['mark_read' => 1]) }}" class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Notifikasi</a>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="w-full rounded-md px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50">Keluar</button>
-            </form>
         </div>
     </div>
 
