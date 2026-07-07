@@ -228,6 +228,11 @@
 .bottom-nav-item i {
   font-size: 1.125rem;
 }
+.bottom-nav-label {
+  font-size: 0.625rem;
+  line-height: 1;
+  white-space: nowrap;
+}
 .bottom-nav-spacer {
   height: 80px;
 }

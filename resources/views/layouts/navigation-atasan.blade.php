@@ -111,12 +111,15 @@
     <div class="bottom-nav sm:hidden">
         <a href="{{ route('atasan.dashboard') }}" class="bottom-nav-item {{ request()->routeIs('atasan.dashboard') ? 'active' : '' }}">
             <i class="fas fa-chart-pie"></i>
+            <span class="bottom-nav-label">Beranda</span>
         </a>
         <a href="{{ route('atasan.rekap-admin') }}" class="bottom-nav-item {{ request()->routeIs('atasan.rekap-admin*') ? 'active' : '' }}">
             <i class="fas fa-file-alt"></i>
+            <span class="bottom-nav-label">Rekap</span>
         </a>
         <a href="{{ route('profile.edit') }}" class="bottom-nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
             <i class="fas fa-user"></i>
+            <span class="bottom-nav-label">Profil</span>
         </a>
     </div>
 </nav>

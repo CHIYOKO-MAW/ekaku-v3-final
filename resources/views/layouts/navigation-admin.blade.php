@@ -115,18 +115,23 @@
     <div class="bottom-nav sm:hidden">
         <a href="{{ route('admin.dashboard') }}" class="bottom-nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
             <i class="fas fa-chart-pie"></i>
+            <span class="bottom-nav-label">Beranda</span>
         </a>
         <a href="{{ route('admin.pengguna.index') }}" class="bottom-nav-item {{ request()->routeIs('admin.pengguna.*') ? 'active' : '' }}">
             <i class="fas fa-users"></i>
+            <span class="bottom-nav-label">Pengguna</span>
         </a>
         <a href="{{ route('admin.laporan') }}" class="bottom-nav-item {{ request()->routeIs('admin.laporan*') ? 'active' : '' }}">
             <i class="fas fa-file-alt"></i>
+            <span class="bottom-nav-label">Laporan</span>
         </a>
         <a href="{{ route('admin.verifikasi.index') }}" class="bottom-nav-item {{ request()->routeIs('admin.verifikasi.*') ? 'active' : '' }}">
             <i class="fas fa-check-circle"></i>
+            <span class="bottom-nav-label">Verifikasi</span>
         </a>
         <a href="{{ route('admin.notification') }}" class="bottom-nav-item {{ request()->routeIs('admin.notification') ? 'active' : '' }}">
             <i class="fas fa-paper-plane"></i>
+            <span class="bottom-nav-label">Kirim</span>
         </a>
     </div>
 </nav>
