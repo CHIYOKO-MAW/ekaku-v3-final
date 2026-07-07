@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <div class="overflow-x-auto rounded-xl bg-white card-shadow">
+    <div class="table-scroll-wrapper rounded-xl bg-white card-shadow">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>

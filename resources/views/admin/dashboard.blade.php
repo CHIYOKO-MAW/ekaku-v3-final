@@ -144,7 +144,7 @@
                 <h2 class="text-lg font-semibold text-gray-900">Aktivitas Terbaru</h2>
                 <a href="{{ route('admin.laporan') }}" class="text-sm font-medium text-disnaker-600 hover:text-disnaker-700">Lihat laporan</a>
             </div>
-            <div class="overflow-x-auto">
+            <div class="table-scroll-wrapper">
                 <table class="min-w-full divide-y divide-gray-200 text-sm">
                     <thead class="bg-gray-50">
                         <tr>
@@ -180,8 +180,8 @@
          <div class="rounded-xl bg-white p-6 card-shadow">
              <h2 class="text-lg font-semibold text-gray-900">Wilayah Prioritas Intervensi</h2>
              <p class="mt-1 text-xs text-gray-500">Skor prioritas berdasarkan jumlah belum bekerja + pending verifikasi.</p>
-             <div class="mt-4 overflow-x-auto">
-                 <table class="min-w-full divide-y divide-gray-200 text-sm">
+              <div class="mt-4 table-scroll-wrapper">
+                  <table class="min-w-full divide-y divide-gray-200 text-sm">
                      <thead class="bg-gray-50">
                          <tr>
                              <th class="px-3 py-2 text-left font-semibold text-gray-600">Kecamatan</th>
