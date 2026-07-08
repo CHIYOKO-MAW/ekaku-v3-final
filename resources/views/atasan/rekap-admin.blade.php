@@ -159,22 +159,26 @@
             </div>
 
             {{-- TABLE --}}
-            <div class="rounded-xl bg-white p-6 card-shadow" x-data="{ sort: 'total', dir: 'desc' }">
+            <div class="rounded-xl bg-white p-6 card-shadow">
                 <h2 class="text-lg font-semibold text-gray-900 mb-4">Detail Kinerja Admin</h2>
                 <div class="table-scroll-wrapper">
                     <table class="min-w-full divide-y divide-gray-200 text-sm">
                         <thead class="bg-gray-50">
+                            @php
+                                $currentSort = request('sort', 'total');
+                                $currentDir = request('dir', 'desc');
+                            @endphp
                             <tr>
-                                <th class="px-3 py-2 text-left font-semibold text-gray-600 cursor-pointer select-none" @click="sort = 'name'; dir = dir === 'asc' ? 'desc' : 'asc'">
-                                    Nama <i class="fas ml-1" :class="sort === 'name' ? (dir === 'asc' ? 'fa-chevron-up' : 'fa-chevron-down') : 'fa-chevron-down'"></i>
+                                <th class="px-3 py-2 text-left font-semibold text-gray-600 cursor-pointer select-none" onclick="window.location.href='{{ route('atasan.rekap-admin', array_merge(request()->query(), ['sort' => 'name', 'dir' => $currentSort === 'name' && $currentDir === 'asc' ? 'desc' : 'asc'])) }}'">
+                                    Nama <i class="fas ml-1 {{ $currentSort === 'name' ? ($currentDir === 'asc' ? 'fa-chevron-up' : 'fa-chevron-down') : 'fa-chevron-down' }}"></i>
                                 </th>
-                                <th class="px-3 py-2 text-left font-semibold text-gray-600 cursor-pointer select-none" @click="sort = 'total'; dir = dir === 'asc' ? 'desc' : 'asc'">
-                                    Total <i class="fas ml-1" :class="sort === 'total' ? (dir === 'asc' ? 'fa-chevron-up' : 'fa-chevron-down') : 'fa-chevron-down'"></i>
+                                <th class="px-3 py-2 text-left font-semibold text-gray-600 cursor-pointer select-none" onclick="window.location.href='{{ route('atasan.rekap-admin', array_merge(request()->query(), ['sort' => 'total', 'dir' => $currentSort === 'total' && $currentDir === 'asc' ? 'desc' : 'asc'])) }}'">
+                                    Total <i class="fas ml-1 {{ $currentSort === 'total' ? ($currentDir === 'asc' ? 'fa-chevron-up' : 'fa-chevron-down') : 'fa-chevron-down' }}"></i>
                                 </th>
                                 <th class="px-3 py-2 text-left font-semibold text-gray-600">Verified</th>
                                 <th class="px-3 py-2 text-left font-semibold text-gray-600">Rejected</th>
-                                <th class="px-3 py-2 text-left font-semibold text-gray-600 cursor-pointer select-none" @click="sort = 'rate'; dir = dir === 'asc' ? 'desc' : 'asc'">
-                                    Rate <i class="fas ml-1" :class="sort === 'rate' ? (dir === 'asc' ? 'fa-chevron-up' : 'fa-chevron-down') : 'fa-chevron-down'"></i>
+                                <th class="px-3 py-2 text-left font-semibold text-gray-600 cursor-pointer select-none" onclick="window.location.href='{{ route('atasan.rekap-admin', array_merge(request()->query(), ['sort' => 'rate', 'dir' => $currentSort === 'rate' && $currentDir === 'asc' ? 'desc' : 'asc'])) }}'">
+                                    Rate <i class="fas ml-1 {{ $currentSort === 'rate' ? ($currentDir === 'asc' ? 'fa-chevron-up' : 'fa-chevron-down') : 'fa-chevron-down' }}"></i>
                                 </th>
                                 <th class="px-3 py-2 text-left font-semibold text-gray-600">Aksi</th>
                             </tr>

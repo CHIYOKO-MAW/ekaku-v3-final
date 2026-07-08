@@ -436,7 +436,18 @@ class DashboardController extends Controller
                 'rejected' => $rejected,
                 'approval_rate' => $approvalRate,
             ];
-        })->sortByDesc('total')->values();
+        })->values();
+
+        $sortField = request('sort', 'total');
+        $sortDir = request('dir', 'desc');
+        $allowedSorts = ['name', 'total', 'rate'];
+        if (! in_array($sortField, $allowedSorts)) {
+            $sortField = 'total';
+        }
+        $sortBy = $sortField === 'rate' ? 'approval_rate' : $sortField;
+        $adminData = $sortDir === 'asc'
+            ? $adminData->sortBy($sortBy)->values()
+            : $adminData->sortByDesc($sortBy)->values();
 
         $totalVerifikasi = $adminData->sum('total');
         $totalVerified = $adminData->sum('verified');
