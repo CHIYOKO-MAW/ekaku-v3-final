@@ -15,7 +15,7 @@
 
   <div class="rounded-xl bg-white p-6 card-shadow">
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 text-sm">
-      <div><span class="font-semibold">Nama:</span> {{ $biodata->user->name }}</div>
+      <div><span class="font-semibold">Nama:</span> {{ $biodata->user?->name ?? '-' }}</div>
       <div><span class="font-semibold">NIK:</span> {{ $biodata->nik }}</div>
       <div><span class="font-semibold">Tempat Lahir:</span> {{ $biodata->tempat_lahir }}</div>
       <div><span class="font-semibold">Tanggal Lahir:</span> {{ optional($biodata->tanggal_lahir)->format('d M Y') ?? $biodata->tanggal_lahir }}</div>
@@ -26,7 +26,7 @@
 
     <h2 class="mt-8 text-lg font-semibold text-gray-900">Dokumen Upload</h2>
     <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
-      @forelse($biodata->user->uploads as $upload)
+      @forelse($biodata->user?->uploads ?? [] as $upload)
         @php $ext = pathinfo($upload->file_path, PATHINFO_EXTENSION); @endphp
         <div class="rounded-lg border border-gray-200 p-4">
           <div class="flex items-center gap-3">

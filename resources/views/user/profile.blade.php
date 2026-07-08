@@ -228,7 +228,7 @@
                             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div>
                                     <x-input-label for="nik" :value="__('NIK')" />
-                                    <x-text-input id="nik" name="nik" type="text" required value="{{ old('nik', $biodata->nik ?? '') }}" />
+                                    <x-text-input id="nik" name="nik" type="text" required value="{{ old('nik', $biodata?->nik ?? '') }}" />
                                     <x-input-error :messages="$errors->get('nik')" />
                                 </div>
                                 <div>
@@ -237,79 +237,79 @@
                                 </div>
                                 <div>
                                     <x-input-label for="tempat_lahir" :value="__('Tempat Lahir')" />
-                                    <x-text-input id="tempat_lahir" name="tempat_lahir" type="text" required value="{{ old('tempat_lahir', $biodata->tempat_lahir ?? '') }}" />
+                                    <x-text-input id="tempat_lahir" name="tempat_lahir" type="text" required value="{{ old('tempat_lahir', $biodata?->tempat_lahir ?? '') }}" />
                                     <x-input-error :messages="$errors->get('tempat_lahir')" />
                                 </div>
                                 <div>
                                     <x-input-label for="tanggal_lahir" :value="__('Tanggal Lahir')" />
-                                    <x-text-input id="tanggal_lahir" name="tanggal_lahir" type="date" required value="{{ old('tanggal_lahir', $biodata->tanggal_lahir ?? '') }}" />
+                                    <x-text-input id="tanggal_lahir" name="tanggal_lahir" type="date" required value="{{ old('tanggal_lahir', $biodata?->tanggal_lahir ?? '') }}" />
                                     <x-input-error :messages="$errors->get('tanggal_lahir')" />
                                 </div>
                                 <div class="md:col-span-2">
                                     <x-input-label for="alamat" :value="__('Alamat')" />
-                                    <textarea id="alamat" name="alamat" class="form-input" required>{{ old('alamat', $biodata->alamat ?? '') }}</textarea>
+                                    <textarea id="alamat" name="alamat" class="form-input" required>{{ old('alamat', $biodata?->alamat ?? '') }}</textarea>
                                     <x-input-error :messages="$errors->get('alamat')" />
                                 </div>
                                 <div>
                                     <x-input-label for="jenis_kelamin" :value="__('Jenis Kelamin')" />
                                     <select id="jenis_kelamin" name="jenis_kelamin" class="form-input">
                                         <option value="">Pilih Jenis Kelamin</option>
-                                        <option value="laki_laki" @selected(old('jenis_kelamin', $biodata->jenis_kelamin ?? '') === 'laki_laki')>Laki-laki</option>
-                                        <option value="perempuan" @selected(old('jenis_kelamin', $biodata->jenis_kelamin ?? '') === 'perempuan')>Perempuan</option>
+                                        <option value="laki_laki" @selected(old('jenis_kelamin', $biodata?->jenis_kelamin ?? '') === 'laki_laki')>Laki-laki</option>
+                                        <option value="perempuan" @selected(old('jenis_kelamin', $biodata?->jenis_kelamin ?? '') === 'perempuan')>Perempuan</option>
                                     </select>
                                     <x-input-error :messages="$errors->get('jenis_kelamin')" />
                                 </div>
                                 <div>
                                     <x-input-label for="agama" :value="__('Agama')" />
-                                    <x-text-input id="agama" name="agama" type="text" value="{{ old('agama', $biodata->agama ?? '') }}" placeholder="Contoh: Islam" />
+                                    <x-text-input id="agama" name="agama" type="text" value="{{ old('agama', $biodata?->agama ?? '') }}" placeholder="Contoh: Islam" />
                                     <x-input-error :messages="$errors->get('agama')" />
                                 </div>
                                 <div>
                                     <x-input-label for="rt_rw" :value="__('RT/RW')" />
-                                    <x-text-input id="rt_rw" name="rt_rw" type="text" value="{{ old('rt_rw', $biodata->rt_rw ?? '') }}" placeholder="Contoh: 002/005" />
+                                    <x-text-input id="rt_rw" name="rt_rw" type="text" value="{{ old('rt_rw', $biodata?->rt_rw ?? '') }}" placeholder="Contoh: 002/005" />
                                     <x-input-error :messages="$errors->get('rt_rw')" />
                                 </div>
                                 <div>
                                     <x-input-label for="kode_pos" :value="__('Kode Pos')" />
-                                    <x-text-input id="kode_pos" name="kode_pos" type="text" value="{{ old('kode_pos', $biodata->kode_pos ?? '') }}" placeholder="Contoh: 42211" />
+                                    <x-text-input id="kode_pos" name="kode_pos" type="text" value="{{ old('kode_pos', $biodata?->kode_pos ?? '') }}" placeholder="Contoh: 42211" />
                                     <x-input-error :messages="$errors->get('kode_pos')" />
                                 </div>
                                 <div>
                                     <x-input-label for="kecamatan" :value="__('Kecamatan')" />
-                                    <x-text-input id="kecamatan" name="kecamatan" type="text" value="{{ old('kecamatan', $biodata->kecamatan ?? '') }}" placeholder="Contoh: Pandeglang" />
+                                    <x-text-input id="kecamatan" name="kecamatan" type="text" value="{{ old('kecamatan', $biodata?->kecamatan ?? '') }}" placeholder="Contoh: Pandeglang" />
                                     <x-input-error :messages="$errors->get('kecamatan')" />
                                 </div>
                                 <div>
                                     <x-input-label for="desa_kelurahan" :value="__('Desa/Kelurahan')" />
-                                    <x-text-input id="desa_kelurahan" name="desa_kelurahan" type="text" value="{{ old('desa_kelurahan', $biodata->desa_kelurahan ?? '') }}" placeholder="Contoh: Pandeglang" />
+                                    <x-text-input id="desa_kelurahan" name="desa_kelurahan" type="text" value="{{ old('desa_kelurahan', $biodata?->desa_kelurahan ?? '') }}" placeholder="Contoh: Pandeglang" />
                                     <x-input-error :messages="$errors->get('desa_kelurahan')" />
                                 </div>
                                 <div>
                                     <x-input-label for="status_perkawinan" :value="__('Status Perkawinan')" />
                                     <select id="status_perkawinan" name="status_perkawinan" class="form-input">
                                         <option value="">Pilih Status Perkawinan</option>
-                                        <option value="belum_menikah" @selected(old('status_perkawinan', $biodata->status_perkawinan ?? '') === 'belum_menikah')>Belum Menikah</option>
-                                        <option value="menikah" @selected(old('status_perkawinan', $biodata->status_perkawinan ?? '') === 'menikah')>Menikah</option>
-                                        <option value="cerai_hidup" @selected(old('status_perkawinan', $biodata->status_perkawinan ?? '') === 'cerai_hidup')>Cerai Hidup</option>
-                                        <option value="cerai_mati" @selected(old('status_perkawinan', $biodata->status_perkawinan ?? '') === 'cerai_mati')>Cerai Mati</option>
+                                        <option value="belum_menikah" @selected(old('status_perkawinan', $biodata?->status_perkawinan ?? '') === 'belum_menikah')>Belum Menikah</option>
+                                        <option value="menikah" @selected(old('status_perkawinan', $biodata?->status_perkawinan ?? '') === 'menikah')>Menikah</option>
+                                        <option value="cerai_hidup" @selected(old('status_perkawinan', $biodata?->status_perkawinan ?? '') === 'cerai_hidup')>Cerai Hidup</option>
+                                        <option value="cerai_mati" @selected(old('status_perkawinan', $biodata?->status_perkawinan ?? '') === 'cerai_mati')>Cerai Mati</option>
                                     </select>
                                     <x-input-error :messages="$errors->get('status_perkawinan')" />
                                 </div>
                                 <div>
                                     <x-input-label for="tinggi_badan" :value="__('Tinggi Badan (cm)')" />
-                                    <x-text-input id="tinggi_badan" name="tinggi_badan" type="number" min="50" max="250" value="{{ old('tinggi_badan', $biodata->tinggi_badan ?? '') }}" />
+                                    <x-text-input id="tinggi_badan" name="tinggi_badan" type="number" min="50" max="250" value="{{ old('tinggi_badan', $biodata?->tinggi_badan ?? '') }}" />
                                     <x-input-error :messages="$errors->get('tinggi_badan')" />
                                 </div>
                                 <div>
                                     <x-input-label for="berat_badan" :value="__('Berat Badan (kg)')" />
-                                    <x-text-input id="berat_badan" name="berat_badan" type="number" min="20" max="300" value="{{ old('berat_badan', $biodata->berat_badan ?? '') }}" />
+                                    <x-text-input id="berat_badan" name="berat_badan" type="number" min="20" max="300" value="{{ old('berat_badan', $biodata?->berat_badan ?? '') }}" />
                                     <x-input-error :messages="$errors->get('berat_badan')" />
                                 </div>
                                 <div class="md:col-span-2">
                                     <input type="hidden" name="disabilitas" value="0">
                                     <label class="inline-flex items-center gap-2 text-sm text-gray-700">
                                         <input type="checkbox" name="disabilitas" value="1" class="rounded border-gray-300 text-disnaker-600 focus:ring-disnaker-500"
-                                            @checked((bool) old('disabilitas', $biodata->disabilitas ?? false))>
+                                            @checked((bool) old('disabilitas', $biodata?->disabilitas ?? false))>
                                         Penyandang disabilitas
                                     </label>
                                     <x-input-error :messages="$errors->get('disabilitas')" />
@@ -327,37 +327,37 @@
                             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div>
                                     <x-input-label for="pendidikan" :value="__('Pendidikan Terakhir')" />
-                                    <x-text-input id="pendidikan" name="pendidikan" type="text" required value="{{ old('pendidikan', $biodata->pendidikan ?? '') }}" />
+                                    <x-text-input id="pendidikan" name="pendidikan" type="text" required value="{{ old('pendidikan', $biodata?->pendidikan ?? '') }}" />
                                     <x-input-error :messages="$errors->get('pendidikan')" />
                                 </div>
                                 <div>
                                     <x-input-label for="tahun_lulus" :value="__('Tahun Lulus')" />
-                                    <x-text-input id="tahun_lulus" name="tahun_lulus" type="text" value="{{ old('tahun_lulus', $biodata->tahun_lulus ?? '') }}" placeholder="Contoh: 2020" />
+                                    <x-text-input id="tahun_lulus" name="tahun_lulus" type="text" value="{{ old('tahun_lulus', $biodata?->tahun_lulus ?? '') }}" placeholder="Contoh: 2020" />
                                     <x-input-error :messages="$errors->get('tahun_lulus')" />
                                 </div>
                                 <div>
                                     <x-input-label for="institusi_pendidikan" :value="__('Nama Institusi Pendidikan')" />
-                                    <x-text-input id="institusi_pendidikan" name="institusi_pendidikan" type="text" value="{{ old('institusi_pendidikan', $biodata->institusi_pendidikan ?? '') }}" />
+                                    <x-text-input id="institusi_pendidikan" name="institusi_pendidikan" type="text" value="{{ old('institusi_pendidikan', $biodata?->institusi_pendidikan ?? '') }}" />
                                     <x-input-error :messages="$errors->get('institusi_pendidikan')" />
                                 </div>
                                 <div>
                                     <x-input-label for="jurusan" :value="__('Jurusan')" />
-                                    <x-text-input id="jurusan" name="jurusan" type="text" value="{{ old('jurusan', $biodata->jurusan ?? '') }}" />
+                                    <x-text-input id="jurusan" name="jurusan" type="text" value="{{ old('jurusan', $biodata?->jurusan ?? '') }}" />
                                     <x-input-error :messages="$errors->get('jurusan')" />
                                 </div>
                                 <div class="md:col-span-2">
                                     <x-input-label for="keahlian" :value="__('Keterampilan / Keahlian')" />
-                                    <textarea id="keahlian" name="keahlian" class="form-input" placeholder="Contoh: Microsoft Office, Administrasi, Bahasa Inggris">{{ old('keahlian', $biodata->keahlian ?? '') }}</textarea>
+                                    <textarea id="keahlian" name="keahlian" class="form-input" placeholder="Contoh: Microsoft Office, Administrasi, Bahasa Inggris">{{ old('keahlian', $biodata?->keahlian ?? '') }}</textarea>
                                     <x-input-error :messages="$errors->get('keahlian')" />
                                 </div>
                                 <div class="md:col-span-2">
                                     <x-input-label for="pengalaman" :value="__('Pengalaman Kerja')" />
-                                    <textarea id="pengalaman" name="pengalaman" class="form-input" placeholder="Ringkasan pengalaman kerja Anda">{{ old('pengalaman', $biodata->pengalaman ?? '') }}</textarea>
+                                    <textarea id="pengalaman" name="pengalaman" class="form-input" placeholder="Ringkasan pengalaman kerja Anda">{{ old('pengalaman', $biodata?->pengalaman ?? '') }}</textarea>
                                     <x-input-error :messages="$errors->get('pengalaman')" />
                                 </div>
                                 <div class="md:col-span-2">
                                     <x-input-label for="tujuan_lamaran" :value="__('Tempat/Tujuan Melamar')" />
-                                    <x-text-input id="tujuan_lamaran" name="tujuan_lamaran" type="text" value="{{ old('tujuan_lamaran', $biodata->tujuan_lamaran ?? '') }}" placeholder="Contoh: PT Maju Bersama" />
+                                    <x-text-input id="tujuan_lamaran" name="tujuan_lamaran" type="text" value="{{ old('tujuan_lamaran', $biodata?->tujuan_lamaran ?? '') }}" placeholder="Contoh: PT Maju Bersama" />
                                     <x-input-error :messages="$errors->get('tujuan_lamaran')" />
                                 </div>
                             </div>
@@ -615,11 +615,13 @@
                     <h3 class="text-sm font-semibold text-white"><i class="fas fa-id-card mr-2"></i>Mini Kartu Digital</h3>
                 </div>
                 <div class="p-5">
-                    @if ($biodata?->status_verifikasi === 'verified')
+                    @if ($biodata?->status_verifikasi === 'verified' && $user->kartuKuning)
                         <div class="rounded-lg border border-green-200 bg-green-50 p-4">
                             <p class="text-sm text-gray-600">Nomor AK-1</p>
                             <p class="font-semibold text-gray-900">{{ $user->kartuKuning->nomor_ak1 ?? '-' }}</p>
+                            @if($validUntil)
                             <p class="mt-2 text-xs text-gray-500">Berlaku hingga {{ $validUntil->format('d M Y') }}</p>
+                            @endif
                         </div>
                         <a href="{{ route('kartu.show') }}" class="btn-primary mt-4">
                             <i class="fas fa-eye mr-2"></i>Preview Kartu

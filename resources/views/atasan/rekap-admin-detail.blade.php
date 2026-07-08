@@ -153,7 +153,7 @@
                     <tbody class="divide-y divide-gray-100">
                         @forelse($biodataList as $biodata)
                         <tr class="hover:bg-gray-50">
-                            <td class="px-3 py-3 font-medium text-gray-900">{{ $biodata->user->name ?? '-' }}</td>
+                            <td class="px-3 py-3 font-medium text-gray-900">{{ $biodata->user?->name ?? '-' }}</td>
                             <td class="px-3 py-3 text-gray-700">{{ $biodata->nik ?? '-' }}</td>
                             <td class="px-3 py-3">
                                 @php $sv = $biodata->status_verifikasi; @endphp
