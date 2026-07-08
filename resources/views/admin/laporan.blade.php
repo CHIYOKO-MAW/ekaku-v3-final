@@ -17,51 +17,52 @@
             <option value="belum_bekerja" @selected(request('status') === 'belum_bekerja')>Belum Bekerja</option>
             <option value="sudah_bekerja" @selected(request('status') === 'sudah_bekerja')>Sudah Bekerja</option>
         </select>
-        <select name="kecamatan_code" class="form-input"
-            x-on:change="document.querySelector('select[name=\'kelurahan_name\']').__x.$data.loadVillages($event.target.value)">
-            <option value="">Semua Kecamatan</option>
-            @foreach(($districts ?? []) as $district)
-                <option value="{{ $district['code'] }}" @selected(($selectedDistrictCode ?? '') === $district['code'])>
-                    {{ $district['name'] }}
-                </option>
-            @endforeach
-        </select>
-        <select name="kelurahan_name" class="form-input"
-            x-data="{
-                loading: false,
-                error: false,
-                async loadVillages(code) {
-                    this.loading = true;
-                    this.error = false;
-                    const el = $el;
-                    el.innerHTML = '<option value=\"\">Memuat desa...</option>';
-                    try {
-                        const res = await fetch(`/admin/wilayah/${code}/villages`, {
-                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                        });
-                        const payload = await res.json();
-                        el.innerHTML = '<option value=\"\">Semua Desa/Kelurahan</option>';
-                        (payload.villages || []).forEach((v) => {
-                            const opt = document.createElement('option');
-                            opt.value = v.name;
-                            opt.textContent = v.name;
-                            el.appendChild(opt);
-                        });
-                    } catch {
-                        el.innerHTML = '<option value=\"\" class=\"text-red-500\">Gagal memuat desa</option>';
-                        this.error = true;
-                    } finally {
-                        this.loading = false;
-                    }
+        <div x-data="{
+            loading: false,
+            error: false,
+            async loadVillages(code) {
+                this.loading = true;
+                this.error = false;
+                const el = $refs.kelurahan;
+                el.innerHTML = '<option value=\"\">Memuat desa...</option>';
+                try {
+                    const res = await fetch(`/admin/wilayah/${code}/villages`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+                    const payload = await res.json();
+                    el.innerHTML = '<option value=\"\">Semua Desa/Kelurahan</option>';
+                    (payload.villages || []).forEach((v) => {
+                        const opt = document.createElement('option');
+                        opt.value = v.name;
+                        opt.textContent = v.name;
+                        el.appendChild(opt);
+                    });
+                } catch {
+                    el.innerHTML = '<option value=\"\" class=\"text-red-500\">Gagal memuat desa</option>';
+                    this.error = true;
+                } finally {
+                    this.loading = false;
                 }
-            }">
-            <option value="">Semua Desa/Kelurahan</option>
-            @foreach(($villagesForSelectedDistrict ?? []) as $village)
-                <option value="{{ $village['name'] }}" @selected(($selectedVillageName ?? '') === $village['name'])>
+            }
+        }" class="contents">
+            <select name="kecamatan_code" class="form-input"
+                x-on:change="loadVillages($event.target.value)">
+                <option value="">Semua Kecamatan</option>
+                @foreach(($districts ?? []) as $district)
+                    <option value="{{ $district['code'] }}" @selected(($selectedDistrictCode ?? '') === $district['code'])>
+                        {{ $district['name'] }}
+                    </option>
+                @endforeach
+            </select>
+            <select x-ref="kelurahan" name="kelurahan_name" class="form-input">
+                <option value="">Semua Desa/Kelurahan</option>
+                @foreach(($villagesForSelectedDistrict ?? []) as $village)
+                    <option value="{{ $village['name'] }}" @selected(($selectedVillageName ?? '') === $village['name'])>
                     {{ $village['name'] }}
                 </option>
             @endforeach
         </select>
+        </div>
         <button type="submit" class="btn-primary justify-center">Terapkan Filter</button>
     </form>
 
