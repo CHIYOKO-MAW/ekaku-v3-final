@@ -87,7 +87,7 @@
                                 <p class="text-xs text-gray-500">{{ $doc->created_at->format('d M Y') }}</p>
                             </div>
                             <div x-data="{ confirm: false }">
-                                <button @click.prevent="confirm = true" class="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500">
+                                <button @click.prevent="confirm = true" class="rounded-lg p-2.5 text-gray-400 hover:bg-red-50 hover:text-red-500">
                                     <i class="fas fa-trash-alt text-sm"></i>
                                 </button>
                                 <div x-cloak x-show="confirm" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" @click.away="confirm = false">

@@ -15,7 +15,7 @@
             </a>
 
             <div class="ml-auto sm:hidden" x-data="{ show: false }">
-                <button type="button" x-on:click="show = true" class="rounded-md p-2 text-gray-400 hover:text-red-500 hover:bg-gray-100 transition-colors" title="Keluar">
+                <button type="button" x-on:click="show = true" class="rounded-md p-2.5 text-gray-400 hover:text-red-500 hover:bg-gray-100 transition-colors" title="Keluar">
                     <i class="fas fa-sign-out-alt text-lg"></i>
                 </button>
                 <div x-show="show" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
