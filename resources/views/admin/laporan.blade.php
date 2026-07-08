@@ -3,7 +3,53 @@
 @section('title', 'Laporan Status')
 
 @section('content')
-<div class="page-wrap">
+<div class="page-wrap" x-data="{ loaded: false }" x-init="setTimeout(() => loaded = true, 150)">
+
+    {{-- SKELETON --}}
+    <div x-show="!loaded" class="space-y-6">
+        <div class="rounded-xl bg-gray-200 p-6 card-shadow animate-pulse">
+            <x-skeleton type="title" class="w-1/3" />
+            <x-skeleton type="text-sm" class="mt-2 w-1/2" />
+        </div>
+        <div class="grid grid-cols-1 gap-3 rounded-xl bg-gray-200 p-4 card-shadow animate-pulse md:grid-cols-6">
+            <x-skeleton type="btn" />
+            <x-skeleton type="btn" />
+            <x-skeleton type="btn" />
+            <x-skeleton type="btn" />
+            <x-skeleton type="btn" />
+            <x-skeleton type="btn" />
+        </div>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
+            @foreach([1,2,3,4] as $i)
+            <div class="rounded-xl bg-gray-200 p-5 card-shadow animate-pulse">
+                <x-skeleton type="text-sm" class="w-1/2" />
+                <x-skeleton type="title" class="mt-2 w-1/3" />
+            </div>
+            @endforeach
+        </div>
+        <div class="flex gap-3">
+            <x-skeleton type="btn" />
+            <x-skeleton type="btn" />
+        </div>
+        <div class="rounded-xl bg-gray-200 card-shadow animate-pulse">
+            <div class="p-4 space-y-3">
+                @foreach([1,2,3,4,5] as $i)
+                <div class="flex items-center gap-4 rounded-lg bg-gray-300 p-4 animate-pulse">
+                    <x-skeleton type="text" class="w-1/6" />
+                    <x-skeleton type="text-sm" class="w-1/6" />
+                    <x-skeleton type="text-sm" class="w-1/6" />
+                    <x-skeleton type="text-sm" class="w-1/6" />
+                    <x-skeleton type="text-sm" class="w-1/6" />
+                    <x-skeleton type="badge" />
+                    <x-skeleton type="text-sm" class="w-1/6" />
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+    {{-- REAL CONTENT --}}
+    <div x-show="loaded" x-cloak class="space-y-6">
     <div class="mb-6 rounded-xl bg-white p-6 card-shadow">
         <h1 class="text-2xl font-bold text-gray-900">Laporan Status Pengguna</h1>
         <p class="mt-1 text-sm text-gray-600">Rekap status pekerjaan dan verifikasi untuk evaluasi operasional.</p>
@@ -110,6 +156,7 @@
             </table>
         </div>
         <div class="border-t border-gray-100 px-4 py-3">{{ $rows->links() }}</div>
+    </div>
     </div>
 </div>
 

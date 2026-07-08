@@ -3,7 +3,42 @@
 @section('title', 'Notifikasi')
 
 @section('content')
-<div class="page-wrap">
+<div class="page-wrap" x-data="{ loaded: false }" x-init="setTimeout(() => loaded = true, 150)">
+
+    {{-- SKELETON --}}
+    <div x-show="!loaded" class="space-y-6">
+        <div class="rounded-xl bg-gray-200 p-6 card-shadow animate-pulse">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <x-skeleton type="title" class="w-1/3" />
+                    <x-skeleton type="text-sm" class="mt-2 w-1/2" />
+                </div>
+                <div class="flex items-center gap-2">
+                    <x-skeleton type="badge" />
+                    <x-skeleton type="btn" />
+                </div>
+            </div>
+        </div>
+        <div class="rounded-xl bg-gray-200 card-shadow animate-pulse">
+            <div class="space-y-0">
+                @foreach([1,2,3,4] as $i)
+                <div class="border-b border-gray-100 px-6 py-4">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex-1 space-y-2">
+                            <x-skeleton type="text" class="w-1/3" />
+                            <x-skeleton type="text-sm" class="w-2/3" />
+                            <x-skeleton type="text-sm" class="w-1/4" />
+                        </div>
+                        <x-skeleton type="btn" />
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+    {{-- REAL CONTENT --}}
+    <div x-show="loaded" x-cloak class="space-y-6">
     <div class="mb-6 rounded-xl bg-gradient-to-r from-[#005aa7] to-blue-600 p-6 card-shadow">
         <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -57,5 +92,6 @@
     @if (method_exists($notes, 'links'))
         <div class="mt-4">{{ $notes->links() }}</div>
     @endif
+    </div>
 </div>
 @endsection

@@ -3,7 +3,33 @@
 @section('title', 'Update Status Pekerjaan')
 
 @section('content')
-<div class="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+<div class="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8" x-data="{ loaded: false }" x-init="setTimeout(() => loaded = true, 150)">
+
+  {{-- SKELETON --}}
+  <div x-show="!loaded" class="space-y-6">
+    <div class="mb-6">
+      <x-skeleton type="title" class="w-1/2" />
+      <x-skeleton type="text-sm" class="mt-2 w-2/3" />
+    </div>
+    <div class="rounded-xl bg-gray-200 p-6 card-shadow animate-pulse space-y-4">
+      <div>
+        <x-skeleton type="text-sm" class="w-1/4" />
+        <x-skeleton type="btn" class="mt-2 w-full" />
+      </div>
+      <div>
+        <x-skeleton type="text-sm" class="w-1/3" />
+        <x-skeleton type="btn" class="mt-2 w-full" />
+      </div>
+      <div>
+        <x-skeleton type="text-sm" class="w-1/4" />
+        <x-skeleton type="btn" class="mt-2 w-full" />
+      </div>
+      <x-skeleton type="btn" class="w-1/3" />
+    </div>
+  </div>
+
+  {{-- REAL CONTENT --}}
+  <div x-show="loaded" x-cloak class="space-y-6">
   <div class="mb-6">
     <h1 class="text-2xl font-bold text-gray-900">Update Status Pekerjaan</h1>
     <p class="mt-1 text-sm text-gray-600">Smart Reminder akan mengingatkan pembaruan status setiap 90 hari.</p>
@@ -35,6 +61,7 @@
         <span x-show="loading" class="flex items-center gap-2"><svg class="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Menyimpan...</span>
       </button>
     </form>
+  </div>
   </div>
 </div>
 @endsection
