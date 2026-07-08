@@ -25,6 +25,12 @@
     {{-- REAL CONTENT --}}
     <div x-show="loaded" x-cloak class="space-y-8">
 
+        <x-breadcrumb :items="[
+            ['label' => 'Dashboard', 'url' => route('atasan.dashboard')],
+            ['label' => 'Rekap Admin', 'url' => route('atasan.rekap-admin')],
+            ['label' => 'Detail Rekap']
+        ]" />
+
         {{-- HEADER --}}
         <div class="rounded-xl bg-white p-6 card-shadow">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

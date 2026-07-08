@@ -4,6 +4,12 @@
 
 @section('content')
 <div class="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+  <x-breadcrumb :items="[
+      ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
+      ['label' => 'Pengguna', 'url' => route('admin.pengguna.index')],
+      ['label' => 'Edit Pengguna']
+  ]" />
+
   <div class="mb-6 flex items-center justify-between">
     <h1 class="text-2xl font-bold text-gray-900">Edit Pengguna</h1>
     <a href="{{ route('admin.pengguna.index') }}" class="btn-secondary">Kembali</a>

@@ -10,6 +10,12 @@
     loadingApprove: false,
     loadingReject: false
 }">
+  <x-breadcrumb :items="[
+      ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
+      ['label' => 'Verifikasi', 'url' => route('admin.verifikasi.index')],
+      ['label' => 'Detail Biodata']
+  ]" />
+
   <div class="mb-6 flex items-center justify-between">
     <h1 class="text-2xl font-bold text-gray-900">Detail Verifikasi</h1>
     <a href="{{ route('admin.verifikasi.index') }}" class="btn-secondary">Kembali</a>
