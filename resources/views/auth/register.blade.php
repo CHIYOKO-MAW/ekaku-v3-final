@@ -6,7 +6,7 @@
         <p class="mt-1 text-sm text-gray-600">Isi data diri Anda untuk mendaftar</p>
     </div>
 
-    <form method="POST" action="{{ route('register') }}" class="space-y-5">
+    <form method="POST" action="{{ route('register') }}" class="space-y-5" x-data="{ loading: false }" @submit="loading = true">
         @csrf
 
         <div>
@@ -53,8 +53,9 @@
 
         <div class="flex items-center justify-between pt-2">
             <a class="text-sm text-gray-600 hover:text-gray-900" href="{{ route('login') }}">Sudah punya akun?</a>
-            <x-primary-button>
-                Daftar
+            <x-primary-button x-bind:disabled="loading">
+                <span x-show="!loading">Daftar</span>
+                <span x-show="loading" class="flex items-center gap-2"><svg class="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Memproses...</span>
             </x-primary-button>
         </div>
     </form>

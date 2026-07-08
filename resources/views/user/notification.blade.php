@@ -33,11 +33,12 @@
                         <p class="mt-1 text-xs text-gray-500">{{ $note->created_at?->format('d M Y H:i') }}</p>
                     </div>
                     @if (! $note->status_baca)
-                        <form method="POST" action="{{ route('notifikasi.read', $note) }}">
+                        <form method="POST" action="{{ route('notifikasi.read', $note) }}" x-data="{ loading: false }" @submit="loading = true">
                             @csrf
                             @method('PATCH')
-                            <button type="submit" class="rounded-md border border-disnaker-200 px-3 py-1.5 text-xs font-medium text-disnaker-600 hover:bg-disnaker-50">
-                                Tandai Dibaca
+                            <button type="submit" class="rounded-md border border-disnaker-200 px-3 py-1.5 text-xs font-medium text-disnaker-600 hover:bg-disnaker-50" x-bind:disabled="loading">
+                                <span x-show="!loading">Tandai Dibaca</span>
+                                <span x-show="loading">...</span>
                             </button>
                         </form>
                     @endif

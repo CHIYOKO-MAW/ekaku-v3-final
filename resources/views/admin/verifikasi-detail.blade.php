@@ -6,7 +6,9 @@
 <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8" x-data="{
     showApprove: false,
     showReject: false,
-    rejectCatatan: ''
+    rejectCatatan: '',
+    loadingApprove: false,
+    loadingReject: false
 }">
   <div class="mb-6 flex items-center justify-between">
     <h1 class="text-2xl font-bold text-gray-900">Detail Verifikasi</h1>
@@ -75,10 +77,13 @@
       </div>
       <div class="mt-6 flex justify-end gap-3">
         <button type="button" x-on:click="showApprove = false" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Batal</button>
-        <form action="{{ route('admin.verifikasi.updateStatus', $biodata) }}" method="POST">
+        <form action="{{ route('admin.verifikasi.updateStatus', $biodata) }}" method="POST" @submit="loadingApprove = true">
           @csrf
           <input type="hidden" name="status" value="verified">
-          <button type="submit" class="rounded-lg bg-disnaker-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-disnaker-700">Ya, Setujui</button>
+          <button type="submit" class="rounded-lg bg-disnaker-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-disnaker-700" x-bind:disabled="loadingApprove">
+            <span x-show="!loadingApprove">Ya, Setujui</span>
+            <span x-show="loadingApprove" class="flex items-center gap-2"><svg class="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Memproses...</span>
+          </button>
         </form>
       </div>
     </div>
@@ -99,11 +104,14 @@
       </div>
       <div class="mt-6 flex justify-end gap-3">
         <button type="button" x-on:click="showReject = false" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Batal</button>
-        <form action="{{ route('admin.verifikasi.updateStatus', $biodata) }}" method="POST">
+        <form action="{{ route('admin.verifikasi.updateStatus', $biodata) }}" method="POST" @submit="loadingReject = true">
           @csrf
           <input type="hidden" name="status" value="rejected">
           <input type="hidden" name="catatan" :value="rejectCatatan">
-          <button type="submit" class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700">Ya, Tolak</button>
+          <button type="submit" class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700" x-bind:disabled="loadingReject">
+            <span x-show="!loadingReject">Ya, Tolak</span>
+            <span x-show="loadingReject" class="flex items-center gap-2"><svg class="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Menolak...</span>
+          </button>
         </form>
       </div>
     </div>

@@ -20,7 +20,7 @@
         ? \Carbon\Carbon::parse($user->kartuKuning->tanggal_cetak)->addYears(5)
         : null;
 @endphp
-<div class="page-wrap" x-data="{ activeTab: 'akun', openPribadi: true, openPendidikan: true, loaded: false }" x-init="setTimeout(() => { activeTab = window.location.hash === '#biodata' ? 'biodata' : window.location.hash === '#berkas' ? 'berkas' : 'akun'; loaded = true; }, 150)">
+<div class="page-wrap" x-data="{ activeTab: 'akun', openPribadi: true, openPendidikan: true, loaded: false, loadingAkun: false, loadingBiodata: false }" x-init="setTimeout(() => { activeTab = window.location.hash === '#biodata' ? 'biodata' : window.location.hash === '#berkas' ? 'berkas' : 'akun'; loaded = true; }, 150)">
 
     {{-- SKELETON: HEADER --}}
     <div x-show="!loaded" class="rounded-xl bg-gray-200 p-6 card-shadow animate-pulse">
@@ -118,7 +118,7 @@
                     </div>
                 </div>
                 <div class="p-6">
-                    <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="grid grid-cols-1 gap-6 md:grid-cols-2" @submit="loadingAkun = true">
                         @csrf
                         @method('PATCH')
 
@@ -179,8 +179,9 @@
                             <x-input-error :messages="$errors->get('email')" />
                         </div>
                         <div class="md:col-span-2">
-                            <button type="submit" class="btn-primary">
-                                <i class="fas fa-save mr-2"></i>Simpan Informasi Akun
+                            <button type="submit" class="btn-primary" x-bind:disabled="loadingAkun">
+                                <span x-show="!loadingAkun"><i class="fas fa-save mr-2"></i>Simpan Informasi Akun</span>
+                                <span x-show="loadingAkun" class="flex items-center gap-2"><svg class="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Menyimpan...</span>
                             </button>
                         </div>
                     </form>
@@ -213,7 +214,7 @@
                 </div>
                 <div x-show="activeTab === 'biodata'" class="p-6">
 
-                <form method="POST" action="{{ $biodata ? route('biodata.update') : route('biodata.store') }}" class="space-y-6">
+                <form method="POST" action="{{ $biodata ? route('biodata.update') : route('biodata.store') }}" class="space-y-6" @submit="loadingBiodata = true">
                     @csrf
                     @if ($biodata)
                         @method('PUT')
@@ -365,8 +366,9 @@
                     </div>
 
                     <div class="flex flex-wrap gap-3">
-                        <button type="submit" class="btn-primary">
-                            <i class="fas fa-save mr-2"></i>{{ $biodata ? 'Perbarui Biodata' : 'Simpan Biodata' }}
+                        <button type="submit" class="btn-primary" x-bind:disabled="loadingBiodata">
+                            <span x-show="!loadingBiodata"><i class="fas fa-save mr-2"></i>{{ $biodata ? 'Perbarui Biodata' : 'Simpan Biodata' }}</span>
+                            <span x-show="loadingBiodata" class="flex items-center gap-2"><svg class="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Menyimpan...</span>
                         </button>
                     </div>
                 </form>
