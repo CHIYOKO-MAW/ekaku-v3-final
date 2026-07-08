@@ -33,6 +33,13 @@ if (file_exists(__DIR__.'/auth.php')) {
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    // Onboarding
+    Route::get('/onboarding', fn () => view('user.onboarding'))->name('onboarding');
+    Route::patch('/onboarding/skip', function () {
+        auth()->user()->update(['onboarding_completed' => true]);
+        return redirect()->route('dashboard');
+    })->name('onboarding.skip');
+
     Route::middleware(DoNotCacheResponse::class)->group(function () {
         Route::get('/profile/photo/{user}', [ProfileController::class, 'photo'])->name('profile.photo');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

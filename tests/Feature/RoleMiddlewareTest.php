@@ -82,7 +82,7 @@ class RoleMiddlewareTest extends TestCase
 
     public function test_user_can_access_user_dashboard(): void
     {
-        $user = User::factory()->create(['role' => 'user']);
+        $user = User::factory()->create(['role' => 'user', 'onboarding_completed' => true]);
 
         $response = $this->actingAs($user)->get(route('dashboard.user'));
 
