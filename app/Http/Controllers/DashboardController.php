@@ -39,10 +39,10 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        // Redirect new users to onboarding
-        if ($user->role === 'user' && ! $user->onboarding_completed) {
-            return redirect()->route('onboarding');
-        }
+        // Redirect new users to onboarding (disabled for now)
+        // if ($user->role === 'user' && ! $user->onboarding_completed) {
+        //     return redirect()->route('onboarding');
+        // }
         $userId = $user->id;
 
         $biodata = Cache::remember("dashboard.user.{$userId}.biodata", 60, fn () => $user->biodata);
