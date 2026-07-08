@@ -3,7 +3,7 @@
 @section('title', 'Pengguna Perlu Perhatian')
 
 @section('content')
-<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+<div class="page-wrap">
     <div class="mb-6 rounded-xl bg-white p-6 card-shadow">
         <h1 class="text-2xl font-bold text-gray-900">Pengguna Perlu Perhatian</h1>
         <p class="mt-1 text-sm text-gray-600">Prioritas tindak lanjut untuk user dengan isu biodata/verifikasi/update status.</p>
