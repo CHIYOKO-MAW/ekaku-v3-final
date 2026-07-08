@@ -22,7 +22,8 @@
 
     <div class="overflow-hidden rounded-xl bg-white card-shadow">
         <div class="table-scroll-wrapper">
-            <table class="min-w-full divide-y divide-gray-200 text-sm">
+            {{-- Desktop table --}}
+            <table class="hidden min-w-full divide-y divide-gray-200 text-sm sm:table">
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-4 py-3 text-left font-semibold text-gray-600">Nama</th>
@@ -56,6 +57,29 @@
                     @endforelse
                 </tbody>
             </table>
+            {{-- Mobile cards --}}
+            <div class="sm:hidden space-y-3 p-4">
+                @forelse($users as $item)
+                    @php $sv = $item->biodata->status_verifikasi ?? 'pending'; @endphp
+                    <div class="rounded-lg border border-gray-200 p-4">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="font-medium text-gray-900">{{ $item->name }}</p>
+                                <p class="text-xs text-gray-500">{{ $item->email }}</p>
+                            </div>
+                            <span class="rounded-full px-2 py-1 text-xs font-semibold {{ $sv === 'verified' ? 'bg-green-100 text-green-700' : ($sv === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }}">{{ strtoupper($sv) }}</span>
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500">NIK: {{ $item->biodata->nik ?? '-' }}</p>
+                        <p class="mt-1 text-sm text-gray-600">{{ $item->statusPekerjaan?->status_pekerjaan ? str_replace('_', ' ', ucfirst($item->statusPekerjaan->status_pekerjaan)) : '-' }}</p>
+                        <div class="mt-3 flex gap-2">
+                            <a href="{{ route('admin.pengguna.show', $item) }}" class="btn-secondary text-xs">Detail</a>
+                            <a href="{{ route('admin.pengguna.edit', $item) }}" class="btn-secondary text-xs">Edit</a>
+                        </div>
+                    </div>
+                @empty
+                    <div class="py-8 text-center text-sm text-gray-500"><i class="fas fa-users mr-2"></i>Tidak ada data pengguna.</div>
+                @endforelse
+            </div>
         </div>
         <div class="border-t border-gray-100 px-4 py-3">{{ $users->links() }}</div>
     </div>
