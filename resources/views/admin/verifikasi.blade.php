@@ -34,7 +34,8 @@
 
     <div class="overflow-hidden rounded-xl bg-white card-shadow">
     <div class="table-scroll-wrapper">
-      <table class="min-w-full divide-y divide-gray-200 text-sm">
+      {{-- Desktop table --}}
+      <table class="hidden min-w-full divide-y divide-gray-200 text-sm sm:table">
         <thead class="bg-gray-50">
           <tr>
             <th class="px-4 py-3 text-left font-semibold text-gray-600">#</th>
@@ -58,6 +59,29 @@
           @endforelse
         </tbody>
       </table>
+      {{-- Mobile cards --}}
+      <div class="sm:hidden space-y-3 p-4">
+        @forelse($datas as $data)
+          <x-mobile-card
+              :title="$data->user->name"
+              :subtitle="'NIK: ' . $data->nik"
+              status="yellow"
+              :badge="strtoupper($data->status_verifikasi)"
+              badgeColor="yellow"
+          >
+              <div class="mobile-card-field">
+                  <i class="fas fa-id-card mobile-card-field-icon"></i>
+                  <span class="mobile-card-field-label">NIK</span>
+                  <span class="mobile-card-field-value">{{ $data->nik }}</span>
+              </div>
+              <x-slot:actions>
+                  <a href="{{ route('admin.verifikasi.show', $data) }}" class="btn-secondary text-xs">Detail</a>
+              </x-slot:actions>
+          </x-mobile-card>
+        @empty
+          <div class="py-8 text-center text-sm text-gray-500"><i class="fas fa-check-circle mr-2"></i>Tidak ada data verifikasi pending.</div>
+        @endforelse
+      </div>
     </div>
     <div class="border-t border-gray-100 px-4 py-3">{{ $datas->links() }}</div>
   </div>

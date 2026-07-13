@@ -55,7 +55,7 @@
         <p class="mt-1 text-sm text-gray-600">Rekap status pekerjaan dan verifikasi untuk evaluasi operasional.</p>
     </div>
 
-    <form method="GET" class="mb-6 grid grid-cols-1 gap-3 rounded-xl bg-white p-4 card-shadow md:grid-cols-6">
+    <form method="GET" class="mb-6 grid grid-cols-1 gap-3 rounded-xl bg-white p-4 card-shadow md:grid-cols-6" x-data="laporanFilter()">
         <input type="date" name="start_date" value="{{ request('start_date') }}" class="form-input" />
         <input type="date" name="end_date" value="{{ request('end_date') }}" class="form-input" />
         <select name="status" class="form-input">
@@ -63,34 +63,6 @@
             <option value="belum_bekerja" @selected(request('status') === 'belum_bekerja')>Belum Bekerja</option>
             <option value="sudah_bekerja" @selected(request('status') === 'sudah_bekerja')>Sudah Bekerja</option>
         </select>
-        <div x-data="{
-            loading: false,
-            error: false,
-            async loadVillages(code) {
-                this.loading = true;
-                this.error = false;
-                const el = $refs.kelurahan;
-                el.innerHTML = '<option value=\"\">Memuat desa...</option>';
-                try {
-                    const res = await fetch(`/admin/wilayah/${code}/villages`, {
-                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                    });
-                    const payload = await res.json();
-                    el.innerHTML = '<option value=\"\">Semua Desa/Kelurahan</option>';
-                    (payload.villages || []).forEach((v) => {
-                        const opt = document.createElement('option');
-                        opt.value = v.name;
-                        opt.textContent = v.name;
-                        el.appendChild(opt);
-                    });
-                } catch {
-                    el.innerHTML = '<option value=\"\" class=\"text-red-500\">Gagal memuat desa</option>';
-                    this.error = true;
-                } finally {
-                    this.loading = false;
-                }
-            }
-        }" class="contents">
             <select name="kecamatan_code" class="form-input"
                 x-on:change="loadVillages($event.target.value)">
                 <option value="">Semua Kecamatan</option>
@@ -108,7 +80,6 @@
                 </option>
             @endforeach
         </select>
-        </div>
         <button type="submit" class="btn-primary justify-center">Terapkan Filter</button>
     </form>
 
@@ -126,7 +97,8 @@
 
     <div class="overflow-hidden rounded-xl bg-white card-shadow">
         <div class="table-scroll-wrapper">
-            <table class="min-w-full divide-y divide-gray-200 text-sm">
+            {{-- Desktop table --}}
+            <table class="hidden min-w-full divide-y divide-gray-200 text-sm sm:table">
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-4 py-3 text-left font-semibold text-gray-600">Nama</th>
@@ -154,6 +126,45 @@
                     @endforelse
                 </tbody>
             </table>
+            {{-- Mobile cards --}}
+            <div class="sm:hidden space-y-3 p-4">
+                @forelse($rows as $row)
+                    @php $sp = $row->statusPekerjaan?->status_pekerjaan ?? null; @endphp
+                    <x-mobile-card
+                        :title="$row->name"
+                        :subtitle="$row->email"
+                        :status="$sp === 'sudah_bekerja' ? 'green' : ($sp === 'belum_bekerja' ? 'yellow' : 'gray')"
+                        :badge="$sp ? str_replace('_', ' ', ucfirst($sp)) : '-'"
+                        :badgeColor="$sp === 'sudah_bekerja' ? 'green' : ($sp === 'belum_bekerja' ? 'yellow' : 'gray')"
+                        expandable
+                    >
+                        <div class="mobile-card-field">
+                            <i class="fas fa-id-card mobile-card-field-icon"></i>
+                            <span class="mobile-card-field-label">NIK</span>
+                            <span class="mobile-card-field-value">{{ $row->biodata->nik ?? '-' }}</span>
+                        </div>
+                        <x-slot:expand>
+                            <div class="mobile-card-field">
+                                <i class="fas fa-map-marker-alt mobile-card-field-icon"></i>
+                                <span class="mobile-card-field-label">Kecamatan</span>
+                                <span class="mobile-card-field-value">{{ $areaMap[$row->id]['kecamatan'] ?? '-' }}</span>
+                            </div>
+                            <div class="mobile-card-field">
+                                <i class="fas fa-building mobile-card-field-icon"></i>
+                                <span class="mobile-card-field-label">Kelurahan</span>
+                                <span class="mobile-card-field-value">{{ $areaMap[$row->id]['kelurahan'] ?? '-' }}</span>
+                            </div>
+                            <div class="mobile-card-field">
+                                <i class="fas fa-calendar mobile-card-field-icon"></i>
+                                <span class="mobile-card-field-label">Update</span>
+                                <span class="mobile-card-field-value">{{ optional($row->statusPekerjaan?->tanggal_update)->format('d M Y') ?? '-' }}</span>
+                            </div>
+                        </x-slot:expand>
+                    </x-mobile-card>
+                @empty
+                    <div class="py-8 text-center text-sm text-gray-500"><i class="fas fa-file-alt mr-2"></i>Tidak ada data laporan untuk filter ini.</div>
+                @endforelse
+            </div>
         </div>
         <div class="border-t border-gray-100 px-4 py-3">{{ $rows->links() }}</div>
     </div>
@@ -162,3 +173,38 @@
 
 
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('laporanFilter', () => ({
+        loading: false,
+        error: false,
+        async loadVillages(code) {
+            this.loading = true;
+            this.error = false;
+            const el = this.$refs.kelurahan;
+            el.innerHTML = '<option value="">Memuat desa...</option>';
+            try {
+                const res = await fetch(`/admin/wilayah/${code}/villages`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const payload = await res.json();
+                el.innerHTML = '<option value="">Semua Desa/Kelurahan</option>';
+                (payload.villages || []).forEach((v) => {
+                    const opt = document.createElement('option');
+                    opt.value = v.name;
+                    opt.textContent = v.name;
+                    el.appendChild(opt);
+                });
+            } catch {
+                el.innerHTML = '<option value="" class="text-red-500">Gagal memuat desa</option>';
+                this.error = true;
+            } finally {
+                this.loading = false;
+            }
+        }
+    }));
+});
+</script>
+@endpush

@@ -174,19 +174,21 @@
                     </tbody>
                 </table>
                 {{-- Mobile cards --}}
-                <div class="sm:hidden space-y-3">
+                <div class="sm:hidden space-y-3 p-4">
                     @forelse($recentActivities as $item)
                         @php $sv = $item->biodata->status_verifikasi ?? 'pending'; @endphp
-                        <div class="rounded-lg border border-gray-200 p-4">
-                            <div class="flex items-start justify-between">
-                                <div>
-                                    <p class="font-medium text-gray-900">{{ $item->name }}</p>
-                                    <p class="text-xs text-gray-500">NIK: {{ $item->biodata->nik ?? '-' }}</p>
-                                </div>
-                                <span class="rounded-full px-2 py-1 text-xs font-semibold {{ $sv === 'verified' ? 'bg-green-100 text-green-700' : ($sv === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }}">{{ strtoupper($sv) }}</span>
+                        <x-mobile-card
+                            :title="$item->name"
+                            :subtitle="'NIK: ' . ($item->biodata->nik ?? '-')"
+                            :status="$sv === 'verified' ? 'green' : ($sv === 'rejected' ? 'red' : 'yellow')"
+                            :badge="str_replace('_', ' ', ucfirst($item->statusPekerjaan?->status_pekerjaan ?? '-'))"
+                        >
+                            <div class="mobile-card-field">
+                                <i class="fas fa-id-card mobile-card-field-icon"></i>
+                                <span class="mobile-card-field-label">Verifikasi</span>
+                                <span class="mobile-card-field-value font-semibold {{ $sv === 'verified' ? 'text-green-700' : ($sv === 'rejected' ? 'text-red-700' : 'text-yellow-700') }}">{{ strtoupper($sv) }}</span>
                             </div>
-                            <p class="mt-2 text-sm text-gray-600">{{ $item->statusPekerjaan?->status_pekerjaan ? str_replace('_', ' ', ucfirst($item->statusPekerjaan->status_pekerjaan)) : '-' }}</p>
-                        </div>
+                        </x-mobile-card>
                     @empty
                         <div class="py-8 text-center text-sm text-gray-500"><i class="fas fa-history mr-2"></i>Belum ada aktivitas user terbaru.</div>
                     @endforelse
@@ -224,16 +226,34 @@
                      </tbody>
                  </table>
                  {{-- Mobile cards --}}
-                 <div class="sm:hidden space-y-3">
+                 <div class="sm:hidden space-y-3 p-4">
                      @forelse(($topAttentionDistricts ?? []) as $district)
-                         <div class="rounded-lg border border-gray-200 p-4">
-                             <p class="font-medium text-gray-900">{{ $district['kecamatan'] }}</p>
-                             <div class="mt-2 flex flex-wrap gap-3 text-sm">
-                                 <span class="text-yellow-700">{{ $district['belum_bekerja'] }} belum bekerja</span>
-                                 <span class="text-red-700">{{ $district['pending_verifikasi'] }} pending</span>
-                                 <span class="text-gray-500">{{ $district['total'] }} total</span>
+                         <x-mobile-card
+                             :title="$district['kecamatan']"
+                             :subtitle="$district['total'] . ' total user'"
+                             status="red"
+                             :badge="$district['pending_verifikasi'] . ' pending'"
+                             badgeColor="red"
+                             expandable
+                         >
+                             <div class="mobile-card-field">
+                                 <i class="fas fa-exclamation-triangle mobile-card-field-icon text-yellow-600"></i>
+                                 <span class="mobile-card-field-label">Belum Bekerja</span>
+                                 <span class="mobile-card-field-value font-semibold text-yellow-700">{{ $district['belum_bekerja'] }}</span>
                              </div>
-                         </div>
+                             <x-slot:expand>
+                                 <div class="mobile-card-field">
+                                     <i class="fas fa-clock mobile-card-field-icon text-red-600"></i>
+                                     <span class="mobile-card-field-label">Pending Verifikasi</span>
+                                     <span class="mobile-card-field-value text-red-700">{{ $district['pending_verifikasi'] }}</span>
+                                 </div>
+                                 <div class="mobile-card-field">
+                                     <i class="fas fa-users mobile-card-field-icon"></i>
+                                     <span class="mobile-card-field-label">Total User</span>
+                                     <span class="mobile-card-field-value">{{ $district['total'] }}</span>
+                                 </div>
+                             </x-slot:expand>
+                         </x-mobile-card>
                      @empty
                          <div class="py-8 text-center text-sm text-gray-500"><i class="fas fa-info-circle mr-2"></i>Belum ada ringkasan wilayah.</div>
                      @endforelse

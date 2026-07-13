@@ -147,7 +147,8 @@
         <div class="rounded-xl bg-white p-6 card-shadow">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Riwayat Verifikasi</h2>
             <div class="table-scroll-wrapper">
-                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                {{-- Desktop table --}}
+                <table class="hidden min-w-full divide-y divide-gray-200 text-sm sm:table">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-3 py-2 text-left font-semibold text-gray-600">Nama</th>
@@ -176,6 +177,27 @@
                         @endforelse
                     </tbody>
                 </table>
+                {{-- Mobile cards --}}
+                <div class="sm:hidden space-y-3">
+                    @forelse($biodataList as $biodata)
+                        @php $sv = $biodata->status_verifikasi; @endphp
+                        <x-mobile-card
+                            :title="$biodata->user?->name ?? '-'"
+                            :subtitle="$biodata->nik ?? '-'"
+                            :status="$sv === 'verified' ? 'green' : ($sv === 'rejected' ? 'red' : 'yellow')"
+                            :badge="strtoupper($sv)"
+                            :badgeColor="$sv === 'verified' ? 'green' : ($sv === 'rejected' ? 'red' : 'yellow')"
+                        >
+                            <div class="mobile-card-field">
+                                <i class="fas fa-calendar-check mobile-card-field-icon"></i>
+                                <span class="mobile-card-field-label">Verifikasi</span>
+                                <span class="mobile-card-field-value">{{ $biodata->tanggal_verifikasi ? \Carbon\Carbon::parse($biodata->tanggal_verifikasi)->format('d M Y') : '-' }}</span>
+                            </div>
+                        </x-mobile-card>
+                    @empty
+                        <div class="py-8 text-center text-sm text-gray-500"><i class="fas fa-inbox mr-2"></i>Belum ada data verifikasi.</div>
+                    @endforelse
+                </div>
             </div>
             <div class="mt-4">
                 {{ $biodataList->links() }}

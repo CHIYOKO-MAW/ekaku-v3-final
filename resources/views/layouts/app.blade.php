@@ -32,7 +32,7 @@
             @include('layouts.navigation-guest')
         @endif
 
-        <main class="min-h-screen">
+        <main class="min-h-screen pb-20 sm:pb-0">
             @if (session('success'))
                 <div id="flash-success" data-message="{{ session('success') }}" x-data></div>
             @endif

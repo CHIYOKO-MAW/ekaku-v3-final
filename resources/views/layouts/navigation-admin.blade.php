@@ -129,9 +129,12 @@
             <i class="fas fa-check-circle"></i>
             <span class="bottom-nav-label">Verifikasi</span>
         </a>
-        <a href="{{ route('admin.notification') }}" class="bottom-nav-item {{ request()->routeIs('admin.notification') ? 'active' : '' }}">
-            <i class="fas fa-paper-plane"></i>
-            <span class="bottom-nav-label">Kirim</span>
+        <a href="{{ route('notifikasi.index') }}" class="bottom-nav-item relative {{ request()->routeIs('notifikasi.*') ? 'active' : '' }}">
+            <i class="fas fa-bell"></i>
+            <span class="bottom-nav-label">Notif</span>
+            @if ($unreadNotes > 0)
+                <span class="absolute -top-0.5 right-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">{{ $unreadNotes > 9 ? '9+' : $unreadNotes }}</span>
+            @endif
         </a>
     </div>
 </nav>

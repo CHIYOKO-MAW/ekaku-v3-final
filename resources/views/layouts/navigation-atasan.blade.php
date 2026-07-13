@@ -117,6 +117,13 @@
             <i class="fas fa-file-alt"></i>
             <span class="bottom-nav-label">Rekap</span>
         </a>
+        <a href="{{ route('notifikasi.index') }}" class="bottom-nav-item relative {{ request()->routeIs('notifikasi.*') ? 'active' : '' }}">
+            <i class="fas fa-bell"></i>
+            <span class="bottom-nav-label">Notif</span>
+            @if ($unreadNotes > 0)
+                <span class="absolute -top-0.5 right-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">{{ $unreadNotes > 9 ? '9+' : $unreadNotes }}</span>
+            @endif
+        </a>
         <a href="{{ route('profile.edit') }}" class="bottom-nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
             <i class="fas fa-user"></i>
             <span class="bottom-nav-label">Profil</span>

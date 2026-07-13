@@ -2,6 +2,12 @@ import './bootstrap';
 import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;
+
+Alpine.data('expandableCard', () => ({
+    expanded: false,
+    toggle() { this.expanded = !this.expanded; }
+}));
+
 Alpine.start();
 
 const defaultPalette = ['#eab308', '#16a34a', '#2563eb', '#dc2626', '#7c3aed', '#0891b2'];

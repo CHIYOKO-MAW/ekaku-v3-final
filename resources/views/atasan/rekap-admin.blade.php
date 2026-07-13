@@ -217,25 +217,36 @@
                     {{-- Mobile cards --}}
                     <div class="sm:hidden space-y-3 p-4">
                         @forelse($adminData as $admin)
-                            <div class="rounded-lg border border-gray-200 p-4">
-                                <div class="flex items-start justify-between">
-                                    <div>
-                                        <p class="font-medium text-gray-900">{{ $admin['name'] }}</p>
-                                        <p class="text-xs text-gray-500">{{ $admin['email'] }}</p>
+                            @php $rate = $admin['approval_rate']; @endphp
+                            <x-mobile-card
+                                :title="$admin['name']"
+                                :subtitle="$admin['email']"
+                                :status="$rate >= 80 ? 'green' : ($rate >= 50 ? 'yellow' : 'red')"
+                                :badge="$rate . '%'"
+                                :badgeColor="$rate >= 80 ? 'green' : ($rate >= 50 ? 'yellow' : 'red')"
+                                expandable
+                            >
+                                <div class="mobile-card-field">
+                                    <i class="fas fa-clipboard-list mobile-card-field-icon"></i>
+                                    <span class="mobile-card-field-label">Total</span>
+                                    <span class="mobile-card-field-value font-semibold">{{ $admin['total'] }}</span>
+                                </div>
+                                <x-slot:expand>
+                                    <div class="mobile-card-field">
+                                        <i class="fas fa-check-circle mobile-card-field-icon text-green-600"></i>
+                                        <span class="mobile-card-field-label">Verified</span>
+                                        <span class="mobile-card-field-value text-green-700">{{ $admin['verified'] }}</span>
                                     </div>
-                                    <span class="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold {{ $admin['approval_rate'] >= 80 ? 'bg-green-100 text-green-700' : ($admin['approval_rate'] >= 50 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}">
-                                        {{ $admin['approval_rate'] }}%
-                                    </span>
-                                </div>
-                                <div class="mt-2 flex flex-wrap gap-3 text-sm">
-                                    <span class="font-semibold text-gray-900">{{ $admin['total'] }} total</span>
-                                    <span class="text-green-700">{{ $admin['verified'] }} verified</span>
-                                    <span class="text-red-700">{{ $admin['rejected'] }} rejected</span>
-                                </div>
-                                <a href="{{ route('atasan.rekap-admin.detail', $admin['id']) }}" class="mt-3 inline-flex items-center gap-1 text-sm font-medium text-disnaker-600 hover:text-disnaker-700">
-                                    <i class="fas fa-eye"></i> Detail
-                                </a>
-                            </div>
+                                    <div class="mobile-card-field">
+                                        <i class="fas fa-times-circle mobile-card-field-icon text-red-600"></i>
+                                        <span class="mobile-card-field-label">Rejected</span>
+                                        <span class="mobile-card-field-value text-red-700">{{ $admin['rejected'] }}</span>
+                                    </div>
+                                </x-slot:expand>
+                                <x-slot:actions>
+                                    <a href="{{ route('atasan.rekap-admin.detail', $admin['id']) }}" class="btn-secondary text-xs"><i class="fas fa-eye mr-1"></i> Detail</a>
+                                </x-slot:actions>
+                            </x-mobile-card>
                         @empty
                             <div class="py-8 text-center text-sm text-gray-500"><i class="fas fa-user-shield mr-2"></i>Belum ada data admin.</div>
                         @endforelse
