@@ -81,17 +81,22 @@ class DashboardController extends Controller
                 ->groupBy('status_verifikasi')
                 ->pluck('total', 'status_verifikasi');
 
+            $totalUsers = User::where('role', 'user')->count();
+            $sudahBekerja = StatusPekerjaan::where('status_pekerjaan', 'sudah_bekerja')
+                ->whereHas('user', fn ($q) => $q->where('role', 'user'))
+                ->count();
+            $belumBekerja = $totalUsers - $sudahBekerja;
+            $pending = $verificationCounts->get('pending', 0);
+
             return [
-                'totalUsers' => User::where('role', 'user')->count(),
-                'totalActiveUsers' => StatusPekerjaan::whereHas('user', fn ($q) => $q->where('role', 'user'))->distinct('user_id')->count('user_id'),
-                'usersNeedAttention' => User::where('role', 'user')
-                    ->where(function ($q) {
-                        $q->doesntHave('biodata')
-                            ->orWhereHas('biodata', fn ($qb) => $qb->where('status_verifikasi', '!=', 'verified'));
-                    })->count(),
-                'pending' => $verificationCounts->get('pending', 0),
+                'totalUsers' => $totalUsers,
+                'sudahBekerja' => $sudahBekerja,
+                'belumBekerja' => $belumBekerja,
+                'pending' => $pending,
                 'verified' => $verificationCounts->get('verified', 0),
                 'rejected' => $verificationCounts->get('rejected', 0),
+                'percentActive' => $totalUsers > 0 ? round(($sudahBekerja / $totalUsers) * 100, 1) : 0,
+                'percentPending' => $totalUsers > 0 ? round(($pending / $totalUsers) * 100, 1) : 0,
             ];
         });
 
@@ -792,27 +797,20 @@ class DashboardController extends Controller
                     'total' => 0,
                     'belum_bekerja' => 0,
                     'sudah_bekerja' => 0,
-                    'pending_verifikasi' => 0,
                 ];
             }
 
             $bucket[$district]['total']++;
 
-            if ($statusPekerjaan) {
-                if ($statusPekerjaan->status_pekerjaan === 'belum_bekerja') {
-                    $bucket[$district]['belum_bekerja']++;
-                } elseif ($statusPekerjaan->status_pekerjaan === 'sudah_bekerja') {
-                    $bucket[$district]['sudah_bekerja']++;
-                }
-            }
-
-            if ($biodata && $biodata->status_verifikasi === 'pending') {
-                $bucket[$district]['pending_verifikasi']++;
+            if ($statusPekerjaan && $statusPekerjaan->status_pekerjaan === 'sudah_bekerja') {
+                $bucket[$district]['sudah_bekerja']++;
+            } else {
+                $bucket[$district]['belum_bekerja']++;
             }
         }
 
         $allDistricts = collect($bucket)
-            ->sortByDesc(fn ($item) => ($item['belum_bekerja'] * 2) + $item['pending_verifikasi'])
+            ->sortByDesc(fn ($item) => $item['belum_bekerja'])
             ->values();
 
         $topAttentionDistricts = $allDistricts->take(5);

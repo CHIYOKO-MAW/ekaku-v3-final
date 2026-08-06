@@ -89,6 +89,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/verifikasi', [VerifikasiController::class, 'index'])->name('verifikasi.index');
         Route::get('/pengguna', [UserController::class, 'index'])->name('pengguna.index');
         Route::get('/pengguna/perhatian', [UserController::class, 'attention'])->name('pengguna.perhatian');
+        Route::get('/pengguna/export/sudah-bekerja', [UserController::class, 'exportSudahBekerja'])->name('pengguna.export.sudah-bekerja');
         Route::get('/laporan', [DashboardController::class, 'laporanAdmin'])->name('laporan');
         Route::get('/wilayah/{districtCode}/villages', [DashboardController::class, 'villagesByDistrict'])->name('wilayah.villages');
         Route::view('/notifikasi', 'admin.notification')->name('notification');

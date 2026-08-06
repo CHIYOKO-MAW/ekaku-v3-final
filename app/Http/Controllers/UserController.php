@@ -32,9 +32,66 @@ class UserController extends Controller
             $users->whereHas('statusPekerjaan', fn ($q) => $q->where('status_pekerjaan', request('status')));
         }
 
+        if (request('kecamatan')) {
+            $kecamatan = trim((string) request('kecamatan'));
+            $users->whereHas('biodata', fn ($q) => $q->where('kecamatan', $kecamatan));
+        }
+
         $users = $users->latest()->paginate(20)->withQueryString();
 
-        return view('admin.users.index', compact('users'));
+        $districts = $this->getPandeglangDistricts();
+
+        return view('admin.users.index', compact('users', 'districts'));
+    }
+
+    public function exportSudahBekerja()
+    {
+        $users = User::where('role', 'user')
+            ->whereHas('statusPekerjaan', fn ($q) => $q->where('status_pekerjaan', 'sudah_bekerja'))
+            ->with(['biodata', 'statusPekerjaan'])
+            ->latest()
+            ->get();
+
+        $csvHeader = ['No', 'Nama', 'NIK', 'Kecamatan', 'Desa/Kelurahan', 'Nama Perusahaan', 'Tanggal Update'];
+        $rows = [];
+        $no = 1;
+        foreach ($users as $user) {
+            $rows[] = [
+                $no++,
+                $user->name,
+                $user->biodata->nik ?? '-',
+                $user->biodata->kecamatan ?? '-',
+                $user->biodata->desa_kelurahan ?? '-',
+                $user->statusPekerjaan->nama_perusahaan ?? '-',
+                $user->statusPekerjaan->tanggal_update ? $user->statusPekerjaan->tanggal_update->format('d/m/Y') : '-',
+            ];
+        }
+
+        $filename = 'sudah_bekerja_'.now()->format('Ymd_His').'.csv';
+        $handle = fopen('php://output', 'w');
+        fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF)); // UTF-8 BOM
+        fputcsv($handle, $csvHeader);
+        foreach ($rows as $row) {
+            fputcsv($handle, $row);
+        }
+        fclose($handle);
+
+        return response($handle)
+            ->header('Content-Type', 'text/csv; charset=UTF-8')
+            ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
+    }
+
+    private function getPandeglangDistricts(): array
+    {
+        $localPath = database_path('data/pandeglang_wilayah.json');
+        if (is_file($localPath)) {
+            $parsed = json_decode((string) file_get_contents($localPath), true);
+            if (is_array($parsed) && isset($parsed['districts']) && is_array($parsed['districts'])) {
+                return collect($parsed['districts'])->pluck('name')->filter()->sort()->values()->all();
+            }
+        }
+
+        return [];
     }
 
     public function show(User $user)

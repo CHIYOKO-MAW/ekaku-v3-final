@@ -291,7 +291,7 @@
                             <tr>
                                 <th class="px-3 py-2 text-left font-semibold text-gray-600">Kecamatan</th>
                                 <th class="px-3 py-2 text-left font-semibold text-gray-600">Belum Bekerja</th>
-                                <th class="px-3 py-2 text-left font-semibold text-gray-600">Pending</th>
+                                <th class="px-3 py-2 text-left font-semibold text-gray-600">Sudah Bekerja</th>
                                 <th class="px-3 py-2 text-left font-semibold text-gray-600">Total</th>
                             </tr>
                         </thead>
@@ -300,7 +300,7 @@
                             <tr>
                                 <td class="px-3 py-2 font-medium text-gray-900">{{ $district['kecamatan'] }}</td>
                                 <td class="px-3 py-2 text-yellow-700">{{ $district['belum_bekerja'] }}</td>
-                                <td class="px-3 py-2 text-red-700">{{ $district['pending_verifikasi'] }}</td>
+                                <td class="px-3 py-2 text-green-700">{{ $district['sudah_bekerja'] }}</td>
                                 <td class="px-3 py-2 text-gray-700">{{ $district['total'] }}</td>
                             </tr>
                             @empty
