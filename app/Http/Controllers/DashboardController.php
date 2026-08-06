@@ -141,6 +141,7 @@ class DashboardController extends Controller
         });
         $topAttentionDistricts = $regionalSummary['topAttentionDistricts'];
         $topWorkingDistricts = $regionalSummary['topWorkingDistricts'];
+        $allDistricts = $regionalSummary['allDistricts'];
 
         return view('admin.dashboard', array_merge(
             $stats,
@@ -153,6 +154,7 @@ class DashboardController extends Controller
                 'recentActivities',
                 'topAttentionDistricts',
                 'topWorkingDistricts',
+                'allDistricts',
             )
         ));
     }
@@ -809,10 +811,11 @@ class DashboardController extends Controller
             }
         }
 
-        $topAttentionDistricts = collect($bucket)
+        $allDistricts = collect($bucket)
             ->sortByDesc(fn ($item) => ($item['belum_bekerja'] * 2) + $item['pending_verifikasi'])
-            ->take(5)
             ->values();
+
+        $topAttentionDistricts = $allDistricts->take(5);
 
         $topWorkingDistricts = collect($bucket)
             ->filter(fn ($item) => $item['total'] > 0)
@@ -825,6 +828,6 @@ class DashboardController extends Controller
             })
             ->values();
 
-        return compact('topAttentionDistricts', 'topWorkingDistricts');
+        return compact('topAttentionDistricts', 'topWorkingDistricts', 'allDistricts');
     }
 }

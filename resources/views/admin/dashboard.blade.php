@@ -290,7 +290,78 @@
 @endforelse
              </div>
          </div>
-     </div>
+      </div>
+
+      {{-- SEMUA WILAYAH TABLE --}}
+      <div class="mt-8 rounded-xl bg-white p-6 card-shadow">
+          <h2 class="text-lg font-semibold text-gray-900">Semua Wilayah Kerja</h2>
+          <p class="mt-1 text-xs text-gray-500">Distribusi seluruh kecamatan di Kabupaten Pandeglang. Diurutkan berdasarkan skor prioritas.</p>
+          <div class="mt-4 table-scroll-wrapper">
+              {{-- Desktop table --}}
+              <table class="hidden min-w-full divide-y divide-gray-200 text-sm sm:table">
+                  <thead class="bg-gray-50">
+                      <tr>
+                          <th class="px-3 py-2 text-left font-semibold text-gray-600">Kecamatan</th>
+                          <th class="px-3 py-2 text-left font-semibold text-gray-600">Belum Bekerja</th>
+                          <th class="px-3 py-2 text-left font-semibold text-gray-600">Sudah Bekerja</th>
+                          <th class="px-3 py-2 text-left font-semibold text-gray-600">Pending Verifikasi</th>
+                          <th class="px-3 py-2 text-left font-semibold text-gray-600">Total User</th>
+                      </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-100">
+                      @forelse(($allDistricts ?? []) as $district)
+                          <tr>
+                              <td class="px-3 py-2 font-medium text-gray-900">{{ $district['kecamatan'] }}</td>
+                              <td class="px-3 py-2 text-yellow-700">{{ $district['belum_bekerja'] }}</td>
+                              <td class="px-3 py-2 text-green-700">{{ $district['sudah_bekerja'] }}</td>
+                              <td class="px-3 py-2 text-red-700">{{ $district['pending_verifikasi'] }}</td>
+                              <td class="px-3 py-2 text-gray-700">{{ $district['total'] }}</td>
+                          </tr>
+                      @empty
+                          <tr><td colspan="5" class="px-3 py-12 text-center text-gray-500"><i class="fas fa-info-circle mr-2"></i>Belum ada data wilayah.</td></tr>
+                      @endforelse
+                  </tbody>
+              </table>
+              {{-- Mobile cards --}}
+              <div class="sm:hidden space-y-3 p-4">
+                  @forelse(($allDistricts ?? []) as $district)
+                      <x-mobile-card
+                          :title="$district['kecamatan']"
+                          :subtitle="$district['total'] . ' total user'"
+                          status="red"
+                          :badge="$district['pending_verifikasi'] . ' pending'"
+                          badgeColor="red"
+                          expandable
+                      >
+                          <div class="mobile-card-field">
+                              <i class="fas fa-exclamation-triangle mobile-card-field-icon text-yellow-600"></i>
+                              <span class="mobile-card-field-label">Belum Bekerja</span>
+                              <span class="mobile-card-field-value font-semibold text-yellow-700">{{ $district['belum_bekerja'] }}</span>
+                          </div>
+                          <div class="mobile-card-field">
+                              <i class="fas fa-check-circle mobile-card-field-icon text-green-600"></i>
+                              <span class="mobile-card-field-label">Sudah Bekerja</span>
+                              <span class="mobile-card-field-value font-semibold text-green-700">{{ $district['sudah_bekerja'] }}</span>
+                          </div>
+                          <x-slot:expand>
+                              <div class="mobile-card-field">
+                                  <i class="fas fa-clock mobile-card-field-icon text-red-600"></i>
+                                  <span class="mobile-card-field-label">Pending Verifikasi</span>
+                                  <span class="mobile-card-field-value text-red-700">{{ $district['pending_verifikasi'] }}</span>
+                              </div>
+                              <div class="mobile-card-field">
+                                  <i class="fas fa-users mobile-card-field-icon"></i>
+                                  <span class="mobile-card-field-label">Total User</span>
+                                  <span class="mobile-card-field-value">{{ $district['total'] }}</span>
+                              </div>
+                          </x-slot:expand>
+                      </x-mobile-card>
+                  @empty
+                      <div class="py-8 text-center text-sm text-gray-500"><i class="fas fa-info-circle mr-2"></i>Belum ada data wilayah.</div>
+                  @endforelse
+              </div>
+          </div>
+      </div>
 
       <!-- Charts Row -->
       <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
