@@ -208,6 +208,7 @@
                          <tr>
                              <th class="px-3 py-2 text-left font-semibold text-gray-600">Kecamatan</th>
                              <th class="px-3 py-2 text-left font-semibold text-gray-600">Belum Bekerja</th>
+                             <th class="px-3 py-2 text-left font-semibold text-gray-600">Sudah Bekerja</th>
                              <th class="px-3 py-2 text-left font-semibold text-gray-600">Pending Verifikasi</th>
                              <th class="px-3 py-2 text-left font-semibold text-gray-600">Total User</th>
                          </tr>
@@ -217,11 +218,12 @@
                              <tr>
                                  <td class="px-3 py-2 font-medium text-gray-900">{{ $district['kecamatan'] }}</td>
                                  <td class="px-3 py-2 text-yellow-700">{{ $district['belum_bekerja'] }}</td>
+                                 <td class="px-3 py-2 text-green-700">{{ $district['sudah_bekerja'] }}</td>
                                  <td class="px-3 py-2 text-red-700">{{ $district['pending_verifikasi'] }}</td>
                                  <td class="px-3 py-2 text-gray-700">{{ $district['total'] }}</td>
                              </tr>
                          @empty
-                             <tr><td colspan="4" class="px-3 py-12 text-center text-gray-500"><i class="fas fa-info-circle mr-2"></i>Belum ada ringkasan wilayah.</td></tr>
+                             <tr><td colspan="5" class="px-3 py-12 text-center text-gray-500"><i class="fas fa-info-circle mr-2"></i>Belum ada ringkasan wilayah.</td></tr>
                          @endforelse
                      </tbody>
                  </table>
@@ -240,6 +242,11 @@
                                  <i class="fas fa-exclamation-triangle mobile-card-field-icon text-yellow-600"></i>
                                  <span class="mobile-card-field-label">Belum Bekerja</span>
                                  <span class="mobile-card-field-value font-semibold text-yellow-700">{{ $district['belum_bekerja'] }}</span>
+                             </div>
+                             <div class="mobile-card-field">
+                                 <i class="fas fa-check-circle mobile-card-field-icon text-green-600"></i>
+                                 <span class="mobile-card-field-label">Sudah Bekerja</span>
+                                 <span class="mobile-card-field-value font-semibold text-green-700">{{ $district['sudah_bekerja'] }}</span>
                              </div>
                              <x-slot:expand>
                                  <div class="mobile-card-field">
