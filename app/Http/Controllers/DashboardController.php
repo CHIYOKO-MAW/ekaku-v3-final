@@ -797,10 +797,15 @@ class DashboardController extends Controller
                     'total' => 0,
                     'belum_bekerja' => 0,
                     'sudah_bekerja' => 0,
+                    'pending_verifikasi' => 0,
                 ];
             }
 
             $bucket[$district]['total']++;
+
+            if ($biodata && $biodata->status_verifikasi === 'pending') {
+                $bucket[$district]['pending_verifikasi']++;
+            }
 
             if ($statusPekerjaan && $statusPekerjaan->status_pekerjaan === 'sudah_bekerja') {
                 $bucket[$district]['sudah_bekerja']++;
@@ -810,7 +815,7 @@ class DashboardController extends Controller
         }
 
         $allDistricts = collect($bucket)
-            ->sortByDesc(fn ($item) => $item['belum_bekerja'])
+            ->sortByDesc(fn ($item) => $item['belum_bekerja'] + $item['pending_verifikasi'])
             ->values();
 
         $topAttentionDistricts = $allDistricts->take(5);

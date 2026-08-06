@@ -118,7 +118,7 @@
             {{-- Wilayah Prioritas --}}
             <div class="rounded-xl bg-white p-6 card-shadow">
                 <h2 class="text-lg font-semibold text-gray-900">Wilayah Prioritas</h2>
-                <p class="mt-1 text-xs text-gray-500">5 kecamatan dengan jumlah belum bekerja terbanyak.</p>
+                <p class="mt-1 text-xs text-gray-500">5 kecamatan dengan jumlah belum bekerja + pending verifikasi terbanyak.</p>
                 <div class="mt-4 space-y-3">
                     @forelse(($topAttentionDistricts ?? []) as $district)
                         <div class="rounded-lg border border-gray-200 p-3">
@@ -128,7 +128,9 @@
                             </div>
                             <div class="mt-2 flex items-center gap-2 text-xs text-gray-600">
                                 <span class="text-green-600">{{ $district['sudah_bekerja'] }} sudah bekerja</span>
-                                <span>•</span>
+                                <span>&bull;</span>
+                                <span class="text-red-600">{{ $district['pending_verifikasi'] }} pending</span>
+                                <span>&bull;</span>
                                 <span>{{ $district['total'] }} total</span>
                             </div>
                             <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
