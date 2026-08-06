@@ -8,6 +8,7 @@ use App\Models\Biodata;
 use App\Models\KartuKuning;
 use App\Models\NotificationE;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class VerifikasiController extends Controller
 {
@@ -75,6 +76,10 @@ class VerifikasiController extends Controller
         if ($oldStatus !== $status) {
             event(new BiodataStatusChanged($biodata->user, $status, $oldStatus));
         }
+
+        // Invalidate dashboard cache so numbers update immediately
+        Cache::forget('dashboard.admin.stats');
+        Cache::forget('dashboard.admin.regionalSummary');
 
         return back()->with('success', 'Status verifikasi diperbarui.');
     }

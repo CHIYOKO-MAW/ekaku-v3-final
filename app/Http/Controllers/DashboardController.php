@@ -83,7 +83,7 @@ class DashboardController extends Controller
 
             return [
                 'totalUsers' => User::where('role', 'user')->count(),
-                'totalActiveUsers' => StatusPekerjaan::distinct('user_id')->count('user_id'),
+                'totalActiveUsers' => StatusPekerjaan::whereHas('user', fn ($q) => $q->where('role', 'user'))->distinct('user_id')->count('user_id'),
                 'usersNeedAttention' => User::where('role', 'user')
                     ->where(function ($q) {
                         $q->doesntHave('biodata')
@@ -96,7 +96,8 @@ class DashboardController extends Controller
         });
 
         $statusDistribution = Cache::remember('dashboard.admin.statusDistribution', 300, function () {
-            return StatusPekerjaan::selectRaw('status_pekerjaan, count(*) as total')
+            return StatusPekerjaan::whereHas('user', fn ($q) => $q->where('role', 'user'))
+                ->selectRaw('status_pekerjaan, count(*) as total')
                 ->groupBy('status_pekerjaan')
                 ->pluck('total', 'status_pekerjaan');
         });
@@ -135,7 +136,7 @@ class DashboardController extends Controller
                 ->get();
         });
 
-        $regionalSummary = Cache::remember('dashboard.admin.regionalSummary', 3600, function () use ($districts) {
+        $regionalSummary = Cache::remember('dashboard.admin.regionalSummary', 300, function () use ($districts) {
             return $this->buildRegionalSummary($districts);
         });
         $topAttentionDistricts = $regionalSummary['topAttentionDistricts'];
@@ -367,7 +368,7 @@ class DashboardController extends Controller
             })->sortByDesc('total')->take(5)->values();
         });
 
-        $regionalSummary = Cache::remember('dashboard.atasan.regionalSummary', 3600, function () use ($districts) {
+        $regionalSummary = Cache::remember('dashboard.atasan.regionalSummary', 300, function () use ($districts) {
             return $this->buildRegionalSummary($districts);
         });
         $topAttentionDistricts = $regionalSummary['topAttentionDistricts'];
@@ -762,25 +763,24 @@ class DashboardController extends Controller
             ->values()
             ->all();
 
-        $rows = User::where('role', 'user')
-            ->join('biodata', 'users.id', '=', 'biodata.user_id')
-            ->leftJoin('status_pekerjaan', 'users.id', '=', 'status_pekerjaan.user_id')
-            ->select(
-                'biodata.alamat',
-                'biodata.status_verifikasi',
-                'status_pekerjaan.status_pekerjaan'
-            )
+        $users = User::where('role', 'user')
+            ->with(['biodata', 'statusPekerjaan'])
             ->get();
 
         $bucket = [];
 
-        foreach ($rows as $row) {
-            $address = strtolower((string) $row->alamat);
+        foreach ($users as $user) {
+            $biodata = $user->biodata;
+            $statusPekerjaan = $user->statusPekerjaan;
+
             $district = 'Tidak Terpetakan';
-            foreach ($sortedDistricts as $name) {
-                if ($name !== '' && str_contains($address, strtolower($name))) {
-                    $district = $name;
-                    break;
+            if ($biodata) {
+                $address = strtolower((string) $biodata->alamat);
+                foreach ($sortedDistricts as $name) {
+                    if ($name !== '' && str_contains($address, strtolower($name))) {
+                        $district = $name;
+                        break;
+                    }
                 }
             }
 
@@ -795,13 +795,16 @@ class DashboardController extends Controller
             }
 
             $bucket[$district]['total']++;
-            if ($row->status_pekerjaan === 'belum_bekerja') {
-                $bucket[$district]['belum_bekerja']++;
-            } elseif ($row->status_pekerjaan === 'sudah_bekerja') {
-                $bucket[$district]['sudah_bekerja']++;
+
+            if ($statusPekerjaan) {
+                if ($statusPekerjaan->status_pekerjaan === 'belum_bekerja') {
+                    $bucket[$district]['belum_bekerja']++;
+                } elseif ($statusPekerjaan->status_pekerjaan === 'sudah_bekerja') {
+                    $bucket[$district]['sudah_bekerja']++;
+                }
             }
 
-            if ($row->status_verifikasi !== 'verified') {
+            if ($biodata && $biodata->status_verifikasi === 'pending') {
                 $bucket[$district]['pending_verifikasi']++;
             }
         }

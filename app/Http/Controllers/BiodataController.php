@@ -179,6 +179,10 @@ class BiodataController extends Controller
             'verifikator_id' => null,
         ]);
 
+        // Invalidate dashboard cache so pending count updates immediately
+        Cache::forget('dashboard.admin.stats');
+        Cache::forget('dashboard.admin.regionalSummary');
+
         // Notify all admins
         User::where('role', 'admin')->each(fn ($admin) => NotificationE::create([
             'user_id' => $admin->id,
