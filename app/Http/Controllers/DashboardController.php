@@ -803,12 +803,10 @@ class DashboardController extends Controller
 
             $bucket[$district]['total']++;
 
-            if ($biodata && $biodata->status_verifikasi === 'pending') {
-                $bucket[$district]['pending_verifikasi']++;
-            }
-
             if ($statusPekerjaan && $statusPekerjaan->status_pekerjaan === 'sudah_bekerja') {
                 $bucket[$district]['sudah_bekerja']++;
+            } elseif ($biodata && $biodata->status_verifikasi === 'pending') {
+                $bucket[$district]['pending_verifikasi']++;
             } else {
                 $bucket[$district]['belum_bekerja']++;
             }

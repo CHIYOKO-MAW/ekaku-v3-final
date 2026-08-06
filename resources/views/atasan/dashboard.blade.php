@@ -313,8 +313,7 @@
                 </div>
                 <p class="mt-3 text-xs text-gray-500">
                     <i class="fas fa-info-circle mr-1"></i>
-                    Pending Verifikasi termasuk dalam angka Belum Bekerja (user dengan biodata belum diverifikasi).
-                    Total = Belum Bekerja + Sudah Bekerja.
+                    Total = Belum Bekerja + Sudah Bekerja + Pending Verifikasi.
                 </p>
             </div>
         </div>

@@ -229,6 +229,42 @@
             </div>
         </div>
 
+        {{-- SEMUA WILAYAH TABLE --}}
+        <div class="rounded-xl bg-white p-6 card-shadow">
+            <h2 class="text-lg font-semibold text-gray-900">Semua Wilayah Kerja</h2>
+            <p class="mt-1 text-xs text-gray-500">Distribusi seluruh kecamatan di Kabupaten Pandeglang. Diurutkan berdasarkan skor prioritas (BB + PV).</p>
+            <div class="mt-4 table-scroll-wrapper">
+                <table class="hidden min-w-full divide-y divide-gray-200 text-sm sm:table">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-3 py-2 text-left font-semibold text-gray-600">Kecamatan</th>
+                            <th class="px-3 py-2 text-left font-semibold text-gray-600">Belum Bekerja</th>
+                            <th class="px-3 py-2 text-left font-semibold text-gray-600">Pending Verifikasi</th>
+                            <th class="px-3 py-2 text-left font-semibold text-gray-600">Sudah Bekerja</th>
+                            <th class="px-3 py-2 text-left font-semibold text-gray-600">Total User</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @forelse(($allDistricts ?? []) as $district)
+                            <tr>
+                                <td class="px-3 py-2 font-medium text-gray-900">{{ $district['kecamatan'] }}</td>
+                                <td class="px-3 py-2 text-yellow-700">{{ $district['belum_bekerja'] }}</td>
+                                <td class="px-3 py-2 text-red-700">{{ $district['pending_verifikasi'] }}</td>
+                                <td class="px-3 py-2 text-green-700">{{ $district['sudah_bekerja'] }}</td>
+                                <td class="px-3 py-2 text-gray-700">{{ $district['total'] }}</td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="5" class="px-3 py-12 text-center text-gray-500"><i class="fas fa-info-circle mr-2"></i>Belum ada data wilayah.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            <p class="mt-3 text-xs text-gray-500">
+                <i class="fas fa-info-circle mr-1"></i>
+                Total = Belum Bekerja + Sudah Bekerja + Pending Verifikasi.
+            </p>
+        </div>
+
         {{-- CHARTS --}}
         <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
             <div class="rounded-xl bg-white p-6 card-shadow">
