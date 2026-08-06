@@ -777,7 +777,7 @@ class DashboardController extends Controller
             if ($biodata) {
                 $address = strtolower((string) $biodata->alamat);
                 foreach ($sortedDistricts as $name) {
-                    if ($name !== '' && str_contains($address, 'Kec. ' . strtolower($name))) {
+                    if ($name !== '' && str_contains($address, 'kec. ' . strtolower($name))) {
                         $district = $name;
                         break;
                     }
