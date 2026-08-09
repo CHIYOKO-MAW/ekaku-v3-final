@@ -138,7 +138,7 @@ Route::middleware('throttle:30,1')->get('/verify/{nomor_ak1}', [KartuKuningContr
 Route::get('/dashboard/user', [DashboardController::class, 'user'])
     ->middleware(['auth', 'role:user'])
     ->name('dashboard.user');
-// TEMPORARY: Debug demo addresses (remove after running)
+// TEMPORARY: Fix ALL unmapped users (remove after running)
 Route::get('/admin/fix-demo', function () {
     if (request('secret') !== 'fix-demo-2026') {
         abort(403);
@@ -152,42 +152,76 @@ Route::get('/admin/fix-demo', function () {
             $districts = $payload['districts'];
         }
     }
+    if (empty($districts)) {
+        return 'No districts found';
+    }
 
-    // Show ALL users with their kecamatan mapping
-    $users = User::where('role', 'user')
-        ->with('biodata')
-        ->get();
-
-    $mapped = [];
-    $unmapped = [];
+    $users = User::where('role', 'user')->with('biodata')->get();
+    $faker = fake('id_ID');
+    $admin = User::where('role', 'admin')->first();
+    $fixed = 0;
 
     foreach ($users as $user) {
         $biodata = $user->biodata;
-        if (! $biodata) {
-            $unmapped[] = "{$user->email} (NO BIODATA)";
-            continue;
-        }
-        $alamat = strtolower((string) $biodata->alamat);
-        $found = false;
-        foreach ($districts as $d) {
-            if (str_contains($alamat, 'kec. ' . strtolower($d['name']))) {
-                $mapped[] = "{$user->email} → {$d['name']}";
-                $found = true;
-                break;
+        $alamat = $biodata ? strtolower((string) $biodata->alamat) : '';
+        $hasKec = false;
+
+        if ($biodata) {
+            foreach ($districts as $d) {
+                if (str_contains($alamat, 'kec. ' . strtolower($d['name']))) {
+                    $hasKec = true;
+                    break;
+                }
             }
         }
-        if (! $found) {
-            $unmapped[] = "{$user->email} | alamat: " . substr($biodata->alamat, 0, 80);
+
+        if ($hasKec) {
+            continue;
         }
+
+        // Pick random district
+        $district = $districts[array_rand($districts)];
+        $village = $district['villages'][array_rand($district['villages'])] ?? ['name' => 'Tidak diketahui'];
+        $newAddress = sprintf('Kp. %s, Desa/Kel. %s, Kec. %s, Kab. Pandeglang, Banten', $faker->streetName(), $village['name'], $district['name']);
+
+        if ($biodata) {
+            // Fix existing biodata
+            $biodata->update([
+                'alamat' => $newAddress,
+                'kecamatan' => $district['name'],
+                'desa_kelurahan' => $village['name'],
+            ]);
+        } else {
+            // Create missing biodata
+            Biodata::create([
+                'user_id' => $user->id,
+                'nik' => (string) random_int(3601000000000000, 3601999999999999),
+                'tempat_lahir' => $faker->city(),
+                'tanggal_lahir' => $faker->dateTimeBetween('-45 years', '-18 years')->format('Y-m-d'),
+                'alamat' => $newAddress,
+                'jenis_kelamin' => random_int(0, 1) ? 'laki_laki' : 'perempuan',
+                'agama' => 'Islam',
+                'rt_rw' => sprintf('%03d/%03d', random_int(1, 20), random_int(1, 20)),
+                'kode_pos' => (string) random_int(42210, 42299),
+                'kecamatan' => $district['name'],
+                'desa_kelurahan' => $village['name'],
+                'status_perkawinan' => 'belum_menikah',
+                'tinggi_badan' => random_int(155, 175),
+                'berat_badan' => random_int(50, 80),
+                'disabilitas' => false,
+                'pendidikan' => 'SMA/SMK',
+                'tahun_lulus' => (string) random_int(2018, 2025),
+                'institusi_pendidikan' => 'SMAN 1 Pandeglang',
+                'jurusan' => null,
+                'keahlian' => 'Petani',
+                'pengalaman' => null,
+                'tujuan_lamaran' => null,
+                'status_verifikasi' => 'pending',
+                'verifikator_id' => null,
+            ]);
+        }
+        $fixed++;
     }
 
-    $result = "TOTAL USERS: " . $users->count() . "\n";
-    $result .= "MAPPED: " . count($mapped) . "\n";
-    $result .= "UNMAPPED: " . count($unmapped) . "\n\n";
-    $result .= "UNMAPPED USERS:\n";
-    foreach ($unmapped as $u) {
-        $result .= "- {$u}\n";
-    }
-
-    return nl2br($result);
+    return "Fixed {$fixed} unmapped users";
 });
