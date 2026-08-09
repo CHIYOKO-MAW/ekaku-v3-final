@@ -138,3 +138,56 @@ Route::middleware('throttle:30,1')->get('/verify/{nomor_ak1}', [KartuKuningContr
 Route::get('/dashboard/user', [DashboardController::class, 'user'])
     ->middleware(['auth', 'role:user'])
     ->name('dashboard.user');
+
+// TEMPORARY: Fix demo user addresses (remove after running)
+Route::middleware(['auth', 'role:admin'])->get('/admin/fix-demo', function () {
+    $districts = [];
+    $path = database_path('data/pandeglang_wilayah.json');
+    if (is_file($path)) {
+        $payload = json_decode((string) file_get_contents($path), true);
+        if (is_array($payload) && isset($payload['districts'])) {
+            $districts = $payload['districts'];
+        }
+    }
+    if (empty($districts)) {
+        return response('No districts found', 500);
+    }
+
+    $users = User::where('role', 'user')
+        ->where('email', 'like', 'demo.user.%@ekaku.demo')
+        ->with('biodata')
+        ->get();
+
+    $fixed = 0;
+    $ok = 0;
+
+    foreach ($users as $user) {
+        $biodata = $user->biodata;
+        if (! $biodata) {
+            continue;
+        }
+        $alamat = strtolower((string) $biodata->alamat);
+        $hasKec = false;
+        foreach ($districts as $d) {
+            if (str_contains($alamat, 'kec. ' . strtolower($d['name']))) {
+                $hasKec = true;
+                break;
+            }
+        }
+        if ($hasKec) {
+            $ok++;
+            continue;
+        }
+        $district = $districts[array_rand($districts)];
+        $village = $district['villages'][array_rand($district['villages'])] ?? ['name' => 'Tidak diketahui'];
+        $faker = fake('id_ID');
+        $biodata->update([
+            'alamat' => sprintf('Kp. %s, Desa/Kel. %s, Kec. %s, Kab. Pandeglang, Banten', $faker->streetName(), $village['name'], $district['name']),
+            'kecamatan' => $district['name'],
+            'desa_kelurahan' => $village['name'],
+        ]);
+        $fixed++;
+    }
+
+    return "Done: {$fixed} fixed, {$ok} already ok out of {$users->count()} users";
+});
