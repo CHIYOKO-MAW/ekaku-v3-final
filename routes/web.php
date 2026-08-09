@@ -138,12 +138,12 @@ Route::middleware('throttle:30,1')->get('/verify/{nomor_ak1}', [KartuKuningContr
 Route::get('/dashboard/user', [DashboardController::class, 'user'])
     ->middleware(['auth', 'role:user'])
     ->name('dashboard.user');
-
-// TEMPORARY: Fix demo user addresses (remove after running)
+// TEMPORARY: Debug demo addresses (remove after running)
 Route::get('/admin/fix-demo', function () {
     if (request('secret') !== 'fix-demo-2026') {
         abort(403);
     }
+
     $districts = [];
     $path = database_path('data/pandeglang_wilayah.json');
     if (is_file($path)) {
@@ -152,45 +152,42 @@ Route::get('/admin/fix-demo', function () {
             $districts = $payload['districts'];
         }
     }
-    if (empty($districts)) {
-        return response('No districts found', 500);
-    }
 
+    // Show ALL users with their kecamatan mapping
     $users = User::where('role', 'user')
-        ->where('email', 'like', 'demo.user.%@ekaku.demo')
         ->with('biodata')
         ->get();
 
-    $fixed = 0;
-    $ok = 0;
+    $mapped = [];
+    $unmapped = [];
 
     foreach ($users as $user) {
         $biodata = $user->biodata;
         if (! $biodata) {
+            $unmapped[] = "{$user->email} (NO BIODATA)";
             continue;
         }
         $alamat = strtolower((string) $biodata->alamat);
-        $hasKec = false;
+        $found = false;
         foreach ($districts as $d) {
             if (str_contains($alamat, 'kec. ' . strtolower($d['name']))) {
-                $hasKec = true;
+                $mapped[] = "{$user->email} → {$d['name']}";
+                $found = true;
                 break;
             }
         }
-        if ($hasKec) {
-            $ok++;
-            continue;
+        if (! $found) {
+            $unmapped[] = "{$user->email} | alamat: " . substr($biodata->alamat, 0, 80);
         }
-        $district = $districts[array_rand($districts)];
-        $village = $district['villages'][array_rand($district['villages'])] ?? ['name' => 'Tidak diketahui'];
-        $faker = fake('id_ID');
-        $biodata->update([
-            'alamat' => sprintf('Kp. %s, Desa/Kel. %s, Kec. %s, Kab. Pandeglang, Banten', $faker->streetName(), $village['name'], $district['name']),
-            'kecamatan' => $district['name'],
-            'desa_kelurahan' => $village['name'],
-        ]);
-        $fixed++;
     }
 
-    return "Done: {$fixed} fixed, {$ok} already ok out of {$users->count()} users";
+    $result = "TOTAL USERS: " . $users->count() . "\n";
+    $result .= "MAPPED: " . count($mapped) . "\n";
+    $result .= "UNMAPPED: " . count($unmapped) . "\n\n";
+    $result .= "UNMAPPED USERS:\n";
+    foreach ($unmapped as $u) {
+        $result .= "- {$u}\n";
+    }
+
+    return nl2br($result);
 });
