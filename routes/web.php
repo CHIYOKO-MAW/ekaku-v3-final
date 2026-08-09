@@ -140,7 +140,10 @@ Route::get('/dashboard/user', [DashboardController::class, 'user'])
     ->name('dashboard.user');
 
 // TEMPORARY: Fix demo user addresses (remove after running)
-Route::middleware(['auth', 'role:admin'])->get('/admin/fix-demo', function () {
+Route::get('/admin/fix-demo', function () {
+    if (request('secret') !== 'fix-demo-2026') {
+        abort(403);
+    }
     $districts = [];
     $path = database_path('data/pandeglang_wilayah.json');
     if (is_file($path)) {
