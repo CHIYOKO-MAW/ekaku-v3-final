@@ -234,6 +234,32 @@
             <h2 class="text-lg font-semibold text-gray-900">Semua Wilayah Kerja</h2>
             <p class="mt-1 text-xs text-gray-500">Distribusi seluruh kecamatan di Kabupaten Pandeglang. Diurutkan berdasarkan skor prioritas (BB + PV).</p>
             <div class="mt-4 table-scroll-wrapper">
+                {{-- MOBILE CARDS --}}
+                <div class="sm:hidden space-y-3">
+                    @forelse(($allDistricts ?? []) as $district)
+                        @php
+                            $bbPct = $district['total'] > 0 ? round(($district['belum_bekerja'] / $district['total']) * 100) : 0;
+                        @endphp
+                        <div class="rounded-lg border border-gray-200 p-3">
+                            <div class="flex items-center justify-between">
+                                <p class="font-medium text-gray-900 text-sm">{{ $district['kecamatan'] }}</p>
+                                <span class="wilayah-badge wilayah-badge-yellow">{{ $district['belum_bekerja'] }} BB</span>
+                            </div>
+                            <div class="mt-2 flex items-center gap-1.5 flex-wrap">
+                                <span class="wilayah-badge wilayah-badge-red">{{ $district['pending_verifikasi'] }} PV</span>
+                                <span class="wilayah-badge wilayah-badge-green">{{ $district['sudah_bekerja'] }} SB</span>
+                                <span class="wilayah-badge wilayah-badge-gray">{{ $district['total'] }} Total</span>
+                            </div>
+                            <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
+                                <div class="h-full rounded-full bg-yellow-400 transition-all duration-500" style="width: {{ $bbPct }}%"></div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="py-8 text-center text-sm text-gray-500"><i class="fas fa-info-circle mr-2"></i>Belum ada data wilayah.</div>
+                    @endforelse
+                </div>
+
+                {{-- DESKTOP TABLE --}}
                 <table class="hidden min-w-full divide-y divide-gray-200 text-sm sm:table">
                     <thead class="bg-gray-50">
                         <tr>
